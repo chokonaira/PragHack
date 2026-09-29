@@ -31,7 +31,19 @@ const typeItems = [
 ]
 
 const thinkingSteps = ['Understanding what happened', 'Structuring the request', 'Choosing the location']
-const examples = ['My laptop keeps shutting down', 'I can\'t log in', 'The printer is offline']
+
+/** Fields the customer changed after the AI suggestion, so the review shows "Edited". */
+const edited = computed(() => {
+  const s = suggestion.value
+  if (!s) return { summary: false, description: false, ticketType: false, location: false }
+  return {
+    summary: form.summary !== s.summary,
+    description: form.description !== s.description,
+    ticketType: form.ticketType !== (s.ticketType ?? 'incident'),
+    location: form.location !== (s.location ?? '')
+  }
+})
+const editedHint = (changed: boolean) => (changed ? 'Edited' : undefined)
 
 const impactLabel = { low: 'Low impact', medium: 'Medium impact', high: 'High impact' } as const
 const impactIcon = { low: 'i-lucide-arrow-down', medium: 'i-lucide-minus', high: 'i-lucide-triangle-alert' } as const
@@ -123,7 +135,13 @@ async function create() {
     lastCreated.value = ticket.key
     await refreshNuxtData('tickets')
     open.value = false
-    toast.add({ title: 'Request created', description: `${ticket.key} is on the list.`, icon: 'i-lucide-circle-check', color: 'success' })
+    toast.add({
+      title: 'Request created',
+      description: `${ticket.key} is on the list.`,
+      icon: 'i-lucide-circle-check',
+      color: 'success',
+      actions: [{ label: 'Open', color: 'neutral', variant: 'outline', onClick: () => navigateTo(`/tickets/${ticket.key}`) }]
+    })
   } catch {
     createError.value = 'We couldn\'t create the request. Your text is still here, try again.'
   } finally {
@@ -152,7 +170,7 @@ async function create() {
             v-model="text"
             autofocus
             :rows="4"
-            :examples="examples"
+            :examples="exampleRequests"
             @submit="run"
           >
             <template #secondary>
@@ -229,6 +247,7 @@ async function create() {
               <UFormField
                 label="Title"
                 required
+                :hint="editedHint(edited.summary)"
                 :error="attempted && !form.summary.trim() ? 'Add a short title' : undefined"
               >
                 <UInput
@@ -237,7 +256,10 @@ async function create() {
                   maxlength="255"
                 />
               </UFormField>
-              <UFormField label="What happened">
+              <UFormField
+                label="What happened"
+                :hint="editedHint(edited.description)"
+              >
                 <UTextarea
                   v-model="form.description"
                   class="w-full"
@@ -247,7 +269,10 @@ async function create() {
                 />
               </UFormField>
               <div class="grid gap-4 sm:grid-cols-2">
-                <UFormField label="Type">
+                <UFormField
+                  label="Type"
+                  :hint="editedHint(edited.ticketType)"
+                >
                   <USelect
                     v-model="form.ticketType"
                     :items="typeItems"
@@ -257,6 +282,7 @@ async function create() {
                 <UFormField
                   label="Location"
                   required
+                  :hint="editedHint(edited.location)"
                   :error="attempted && !form.location ? 'Choose a location' : undefined"
                 >
                   <USelect

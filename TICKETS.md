@@ -188,12 +188,12 @@ flowchart TD
 ### T-13 AI creator UI
 **Owner:** Florian · **Time:** 60 min · **Needs:** T-12, T-03, T-05 · **Unblocks:** T-21
 **Goal:** describe, review, create. This is the hero of the demo.
-- [ ] `/new`: step 1 textarea, 3 example chips (from `docs/ai-samples.md`), "Create with AI" button (also Ctrl/Cmd+Enter), "Fill it in manually" link.
-- [ ] Step 2: progress text ("Understanding", "Structuring", "Choosing location"), no motion under reduced motion.
-- [ ] Step 3 inside an `AiCard`: editable title, description, type, location. Changed fields show "Edited". Missing-info hints and impact shown.
-- [ ] "Create request" calls `POST /api/tickets`, shows a success toast and opens the new ticket. Errors keep what was typed.
-- [ ] If the AI fails, the same form appears empty with a clear message.
-- [ ] Nothing is created until "Create request" is clicked.
+- [x] `/new`: step 1 textarea, 3 example chips (from `docs/ai-samples.md`), "Create with AI" button (also Ctrl/Cmd+Enter), "Fill it in manually" link.
+- [x] Step 2: progress text ("Understanding", "Structuring", "Choosing location"), no motion under reduced motion.
+- [x] Step 3 inside an `AiCard`: editable title, description, type, location. Changed fields show "Edited". Missing-info hints and impact shown.
+- [x] "Create request" calls `POST /api/tickets`, shows a success toast and opens the new ticket. Errors keep what was typed.
+- [x] If the AI fails, the same form appears empty with a clear message.
+- [x] Nothing is created until "Create request" is clicked.
 
 **Check:** the laptop sample goes from text to a created ticket that shows in the list.
 
@@ -273,3 +273,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Marzieh: T-14 done. `summarize-ticket.post.ts` now calls the real LLM in live mode through `server/utils/ai/summarize.ts` (`summarizeTicket`); demo mode is unchanged (still passes `ticket.status` into `getDemoSummary` per Henry's T-21 change above). `basedOnComments`, `generatedAt` and `source` are set by the server, never trusted from the model. Zero-comment tickets never call the model (`shortHistorySummary`), so nothing can be invented there. **Henry (T-15):** build against this route as-is; on an AI failure it answers `502`/`504` via `apiError`, so keep the rest of the detail page working and show the inline "Try again".
 - 2026-09-29, Henry: one input everywhere. `PromptBox.vue` is now used by both the home hero and the New request modal, so they look and behave the same. Voice: red recording state, Stop button, live level bars (animated fallback if the mic meter is blocked), and text streams into the box while you speak (`useSpeechInput` takes interim results). The manual link is now "Skip AI, use the form".
 - 2026-09-29, Henry: T-15 done (Refresh button, cache keyed on ticket updatedAt). Voice input is now a state machine (idle, starting, listening, stopping): Listening shows only once the mic is really on, Stop waits for the last words, the mic is always released, the box is read-only while recording. The modal ignores stale AI runs and both AI and create calls time out (20s and 15s).
+- 2026-09-29, Florian: T-13 done. Example chips are now the first three samples from `docs/ai-samples.md` (short label, full sample text on click) shared by the home hero and the modal via `app/utils/exampleRequests.ts`. Review fields show "Edited" (form field hint) when they differ from the AI suggestion. The success toast keeps Henry's slide-into-list and adds an "Open" action to the new ticket. "Fill it in manually" is the existing "Skip AI, use the form" link. Verified in live mode: laptop sample to created ticket, AI failure fallback, reduced motion, 390 px and 1440 px, light and dark.

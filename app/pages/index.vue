@@ -20,12 +20,6 @@ const reconnecting = computed(() => status.value === 'error' && hasLoaded.value)
 const filter = ref<'all' | StatusId>('all')
 const draft = ref('')
 
-const examples = [
-  'My laptop keeps shutting down',
-  'I can\'t log in',
-  'The printer is offline'
-]
-
 const filters = computed(() => [
   { id: 'all' as const, label: 'All', count: tickets.value.length },
   { id: 'new' as const, label: 'Received', count: tickets.value.filter(t => t.status === 'new').length },
@@ -81,7 +75,7 @@ watch(lastCreated, (key) => {
         <PromptBox
           v-model="draft"
           class="mt-6"
-          :examples="examples"
+          :examples="exampleRequests"
           @submit="start"
         />
       </section>

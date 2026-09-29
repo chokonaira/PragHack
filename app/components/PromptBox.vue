@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { ExampleRequest } from '../utils/exampleRequests'
+
 withDefaults(defineProps<{
   placeholder?: string
   submitLabel?: string
   autofocus?: boolean
-  examples?: string[]
+  examples?: ExampleRequest[]
   rows?: number
 }>(), {
   placeholder: 'For example: my laptop keeps shutting down since yesterday\'s update, three times this morning.',
@@ -136,14 +138,14 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       </UButton>
       <UButton
         v-for="example in examples"
-        :key="example"
+        :key="example.label"
         size="xs"
         color="neutral"
         variant="soft"
         :disabled="voice.active.value"
-        @click="text = example"
+        @click="text = example.text"
       >
-        {{ example }}
+        {{ example.label }}
       </UButton>
     </div>
 
