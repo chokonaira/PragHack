@@ -13,6 +13,7 @@ The MVP scope, priorities and success criteria are in [SPEC.md](SPEC.md) (draft 
 
 - Portal (topics, announcements, registration): https://hackhub.pragvue.cz/
 - Rules: https://hackhub.pragvue.cz/announcements/hackathon-rules
+- Mock ticket API (ServiceBridge): http://mockapi.pragvue.cz:8001/servicebridgeapi/docs, our spec in [docs/api/README.md](docs/api/README.md)
 
 ## The idea (proposed)
 
@@ -56,7 +57,7 @@ The autopilot flow board. A ticket arrives, the AI triages it while the audience
 - A small server route that calls the AI, so API keys never reach the browser.
 - The browser's View Transitions API (with Motion for Vue as a fallback) for card movement.
 
-We have not seen the Mock Ticketing API yet, so we put a thin layer between the UI and the API. That way a surprise in the API costs us little.
+The Mock Ticketing API is documented in [docs/api/README.md](docs/api/README.md). It is a stateless mock with fixed responses, so we put a thin layer between the UI and the API that also remembers our own changes. That way a surprise in the API costs us little.
 
 ## How the idea scores
 

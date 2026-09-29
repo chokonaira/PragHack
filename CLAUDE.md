@@ -28,6 +28,17 @@ pnpm test
 pnpm e2e
 ```
 
+## Backend API
+
+The ticket backend is the ServiceBridge mock API. Its spec for this repo is [docs/api/README.md](docs/api/README.md), with snapshots of the OpenAPI file and the mock definition next to it. Before writing or changing any code that calls the backend, including `MockApiProvider`, server routes, proxies, fixtures or tests, read that document and follow it. Key facts, all verified:
+
+- Base URL is `http://mockapi.pragvue.cz:8001` with no `/servicebridgeapi` prefix. Swagger UI: http://mockapi.pragvue.cz:8001/servicebridgeapi/docs
+- No auth. No CORS, so the browser never calls it directly; go through a Nuxt server route or Nitro proxy.
+- The mock is stateless. Writes return fixed bodies and are not persisted, query strings and request bodies are ignored, path parameters are echoed back. The provider keeps a local overlay of our changes.
+- Ticket `status` is the status name ("In progress"), status ids are `new`, `in_progress`, `resolved`.
+
+If the live API differs from the document, update the document first, then the code. Do not invent endpoints or fields that the document does not list.
+
 ## Conventions
 
 - `<script setup lang="ts">`, typed props, no `any`.

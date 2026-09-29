@@ -1,0 +1,704 @@
+servicebridgeapi:
+  health:
+    url: /health
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      status: Healthy
+      version: 1.1.0-mock
+      buildDate: '2026-09-18T09:00:00Z'
+      environment: Mock
+      database:
+        status: Connected
+        type: MongoDB
+        name: servicebridge-mock
+  version:
+    url: /version
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      version: 1.1.0-mock
+  config:
+    url: /api/v1/config
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      environment: Mock
+      enableNotifications: true
+      apiVersion: v1
+  auth_login:
+    url: /api/v1/auth/login
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      email: mock.user@servicebridge.local
+      displayName: Mock User
+      accessToken: mock-access-token
+      refreshToken: mock-refresh-token
+      expiresAt: '2026-09-18T10:00:00Z'
+      jiraAccountId: mock-jira-account-001
+      jiraEmail: mock.user@jira.local
+      jiraGroups:
+      - JIRA_SB_USERS
+  auth_jira_login:
+    url: /api/v1/auth/jira/login
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      email: mock.user@servicebridge.local
+      displayName: Mock User
+      accessToken: mock-access-token
+      refreshToken: mock-refresh-token
+      expiresAt: '2026-09-18T10:00:00Z'
+      jiraAccountId: mock-jira-account-001
+      jiraEmail: mock.user@jira.local
+      jiraGroups:
+      - JIRA_SB_USERS
+  auth_jira_login_and_exchange_pat:
+    url: /api/v1/auth/jira/login-and-exchange-pat
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      email: mock.user@servicebridge.local
+      displayName: Mock User
+      accessToken: mock-access-token
+      refreshToken: mock-refresh-token
+      expiresAt: '2026-09-18T10:00:00Z'
+      jiraAccountId: mock-jira-account-001
+      jiraEmail: mock.user@jira.local
+  auth_keycloak_exchange:
+    url: /api/v1/auth/keycloak/exchange
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      email: mock.user@servicebridge.local
+      displayName: Mock User
+      accessToken: mock-access-token
+      refreshToken: mock-refresh-token
+      expiresAt: '2026-09-18T10:00:00Z'
+  auth_refresh:
+    url: /api/v1/auth/refresh
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      email: mock.user@servicebridge.local
+      displayName: Mock User
+      accessToken: mock-access-token-refreshed
+      refreshToken: mock-refresh-token-refreshed
+      expiresAt: '2026-09-18T11:00:00Z'
+  auth_logout:
+    url: /api/v1/auth/logout
+    method: POST
+    type: text
+    status_code: 204
+    scope: public
+    response: ''
+  auth_debug_claims:
+    url: /api/v1/auth/debug/claims
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      authenticated: true
+      userName: mock.user@servicebridge.local
+      allClaims:
+      - type: sub
+        value: mock-user-001
+      - type: email
+        value: mock.user@servicebridge.local
+      - type: role
+        value: admin
+      rolesFound:
+      - admin
+      isAdminRole: true
+  projects:
+    url: /api/v1/projects
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: '10001'
+      key: MCDTE
+      name: McDonalds Czech Republic Test
+      projectTypeKey: service_desk
+      self: null
+    - id: '10002'
+      key: SB
+      name: ServiceBridge
+      projectTypeKey: service_desk
+      self: null
+  project_by_key:
+    url: /api/v1/projects/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '10001'
+      key: '{{param1}}'
+      name: Mock project {{param1}}
+      projectTypeKey: service_desk
+      serviceDeskId: '12'
+  ticket_groups:
+    url: /api/v1/catalog/ticket-groups
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: hardware
+      name: Hardware
+    - code: software
+      name: Software
+    - code: network
+      name: Network
+  ticket_types:
+    url: /api/v1/catalog/ticket-types
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: incident
+      name: Incident
+    - code: request
+      name: Service request
+  request_type_groups:
+    url: /api/v1/catalog/request-type-groups
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: '1'
+      name: Hardware support
+    - id: '2'
+      name: Store systems
+  request_types:
+    url: /api/v1/catalog/request-types
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - requestTypeId: '101'
+      name: Report hardware incident
+      description: Report a hardware failure.
+      groupId: '1'
+    - requestTypeId: '102'
+      name: Request access
+      description: Request access to a store system.
+      groupId: '2'
+  restaurants:
+    url: /api/v1/catalog/restaurants
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: CZ_PHA_NUSLE
+      name: Prague Nusle
+    - code: CZ_BRN_CENTRUM
+      name: Brno Centrum
+  restaurants_create_allowed:
+    url: /api/v1/catalog/restaurants/create-allowed
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: CZ_PHA_NUSLE
+      name: Prague Nusle
+  store_areas:
+    url: /api/v1/catalog/store-areas
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: front_counter
+      name: Front counter
+    - code: kitchen
+      name: Kitchen
+  device_types:
+    url: /api/v1/catalog/device-types
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: kiosk
+      name: Self-service kiosk
+    - code: pos_terminal
+      name: Point of sale terminal
+  devices:
+    url: /api/v1/catalog/devices
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - code: KIOSK-01
+      name: Kiosk 01
+    - code: POS-01
+      name: Point of sale 01
+  statuses:
+    url: /api/v1/statuses
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: new
+      name: New
+      description: Ticket was created.
+      categoryKey: new
+      categoryName: New
+      iconUrl: null
+    - id: in_progress
+      name: In progress
+      description: Ticket is being resolved.
+      categoryKey: indeterminate
+      categoryName: In progress
+      iconUrl: null
+    - id: resolved
+      name: Resolved
+      description: Ticket has been resolved.
+      categoryKey: done
+      categoryName: Done
+      iconUrl: null
+  statuses_by_project:
+    url: /api/v1/statuses/by-project/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      projectKey: '{{param1}}'
+      issueTypes:
+      - issueTypeName: Incident
+        statuses:
+        - id: new
+          name: New
+        - id: in_progress
+          name: In progress
+        - id: resolved
+          name: Resolved
+  status_by_id_or_name:
+    url: /api/v1/statuses/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      name: '{{param1}}'
+      description: Mock status
+      categoryKey: indeterminate
+      categoryName: In progress
+      iconUrl: null
+  info_categories:
+    url: /api/v1/info/categories
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: help
+      name: Help
+    - id: operations
+      name: Operations
+  info_items:
+    url: /api/v1/info
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: info-001
+      category: help
+      title: ServiceBridge support
+      content: Contact the service desk for assistance.
+  tickets_create_meta:
+    url: /api/v1/tickets/create-meta
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      projectKey: MCDTE
+      requestTypeId: '101'
+      fields:
+      - key: summary
+        label: Summary
+        type: text
+        required: true
+      - key: description
+        label: Description
+        type: textarea
+        required: false
+      - key: location
+        label: Location
+        type: select
+        required: true
+        options:
+        - value: CZ_PHA_NUSLE
+          label: Prague Nusle
+  tickets:
+    url: /api/v1/tickets
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - issueKey: MCDTE-48
+      summary: Point of sale terminal is offline
+      description: POS-01 is not accepting card payments.
+      status: In progress
+      ticketType: Incident
+      projectKey: MCDTE
+      location: CZ_PHA_NUSLE
+      createdAt: '2026-09-17T08:30:00Z'
+      updatedAt: '2026-09-18T08:45:00Z'
+    - issueKey: MCDTE-49
+      summary: Request a new kiosk account
+      description: Access is required for the new employee.
+      status: New
+      ticketType: Service request
+      projectKey: MCDTE
+      location: CZ_BRN_CENTRUM
+      createdAt: '2026-09-18T07:15:00Z'
+      updatedAt: '2026-09-18T07:15:00Z'
+  tickets_create:
+    url: /api/v1/tickets
+    method: POST
+    type: json
+    status_code: 201
+    scope: public
+    response:
+      issueKey: MCDTE-50
+      id: '1050'
+      summary: Mock ticket created
+      status: New
+  ticket_add_update:
+    url: /api/v1/tickets/{{1}}/updates
+    method: POST
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      issueKey: '{{param1}}'
+      updatedAt: '2026-09-18T09:00:00Z'
+      status: In progress
+  ticket_attachment_content:
+    url: /api/v1/tickets/{{1}}/attachments/{{2}}/content
+    method: GET
+    type: text
+    status_code: 200
+    scope: public
+    headers:
+      Content-Disposition: attachment; filename="mock-attachment.txt"
+    response: Mock attachment content for {{param1}}.
+  ticket_by_key:
+    url: /api/v1/tickets/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      issueKey: '{{param1}}'
+      summary: Mock ticket {{param1}}
+      description: Detailed mock ticket for client integration tests.
+      status: In progress
+      ticketType: Incident
+      projectKey: MCDTE
+      location: CZ_PHA_NUSLE
+      reporter: Mock User
+      assignee: Mock Technician
+      createdAt: '2026-09-17T08:30:00Z'
+      updatedAt: '2026-09-18T08:45:00Z'
+      attachments: []
+  user_settings_get:
+    url: /api/v1/users/me/settings
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      selectedProjectKey: MCDTE
+      useMockData: true
+      notificationsEnabled: true
+  user_settings_update:
+    url: /api/v1/users/me/settings
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: mock-user-001
+      selectedProjectKey: MCDTE
+      useMockData: true
+      notificationsEnabled: true
+  admin_user_settings:
+    url: /api/v1/admin/users
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      items:
+      - userId: mock-user-001
+        email: mock.user@servicebridge.local
+        displayName: Mock User
+        selectedProjectKey: MCDTE
+        useMockData: true
+      total: 1
+      page: 1
+      pageSize: 50
+  admin_user_settings_update:
+    url: /api/v1/admin/users/{{1}}/settings
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      userId: '{{param1}}'
+      selectedProjectKey: MCDTE
+      useMockData: true
+      notificationsEnabled: true
+  project_configuration_project:
+    url: /api/v1/project-configuration/project/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: project-config-001
+      projectKey: '{{param1}}'
+      serviceDeskId: '12'
+      isActive: true
+      fields:
+      - key: location
+        label: Location
+        fieldId: customfield_10001
+        required: true
+  project_configuration_list:
+    url: /api/v1/project-configuration
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: project-config-001
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  project_configuration_create:
+    url: /api/v1/project-configuration
+    method: POST
+    type: json
+    status_code: 201
+    scope: public
+    response:
+      id: project-config-002
+      projectKey: MOCK
+      serviceDeskId: '13'
+      isActive: true
+      fields: []
+  project_configuration_fields_reorder:
+    url: /api/v1/project-configuration/{{1}}/fields/reorder
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  project_configuration_field_upsert:
+    url: /api/v1/project-configuration/{{1}}/fields
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  project_configuration_field_delete:
+    url: /api/v1/project-configuration/{{1}}/fields/{{2}}
+    method: DELETE
+    type: text
+    status_code: 200
+    scope: public
+    response: ''
+  project_configuration_active:
+    url: /api/v1/project-configuration/{{1}}/active
+    method: PATCH
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  project_configuration_update:
+    url: /api/v1/project-configuration/{{1}}
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  project_configuration_delete:
+    url: /api/v1/project-configuration/{{1}}
+    method: DELETE
+    type: text
+    status_code: 204
+    scope: public
+    response: ''
+  project_configuration_by_id:
+    url: /api/v1/project-configuration/{{1}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param1}}'
+      projectKey: MCDTE
+      serviceDeskId: '12'
+      isActive: true
+      fields: []
+  screen_parametrization_active:
+    url: /api/v1/screen-parametrization/active
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: screen-config-001
+      projectKey: MCDTE
+      screenCode: ticket_create
+      screenName: Create ticket
+      isActive: true
+      fields: []
+  screen_parametrization_list:
+    url: /api/v1/screen-parametrization
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+    - id: screen-config-001
+      projectKey: MCDTE
+      screenCode: ticket_create
+      screenName: Create ticket
+      isActive: true
+      fields: []
+  screen_parametrization_create:
+    url: /api/v1/screen-parametrization
+    method: POST
+    type: json
+    status_code: 201
+    scope: public
+    response:
+      id: screen-config-002
+      projectKey: MCDTE
+      screenCode: ticket_detail
+      screenName: Ticket detail
+      isActive: true
+      fields: []
+  screen_parametrization_duplicate:
+    url: /api/v1/screen-parametrization/duplicate
+    method: POST
+    type: json
+    status_code: 201
+    scope: public
+    response:
+      id: screen-config-002
+      projectKey: MCDTE
+      screenCode: ticket_detail
+      screenName: Ticket detail
+      isActive: true
+      fields: []
+  screen_parametrization_active_update:
+    url: /api/v1/screen-parametrization/{{1}}/{{2}}/active
+    method: PATCH
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param2}}'
+      projectKey: '{{param1}}'
+      screenCode: ticket_create
+      screenName: Create ticket
+      isActive: true
+      fields: []
+  screen_parametrization_update:
+    url: /api/v1/screen-parametrization/{{1}}/{{2}}
+    method: PUT
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param2}}'
+      projectKey: '{{param1}}'
+      screenCode: ticket_create
+      screenName: Create ticket
+      isActive: true
+      fields: []
+  screen_parametrization_delete:
+    url: /api/v1/screen-parametrization/{{1}}/{{2}}
+    method: DELETE
+    type: text
+    status_code: 204
+    scope: public
+    response: ''
+  screen_parametrization_by_id:
+    url: /api/v1/screen-parametrization/{{1}}/{{2}}
+    method: GET
+    type: json
+    status_code: 200
+    scope: public
+    response:
+      id: '{{param2}}'
+      projectKey: '{{param1}}'
+      screenCode: ticket_create
+      screenName: Create ticket
+      isActive: true
+      fields: []
