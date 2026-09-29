@@ -25,7 +25,7 @@ Run the demo from the presenter's laptop, not from Vercel. One server, real AI, 
 | 2:40 | "And there it is, at the top, already on the route." | The new ticket slides in with a highlight. | Smooth handoff |
 | 2:55 | "Now the hard part of any ticket: reading a long thread." | Open **Laptop shuts down randomly after update** (9 updates). | Timeline |
 | 3:15 | "Instead of reading nine messages: what's happening, who it's waiting on, and whether I need to act." | Point at the summary card. Click Refresh once. | The second AI feature |
-| 3:45 | "Some tickets need me." | Open **Cannot connect to store Wi-Fi**. Point at "Action for you". | Value: clear next step |
+| 3:45 | "Some tickets need me." | Open **Cannot connect to store Wi-Fi**. Point at "Action for you". Type or speak a short reply and click **Send reply**: it lands in the timeline. | Value: clear next step, two-way |
 | 4:10 | "In real life support moves it forward. Let me play support." | Open the ticket you just created. Click **Simulate support update**. The flow line moves and a reply appears. | The flow line in motion |
 | 4:30 | "Built with Nuxt and Claude. AI drafts, people decide, and it works without AI too. Stop managing tickets. Just tell us what happened." | Back to the home list. | Close |
 

@@ -1,16 +1,22 @@
 <script setup lang="ts">
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   placeholder?: string
   submitLabel?: string
   autofocus?: boolean
   examples?: string[]
   rows?: number
+  label?: string
+  loading?: boolean
+  capturedHint?: string
 }>(), {
   placeholder: 'For example: my laptop keeps shutting down since yesterday\'s update, three times this morning.',
   submitLabel: 'Continue',
   autofocus: false,
   examples: () => [],
-  rows: 3
+  rows: 3,
+  label: 'Describe your problem',
+  loading: false,
+  capturedHint: 'Got it. Edit the text if you like, then continue.'
 })
 
 const text = defineModel<string>({ required: true })
@@ -32,6 +38,7 @@ async function toggleVoice() {
 }
 
 async function submit() {
+  if (props.loading) return
   if (voice.active.value) await voice.stop()
   if (text.value.trim()) emit('submit')
 }
@@ -52,9 +59,9 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       :maxrows="8"
       size="lg"
       class="w-full"
-      aria-label="Describe your problem"
+      :aria-label="label"
       :autofocus="autofocus"
-      :readonly="voice.active.value"
+      :readonly="voice.active.value || loading"
       :placeholder="voice.listening.value ? 'Listening. Start speaking…' : placeholder"
       @input="voice.captured.value = false"
       @keydown.meta.enter.prevent="submit"
@@ -109,7 +116,7 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
           class="size-4"
           aria-hidden="true"
         />
-        Got it. Edit the text if you like, then continue.
+        {{ capturedHint }}
       </div>
     </div>
     <p
@@ -154,7 +161,8 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       <UButton
         class="ms-auto max-sm:min-h-11"
         size="lg"
-        :disabled="!text.trim() || voice.state.value === 'starting'"
+        :loading="loading"
+        :disabled="!text.trim() || loading || voice.state.value === 'starting'"
         @click="submit"
       >
         {{ submitLabel }}

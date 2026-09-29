@@ -39,7 +39,7 @@ The brief asks the app to help people do these things:
 |---|---|
 | Quickly understand current tickets | Live list with a flow line per ticket, status filters and search |
 | Create new service requests | Say or type it. AI drafts the request, the customer edits and confirms |
-| Communicate with support teams | Not in this version. The ticket page shows the full updates timeline read-only |
+| Communicate with support teams | Reply to support from the ticket page, typed or spoken. The reply lands in the timeline and the AI summary takes it into account |
 | Identify important changes | New and updated requests get a tag and a toast, live across devices |
 | Find relevant information | Search, and an AI summary of any ticket |
 | Decide what to do next | The summary says who the ticket is waiting on and what the customer should do |
@@ -50,6 +50,7 @@ The brief asks the app to help people do these things:
 - **AI drafts the request.** Title, description, type and impact from free text. The location is only picked when the text names one. The customer can edit anything, and nothing is created until they click. If AI is unavailable, "Skip AI, use the form" gives the same form.
 - **Live request list.** A flow line per ticket, filters, search, and automatic refresh. New requests slide in with a tag, even when they come from another device.
 - **Ticket detail.** Full-size flow line, description, updates timeline, and a "What's happening?" summary (what is going on, who it is waiting on, what you need to do).
+- **Reply to support.** A reply box under the timeline, with the same Speak button. The reply shows at once and is taken back with an error if it cannot be sent.
 - **Made to be used.** Works on phones from 320 px, light and dark mode, keyboard operable, no accessibility violations on the main screens (axe), respects reduced motion.
 - **Demo mode.** Sample tickets, always labelled "Demo data", so a demo never depends on the network. A demo control on each ticket plays the support side so the flow line can move.
 
@@ -134,10 +135,10 @@ Without an AI key the app still works: AI screens show the pre-written demo answ
 ## Known limitations
 
 - The organizers' mock API saves nothing and returns fixed data. Tickets and comments we create are kept in our own state (Redis on the live site, server memory locally) and expire after 24 hours.
-- Customers cannot reply to a ticket in this version, and cannot change its status (in real life support does). The demo control on a ticket page plays support.
+- Customers can reply but cannot change a ticket's status (in real life support does), and there is no support-side screen. The demo control on a ticket page plays support.
 - The public site runs in demo mode with pre-written AI answers so the AI key is never exposed. Real AI needs a key (`NUXT_AI_LIVE=true` locally).
 - Voice input needs Chrome, Edge or Safari (not Firefox). Chrome sends the audio to Google for recognition. Where unsupported, the mic button is hidden.
-- Not built: replies, "since your last visit" summaries, notifications, attachments.
+- Not built: "since your last visit" summaries, notifications, attachments.
 - Demo data is fictional and always labelled.
 
 ## Pre-existing components

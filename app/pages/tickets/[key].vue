@@ -17,6 +17,37 @@ async function advance() {
   }
 }
 
+const reply = ref('')
+const replying = ref(false)
+const replyError = ref<string | null>(null)
+
+// The reply shows in the timeline at once. If it cannot be sent, it is taken back and the text returns to the box.
+async function sendReply() {
+  const body = reply.value.trim()
+  const before = ticket.value
+  if (!body || replying.value || !before) return
+  replying.value = true
+  replyError.value = null
+  const sentAt = new Date().toISOString()
+  ticket.value = {
+    ...before,
+    updatedAt: sentAt,
+    comments: [...before.comments, { id: `pending-${sentAt}`, author: before.reporter, body, createdAt: sentAt, fromCustomer: true }]
+  }
+  reply.value = ''
+  try {
+    await $fetch(`/api/tickets/${key.value}/comments`, { method: 'POST', body: { body }, timeout: 15000 })
+    await Promise.all([refreshTicket(), refreshNuxtData('tickets')])
+    refreshSummary()
+  } catch {
+    ticket.value = before
+    reply.value = body
+    replyError.value = 'Your reply was not sent. Check your connection and try again.'
+  } finally {
+    replying.value = false
+  }
+}
+
 const { data: summary, status: summaryStatus, error: summaryError, refresh: refreshSummary } = useTicketSummary(key, () => ticket.value?.updatedAt)
 
 useSeoMeta({ title: () => (ticket.value ? `${ticket.value.key} ${ticket.value.summary}` : 'Request not found') })
@@ -122,6 +153,16 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
               Updates
             </h2>
             <ol class="mt-5 space-y-7 border-s border-default ps-6">
+              <li class="relative">
+                <span
+                  class="absolute -start-[1.9rem] top-1.5 size-2.5 rounded-full border-2 border-default bg-accented"
+                  aria-hidden="true"
+                />
+                <p class="flex items-baseline gap-2 text-sm">
+                  <span class="font-medium text-highlighted">Request opened</span>
+                  <span class="text-muted">{{ relativeTime(ticket.createdAt, now) }}</span>
+                </p>
+              </li>
               <li
                 v-for="c in ticket.comments"
                 :key="c.id"
@@ -140,16 +181,6 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
                   {{ c.body }}
                 </p>
               </li>
-              <li class="relative">
-                <span
-                  class="absolute -start-[1.9rem] top-1.5 size-2.5 rounded-full border-2 border-default bg-accented"
-                  aria-hidden="true"
-                />
-                <p class="flex items-baseline gap-2 text-sm">
-                  <span class="font-medium text-highlighted">Request opened</span>
-                  <span class="text-muted">{{ relativeTime(ticket.createdAt, now) }}</span>
-                </p>
-              </li>
             </ol>
             <p
               v-if="!ticket.comments.length"
@@ -157,6 +188,26 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
             >
               No updates yet. Support will reply here.
             </p>
+
+            <div class="mt-8 max-w-2xl">
+              <PromptBox
+                v-model="reply"
+                label="Reply to support"
+                placeholder="Write a reply to support, or tap Speak."
+                submit-label="Send reply"
+                captured-hint="Got it. Edit the text if you like, then send."
+                :rows="2"
+                :loading="replying"
+                @submit="sendReply"
+              />
+              <UAlert
+                v-if="replyError"
+                class="mt-3"
+                color="error"
+                variant="subtle"
+                :description="replyError"
+              />
+            </div>
           </section>
         </div>
 
