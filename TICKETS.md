@@ -148,10 +148,10 @@ flowchart TD
 ### T-12 structure-ticket API
 **Owner:** Florian · **Time:** 40 min · **Needs:** T-11, T-05 · **Unblocks:** T-13
 **Goal:** free text in, a valid structured ticket out.
-- [ ] `POST /api/ai/structure-ticket` exactly as in `docs/contracts.md`. Output validated: summary 80 characters or fewer, `ticketType` and `impact` from the enums, `location` one of the create-meta options or `null`.
-- [ ] The prompt lists the real locations and never invents values.
-- [ ] Demo mode returns the pre-generated result with `source: 'demo'`. If the model fails outside demo mode the route returns `502`.
-- [ ] The 8 samples in `docs/ai-samples.md` are run and the results written down. Pass rule is in that file.
+- [x] `POST /api/ai/structure-ticket` exactly as in `docs/contracts.md`. Output validated: summary 80 characters or fewer, `ticketType` and `impact` from the enums, `location` one of the create-meta options or `null`. (`server/utils/structure.ts` holds the prompt and validator, the route is `server/api/ai/structure-ticket.post.ts`.)
+- [x] The prompt lists the real locations and never invents values.
+- [x] Demo mode returns the pre-generated result with `source: 'demo'`. If the model fails outside demo mode the route returns `502`.
+- [x] The 8 samples in `docs/ai-samples.md` are run and the results written down. Pass rule is in that file. (8 of 8 pass, see the run note there. Tests: `tests/server/structure.test.ts`, 17 tests.)
 
 **Check:** curl with the laptop sample returns valid JSON.
 
