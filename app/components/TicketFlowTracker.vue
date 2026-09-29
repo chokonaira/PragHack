@@ -29,8 +29,8 @@ function nodeState(index: number) {
 
 <template>
   <div
-    class="flex items-center"
-    :class="compact ? 'gap-3' : 'w-full'"
+    class="flex"
+    :class="compact ? 'items-center gap-3' : 'w-full flex-col gap-2'"
   >
     <ol
       class="flex items-center"
@@ -41,65 +41,68 @@ function nodeState(index: number) {
         v-for="(stop, i) in stops"
         :key="stop.id"
         class="flex items-center"
-        :class="i < stops.length - 1 ? 'flex-1' : ''"
+        :class="!compact || i < stops.length - 1 ? 'flex-1' : ''"
         :aria-current="nodeState(i) === 'current' ? 'step' : undefined"
       >
-        <div
-          class="flex flex-col"
-          :class="compact ? '' : 'items-start gap-2'"
+        <span
+          class="relative flex shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-(--motion-base)"
+          :class="[
+            compact ? 'size-3.5' : 'size-6',
+            nodeState(i) === 'upcoming'
+              ? 'border-accented bg-default'
+              : isResolved && i === current
+                ? 'border-success bg-success'
+                : 'border-primary bg-primary'
+          ]"
         >
           <span
-            class="relative flex shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-(--motion-base)"
-            :class="[
-              compact ? 'size-3.5' : 'size-6',
-              nodeState(i) === 'upcoming'
-                ? 'border-accented bg-default'
-                : isResolved && i === current
-                  ? 'border-success bg-success'
-                  : 'border-primary bg-primary'
-            ]"
-          >
-            <span
-              v-if="nodeState(i) === 'current'"
-              class="absolute inset-0 rounded-full bg-primary motion-safe:animate-flow-pulse"
-              aria-hidden="true"
-            />
-            <UIcon
-              v-if="nodeState(i) === 'done' && !compact"
-              name="i-lucide-check"
-              class="size-3.5 text-inverted"
-              aria-hidden="true"
-            />
-            <span
-              v-else-if="nodeState(i) === 'current' && !compact"
-              class="relative size-2 rounded-full bg-inverted"
-              aria-hidden="true"
-            />
-          </span>
+            v-if="nodeState(i) === 'current'"
+            class="absolute inset-0 rounded-full bg-primary motion-safe:animate-flow-pulse"
+            aria-hidden="true"
+          />
+          <UIcon
+            v-if="nodeState(i) === 'done' && !compact"
+            name="i-lucide-check"
+            class="size-3.5 text-inverted"
+            aria-hidden="true"
+          />
           <span
-            v-if="!compact"
-            class="text-sm"
-            :class="nodeState(i) === 'upcoming' ? 'text-muted' : 'font-medium text-highlighted'"
-          >
-            {{ stop.label }}
-          </span>
-          <span
-            v-if="!compact && times[stop.id]"
-            class="-mt-1.5 text-xs text-muted"
-          >
-            {{ times[stop.id] }}
-          </span>
-        </div>
+            v-else-if="nodeState(i) === 'current' && !compact"
+            class="relative size-2 rounded-full bg-inverted"
+            aria-hidden="true"
+          />
+        </span>
         <span
           v-if="i < stops.length - 1"
           class="mx-1.5 h-0.5 flex-1 rounded-full transition-colors duration-(--motion-slow)"
-          :class="[
-            i < current ? 'bg-primary' : 'bg-accented',
-            compact ? '' : '-mt-9'
-          ]"
+          :class="i < current ? 'bg-primary' : 'bg-accented'"
           aria-hidden="true"
         />
-        <span class="sr-only">{{ stop.label }}</span>
+        <span class="sr-only">{{ stop.label }}{{ times[stop.id] ? `, ${times[stop.id]}` : '' }}</span>
+      </li>
+    </ol>
+    <ol
+      v-if="!compact"
+      class="flex w-full"
+      aria-hidden="true"
+    >
+      <li
+        v-for="(stop, i) in stops"
+        :key="stop.id"
+        class="flex flex-1 flex-col items-start gap-0.5 pe-2"
+      >
+        <span
+          class="text-sm"
+          :class="nodeState(i) === 'upcoming' ? 'text-muted' : 'font-medium text-highlighted'"
+        >
+          {{ stop.label }}
+        </span>
+        <span
+          v-if="times[stop.id]"
+          class="text-xs text-muted"
+        >
+          {{ times[stop.id] }}
+        </span>
       </li>
     </ol>
     <span
