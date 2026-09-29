@@ -86,9 +86,9 @@ flowchart TD
 **Goal:** an empty branded app with tests running in CI.
 - [x] Starter content removed (`TemplateMenu`, starter home content, title and meta). App named "TicketFlow AI". (done by Henry; `TemplateMenu.vue` file is unused and can be deleted)
 - [x] `DESIGN.md` colours in `app/app.config.ts`, CSS tokens in `app/assets/css/main.css`, green scale removed. (done by Henry: cobalt scale, violet AI, Schibsted Grotesk, motion tokens)
-- [ ] `runtimeConfig` holds `apiBase`, `demoMode` and the LLM settings (server-only), matching `.env.example`.
-- [ ] Vitest installed. `pnpm test` works with one passing sample test. `.github/workflows/ci.yml` runs `pnpm test`.
-- [ ] `pnpm lint`, `pnpm typecheck` and `pnpm test` pass and CI is green.
+- [x] `runtimeConfig` holds `apiBase`, `demoMode` and the LLM settings (server-only), matching `.env.example`. (done by Marzieh)
+- [x] Vitest installed. `pnpm test` works with one passing sample test. `.github/workflows/ci.yml` runs `pnpm test`. (Vitest landed with T-04; `Test` step added by Marzieh)
+- [x] `pnpm lint`, `pnpm typecheck` and `pnpm test` pass and CI is green. (done by Marzieh; CI green on `bf380d8`)
 
 **Check:** open http://localhost:3000. You see a branded empty page, in light and dark.
 
@@ -258,6 +258,7 @@ Add your row in your first push. It means you have read `CONTRIBUTING.md`, `docs
 | Name | Read and agreed (time) |
 |---|---|
 | Florian | 2026-09-29 14:00 |
+| Marzieh | 2026-09-29 14:20 |
 
 ## Sync log
 
