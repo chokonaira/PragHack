@@ -125,15 +125,19 @@ Request `{ "key": string }`, response `{ "draft": string, "source": 'ai' | 'demo
 
 ## LLM configuration (`server/utils/llm.ts`)
 
-Provider-neutral, so switching provider is an env change:
+We use an Anthropic key, so the default provider is Anthropic's native Messages API. The utility also supports any OpenAI-compatible endpoint, so switching provider is an env change:
 
 ```
-NUXT_LLM_BASE_URL   e.g. https://api.openai.com/v1
+NUXT_LLM_PROVIDER   anthropic (default) or openai
+NUXT_LLM_BASE_URL   anthropic: https://api.anthropic.com   openai-style: e.g. https://api.openai.com/v1
 NUXT_LLM_API_KEY    server only, never committed
-NUXT_LLM_MODEL      model name at that provider
+NUXT_LLM_MODEL      e.g. claude-sonnet-5-5 (or claude-haiku-4-5-20251001 if latency matters)
 ```
 
-`askJson(system, user, validate)` sends an OpenAI-style `POST {base}/chat/completions`, asks for JSON (JSON mode where the provider supports it), validates the reply, retries once, and throws a typed `AiError`. Timeout 10 seconds.
+- `anthropic`: `POST {base}/v1/messages` with headers `x-api-key`, `anthropic-version: 2023-06-01`, `content-type: application/json`. Body `{ model, max_tokens, system, messages: [{ role: 'user', content }] }`. The answer is in `content[0].text`.
+- `openai`: `POST {base}/chat/completions` with `Authorization: Bearer <key>`. The answer is in `choices[0].message.content`.
+
+`askJson(system, user, validate)` calls the chosen provider, asks for JSON only, parses and validates the reply, retries once, and throws a typed `AiError`. Timeout 10 seconds.
 
 ## Demo mode
 
