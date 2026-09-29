@@ -1,32 +1,25 @@
 # TicketFlow AI
 
-Our project for the **PragVue Hackathon 2026**, a 5-hour event to build a working Vue.js prototype. Topic: **AI-Powered Ticket Management Experience** (ServiceBridge).
+> Stop managing tickets. Just tell us what happened.
 
-> **Tagline:** Stop managing tickets. Just tell us what happened.
+TicketFlow AI is a customer-facing service ticket app built for the **PragVue Hackathon 2026** (topic: AI-Powered Ticket Management Experience, ServiceBridge). A customer describes a problem in their own words, typed or spoken. AI turns it into a structured request, the customer reviews it and creates it, and later AI explains what is happening on any ticket.
 
-## Status
+**Live demo:** https://ticketflow-hack.vercel.app (sample data, deploys from every push to `main`)
 
-Preparation phase. The Nuxt starter is set up, docs and tickets are ready, and feature coding starts at kickoff (the hackathon rules require all coding to happen inside the 5-hour window). The final code must go into the Git repository the organizers assign to the team.
+## The problem
 
-## The idea
+Ticket systems make customers understand the system: long forms, unclear categories, long threads, and no clear answer to "where does my request stand?"
 
-A customer describes a problem in plain words. AI turns it into a structured ticket, and later explains what is happening on any ticket. Direction agreed on 2026-09-29: **customer-first**.
+## Features
 
-**The problem:** ticket systems make customers understand the system: complex forms, long threads, unclear status.
+- **Describe it, don't fill in a form.** Type or speak what went wrong. The words stream into the box as you talk, with a clear recording state.
+- **AI drafts the request.** Title, description, type and impact from free text, with the location picked only when the text names one. The customer edits anything and confirms. Nothing is created until they click. If AI is unavailable, "Skip AI, use the form" gives the same form.
+- **My requests.** A live list of tickets. Each one shows a flow line (Received, In progress, Resolved), its location and last update. Filter by status. The list refreshes itself and new tickets slide in.
+- **Ticket detail.** The flow line at full size, the description, an updates timeline, and a "What's happening?" summary: what is going on, who the ticket is waiting on, and whether the customer needs to act.
+- **Built to be used.** Works on phones from 320 px, light and dark mode, keyboard operable, no accessibility violations on the main screens (axe), respects reduced motion.
+- **Demo mode.** Seeded sample tickets, always labelled "Demo data", so the demo never depends on the network. A demo control plays the support side so the flow line can move.
 
-**What it does**
-
-1. **AI ticket creator.** Type what happened. AI proposes title, description, type and location. The customer reviews, edits and clicks "Create request". If AI fails, the same form works manually.
-2. **AI ticket summary.** Open a ticket with a long history and see what is happening, who it is waiting on, and whether you need to act.
-3. **My requests.** A clear list with status, filters and search, and a detail view with a timeline.
-
-Only after these are polished: what changed since your last visit, AI reply help, notifications.
-
-**Principles:** AI is embedded in the flow, never a generic chatbot. AI content is labelled and editable, nothing is created until the customer confirms, and the app works without AI.
-
-## Workflow
-
-The customer journey:
+## How it works
 
 ```mermaid
 flowchart LR
@@ -35,10 +28,8 @@ flowchart LR
     C -->|"Create request"| D["Ticket created"]
     D --> E["My requests"]
     E --> F["Open a ticket"]
-    F --> G["AI explains it: what is happening, waiting on, action needed"]
+    F --> G["AI summary: what is happening, waiting on, action needed"]
 ```
-
-How the app is built:
 
 ```mermaid
 flowchart TB
@@ -46,93 +37,91 @@ flowchart TB
     API --> P{"TicketProvider"}
     P -->|"live"| M["MockApiProvider + overlay of our changes"]
     P -->|"demo"| F["FixtureProvider: seeded demo data"]
-    M --> S["ServiceBridge mock API: stateless, no CORS"]
+    M --> S["ServiceBridge mock API"]
     API --> L["AI routes /api/ai/*"]
-    L --> LLM["Real LLM, key stays on the server"]
+    L --> LLM["Claude, key stays on the server"]
 ```
 
-Why this shape: the mock API does not save writes and has no CORS, so the browser never calls it. Our server keeps an overlay of what we created, and a labelled demo-data mode keeps the demo working offline. Details: [docs/api/README.md](docs/api/README.md).
+The organizers' mock API has no CORS and does not save writes, so the browser never calls it. Our Nuxt server routes call it, keep an overlay of what we create, and fall back to labelled demo data. Details: [docs/api/README.md](docs/api/README.md).
 
-## Run the app
+## Technology stack
 
-**You need:** Node 22 and pnpm (`corepack enable` sets pnpm up). **No Docker, no database.** The mock API is hosted by the organizers.
+Nuxt 4, Vue 3, TypeScript, Nuxt UI 4, Tailwind CSS 4, Lucide icons, Schibsted Grotesk. Server routes run on Nitro. Vitest for tests, GitHub Actions for lint, typecheck and tests, Vercel for hosting. The browser's built-in speech recognition powers voice input.
+
+## Setup and start
+
+You need Node 22 and pnpm (`corepack enable`). No Docker and no database.
 
 ```bash
-git clone git@github.com:chokonaira/PragHack.git
-cd PragHack
+git clone <this repository>
+cd <folder>
 pnpm install
 cp .env.example .env      # then edit .env, never commit it
 pnpm dev                  # http://localhost:3000
 ```
 
-About `.env`:
-
-- The defaults point at the organizers' mock API. Nothing else is needed to browse tickets.
-- Set `NUXT_DEMO_MODE=true` to run on seeded demo data with no network.
-- AI features need `NUXT_LLM_BASE_URL`, `NUXT_LLM_API_KEY` and `NUXT_LLM_MODEL`. Ask a teammate for the key. Never put a key in git.
-
 | Command | What it does |
 |---|---|
-| `pnpm dev` | Dev server on port 3000 |
+| `pnpm dev` | Development server on port 3000 (`pnpm dev --host` to open it from a phone on the same Wi-Fi) |
 | `pnpm build` and `pnpm preview` | Production build and local preview |
-| `pnpm lint` | ESLint |
-| `pnpm typecheck` | Type check |
-| `pnpm test` | Unit tests (exists after ticket T-02) |
+| `pnpm lint` and `pnpm typecheck` | Static checks |
+| `pnpm test` | Unit tests |
 
-Until ticket T-02 lands, the page you see is the Nuxt UI starter.
+## Configuration
 
-## Where to start
+Set in `.env` (see `.env.example`). All of these are server-side.
 
-1. Read [CONTRIBUTING.md](CONTRIBUTING.md) (rules for every push: small, rebased, lint, typecheck and tests all pass, no failing test ever, no secrets).
-2. Skim [SPEC.md](SPEC.md), [docs/contracts.md](docs/contracts.md), [DESIGN.md](DESIGN.md) and [docs/api/README.md](docs/api/README.md).
-3. Pick a ticket in [TICKETS.md](TICKETS.md), write your name on it, push that line, then build.
+| Variable | Default | What it does |
+|---|---|---|
+| `NUXT_API_BASE` | `http://mockapi.pragvue.cz:8001` | The organizers' mock ticket API |
+| `NUXT_DEMO_MODE` | `false` | `true` uses seeded demo tickets and pre-written AI answers, no network needed |
+| `NUXT_AI_LIVE` | `false` | With demo mode on, `true` uses the real model on the demo tickets (needs the key) |
+| `NUXT_LLM_PROVIDER` | `anthropic` | `anthropic` or `openai` (any OpenAI-compatible endpoint) |
+| `NUXT_LLM_BASE_URL` | `https://api.anthropic.com` | Model API address |
+| `NUXT_LLM_MODEL` | `claude-sonnet-5-5` | Model name |
+| `NUXT_LLM_API_KEY` | empty | Your key. Never commit it |
+| `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`) | empty | Upstash Redis for shared demo state. Vercel's integration sets them. Without them, demo state lives in each server instance's memory |
 
-## Docs map
+Without a key the app still works: AI screens show the pre-written demo answers, and creating a ticket always works through the manual form.
+
+## AI: tools and value
+
+**In the app:** Claude (Anthropic API, `claude-sonnet-5-5`), called only from our server routes.
+- Structures free text into a request. It picks the type and impact, proposes a title and description, and suggests details worth adding. It may only choose a location from the real list.
+- Summarises a ticket's history into what is happening, who it is waiting on, and what the customer needs to do.
+- Safety: ticket text is passed to the model as data, never as instructions. Every model answer is validated before use, with a timeout and one retry. If AI fails, the ticket flow still works. AI answers are labelled, and nothing is created or sent without the customer's confirmation.
+
+**To build it:** Claude Code (Claude Sonnet 5.5) for planning, UI, code, tests and review. *Teammates: add the AI tools you used here.*
+
+**Value:** customers describe a problem once, in their own words, and get a clean request and a plain-language status instead of a form and a thread to decode.
+
+## Known limitations
+
+- The organizers' mock API does not save anything and returns fixed data. Tickets and comments we create live in our server's memory and reset on restart. On Vercel each request may hit a different server copy, so shared demo state needs the Upstash Redis variables above. Without them, run locally for the live demo.
+- Customers cannot change a ticket's status. In real life support does. The demo control on a ticket page plays support.
+- The public site runs in demo mode with pre-written AI answers so the AI key is never exposed. Real AI needs a key (`NUXT_AI_LIVE=true` locally).
+- Voice input needs Chrome, Edge or Safari (not Firefox). Chrome sends the audio to Google for recognition. Without support the mic button is hidden.
+- Not built: replying to a ticket, "since your last visit" changes, notifications, and text search.
+- Demo data is fictional and always labelled.
+
+## Pre-existing components
+
+Started from the Nuxt UI starter template. Libraries used: Nuxt, Nuxt UI, Tailwind CSS, Lucide icons, Vitest. Everything else was written during the hackathon.
+
+---
+
+## For the team
 
 | File | What it is |
 |---|---|
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Trunk-based rules for every push |
-| [SPEC.md](SPEC.md) | MVP scope, stories, success criteria, demo script |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Trunk-based rules for every push (lint, typecheck and tests pass, no failing test ever, no secrets) |
 | [TICKETS.md](TICKETS.md) | Tickets with done-checklists, plan, sign-off, sync log |
+| [SPEC.md](SPEC.md) | MVP scope, stories, success criteria |
+| [docs/demo-script.md](docs/demo-script.md) | The 5-minute demo, who says what, fallbacks |
 | [docs/contracts.md](docs/contracts.md) | Shared types, routes and AI response shapes |
-| [docs/ai-samples.md](docs/ai-samples.md) | AI test samples and pass rules |
-| [DESIGN.md](DESIGN.md) | Colours, themes, typography, motion, component and accessibility rules |
-| [docs/WIREFRAMES.md](docs/WIREFRAMES.md) | Low-fidelity wireframes of the three key screens |
-| [docs/api/README.md](docs/api/README.md) | Mock API spec for this repo, snapshots next to it |
-| [docs/api-notes.md](docs/api-notes.md) | Extra API findings and corrections |
-| [pragvue-ai-ticket-management-implementation-plan.md](pragvue-ai-ticket-management-implementation-plan.md) | Product plan |
-| [CLAUDE.md](CLAUDE.md) | Instructions for AI coding agents |
+| [docs/ai-samples.md](docs/ai-samples.md) | AI test samples and results |
+| [DESIGN.md](DESIGN.md) | Colours, type, motion, component and accessibility rules |
+| [docs/api/README.md](docs/api/README.md) | Mock API spec for this repo |
+| [CLAUDE.md](CLAUDE.md) | Instructions for AI coding agents (loads the `ticketflow-ui` skill) |
 
-## How the idea scores
-
-| Category | Points | How we go for it |
-|---|---|---|
-| User Experience and Usability | 25 | Fast, keyboard-friendly, mobile and accessible, with loading, empty and error states |
-| User and Business Value | 20 | One clear customer journey: describe, create, understand |
-| Creativity, Innovation, and AI | 20 | AI embedded in the flow: creator, summary, reply help. Never a generic chatbot |
-| Challenge Fulfilment | 20 | Use as much of the provided API as possible |
-| Technical Quality | 10 | Clean structure, error handling, tests, no secrets in git |
-| Final Presentation | 5 | Scripted demo with a backup mode in case the network fails |
-
-## Live app
-
-**https://ticketflow-hack.vercel.app** deploys automatically from every push to `main` (Vercel, connected to this repo). It runs in demo mode with seeded data and no AI key, so it is safe to share.
-
-## Event links
-
-- Portal (topics, announcements, registration): https://hackhub.pragvue.cz/
-- Rules: https://hackhub.pragvue.cz/announcements/hackathon-rules
-- Mock ticket API (ServiceBridge) Swagger: http://mockapi.pragvue.cz:8001/servicebridgeapi/docs
-
-Topics: [Calendar](https://hackhub.pragvue.cz/topic/calendar-experience), [AI-Powered Ticket Management (ours)](https://hackhub.pragvue.cz/topic/ai-powered-servicebridge-ticket-experience), [Bring Your Own Idea](https://hackhub.pragvue.cz/topic/alternative-challenge-bring-your-own-idea). Each participant holds one registration at a time, and the ticket topic has 20 seats.
-
-## Hackathon requirements to remember
-
-- The main UI must be built with Vue.js. Vue 3 and TypeScript are recommended.
-- Any libraries, APIs, backends and AI tools are allowed. We must explain how we used AI.
-- Deliverables: source code in the assigned repo, a short README (description, features, stack, setup, configuration, AI tools used, known limitations), a working prototype, a live demo, and a 5-minute presentation.
-- Mention significant pre-existing components or libraries in the presentation.
-
-## Open decisions
-
-Tracked in T-01 of [TICKETS.md](TICKETS.md): confirm the topic and register, Nitro proxy or server routes, LLM provider and key, the organizers' answer on the Nuxt starter and the final repo URL, roles.
+Event links: [portal](https://hackhub.pragvue.cz/), [rules](https://hackhub.pragvue.cz/announcements/hackathon-rules), [mock API Swagger](http://mockapi.pragvue.cz:8001/servicebridgeapi/docs).
