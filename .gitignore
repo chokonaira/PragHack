@@ -13,12 +13,16 @@ node_modules
 logs
 *.log
 
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
+# Local env files / secrets
 .env
 .env.*
 !.env.example
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+.fleet
+.idea
+.vscode
