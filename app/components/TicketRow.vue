@@ -9,7 +9,7 @@ const now = useState('now', () => Date.now())
 <template>
   <NuxtLink
     :to="`/tickets/${ticket.key}`"
-    class="-mx-3 block rounded-lg px-3 py-4 transition-colors duration-(--motion-fast) hover:bg-elevated/70 focus-visible:outline-2 focus-visible:outline-primary"
+    class="-mx-3 block rounded-lg px-3 py-3.5 transition-colors duration-(--motion-fast) hover:bg-elevated/70 focus-visible:outline-2 focus-visible:outline-primary"
   >
     <div class="flex items-baseline justify-between gap-4">
       <span class="font-mono text-xs text-muted">{{ ticket.key }}</span>
@@ -18,7 +18,7 @@ const now = useState('now', () => Date.now())
     <p class="mt-1 text-base font-medium text-highlighted">
       {{ ticket.summary }}
     </p>
-    <div class="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+    <div class="mt-2.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
       <TicketFlowTracker
         :status="ticket.status"
         compact
