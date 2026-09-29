@@ -148,6 +148,16 @@ Without an AI key the app still works: AI screens show the pre-written demo answ
 - Not built: "since your last visit" summaries, notifications, attachments.
 - Demo data is fictional and always labelled.
 
+## Where this goes next
+
+The app talks to tickets through one `TicketProvider` interface, so most of this is additive.
+
+1. **Real backend and sign-in.** Point the provider at the production ServiceBridge API and add single sign-on, so "My requests" means the signed-in person's requests and every ticket has a real reporter.
+2. **Support side.** A console where agents see the customer's replies, change status, and get AI-drafted replies that they edit and send.
+3. **Smarter lists.** AI groups related tickets by theme, spots duplicates before a ticket is created ("3 people already reported the store Wi-Fi"), and suggests priority.
+4. **MCP.** Expose tickets as an MCP server (list, read, create, comment) so an assistant can file and follow tickets for a user, always with the same confirm-before-write rule. Read a knowledge base or CMS through MCP to answer simple questions before a ticket is needed.
+5. **More channels.** Notifications by email and push, photo attachments from the phone camera, and voice in Czech and other languages.
+
 ## Pre-existing components
 
 Started from the Nuxt UI starter template. Libraries used: Nuxt, Nuxt UI, Tailwind CSS, Lucide icons, Vitest, qrcode-generator. Everything else was written during the hackathon.
