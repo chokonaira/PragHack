@@ -42,7 +42,7 @@ Speak slowly. If you run long, cut the filter click and the Refresh click.
 | Problem | What to do |
 |---|---|
 | Microphone blocked or not heard | Type the sentence instead. Say nothing about it and keep going. |
-| AI is slow or errors | The screen falls back to the form. Say "if AI is down, the form still works" and fill it in. |
+| AI is slow or errors | In demo mode the app quietly answers from the pre-written data (`source: demo`), so the flow never breaks. If the request itself hangs, the screen offers the form. Say "if AI is down, the form still works". Check the key before you start: `curl` the model API or create one request. |
 | Network dies | Set `NUXT_AI_LIVE=false` and restart. Demo mode still works fully offline with pre-written answers (labelled "Demo data"). |
 | Data looks wrong | Reset (see above). |
 | Everything breaks | Play the backup recording. |

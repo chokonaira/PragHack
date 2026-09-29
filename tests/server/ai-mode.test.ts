@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { shouldUseRealAi } from '../../server/utils/aiMode'
+import { fallsBackToDemo, shouldUseRealAi } from '../../server/utils/aiMode'
 
 describe('shouldUseRealAi', () => {
   it('always uses the model in live mode', () => {
@@ -15,5 +15,12 @@ describe('shouldUseRealAi', () => {
   it('uses the model in demo mode only when AI live is on and a key exists', () => {
     expect(shouldUseRealAi('demo', true, true)).toBe(true)
     expect(shouldUseRealAi('demo', true, false)).toBe(false)
+  })
+})
+
+describe('fallsBackToDemo', () => {
+  it('keeps a demo alive when the model fails, but never hides a failure in live mode', () => {
+    expect(fallsBackToDemo('demo')).toBe(true)
+    expect(fallsBackToDemo('live')).toBe(false)
   })
 })

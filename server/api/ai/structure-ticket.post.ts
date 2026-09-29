@@ -1,6 +1,6 @@
 import type { StructuredTicket } from '../../../shared/types'
 import { structureDemo } from '../../data/demo-ai'
-import { shouldUseRealAi } from '../../utils/aiMode'
+import { fallsBackToDemo, shouldUseRealAi } from '../../utils/aiMode'
 import { apiError } from '../../utils/errors'
 import { isAiError, useLlm } from '../../utils/llm'
 import { resolveProvider } from '../../utils/mode'
@@ -12,7 +12,8 @@ const TEXT_MAX = 4000
  * POST /api/ai/structure-ticket (docs/contracts.md). Free text in, a
  * `StructuredTicket` out. Demo mode answers from the rule-based demo
  * structurer with `source: 'demo'`. Live mode asks the model, with the real
- * create-meta locations in the prompt, and answers 502 when the model fails.
+ * create-meta locations in the prompt, and answers 502 when the model fails. In demo mode a model failure
+ * falls back to the demo structurer, so the demo keeps working.
  */
 export default defineEventHandler(async (event): Promise<StructuredTicket | ReturnType<typeof apiError>> => {
   const body = await readBody<{ text?: unknown }>(event).catch(() => undefined)
@@ -38,6 +39,7 @@ export default defineEventHandler(async (event): Promise<StructuredTicket | Retu
   } catch (err) {
     const code = isAiError(err) ? err.code : 'unknown'
     console.warn(`[structure-ticket] model failed: ${code}`)
+    if (fallsBackToDemo(mode.mode)) return structureDemo(text)
     return apiError(event, 502, 'The AI could not structure this request')
   }
 })

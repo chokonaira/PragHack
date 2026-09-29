@@ -31,7 +31,7 @@ const voice = useSpeechInput((full) => {
 const bars = [0.55, 0.85, 1, 0.75, 0.5]
 
 function barHeight(factor: number) {
-  return `${Math.max(4, Math.round(voice.level.value * 26 * factor))}px`
+  return `${Math.max(4, Math.round(voice.level.value * 20 * factor))}px`
 }
 
 async function toggleVoice() {
@@ -50,8 +50,8 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
 
 <template>
   <div
-    class="rounded-xl border bg-default p-2 shadow-sm transition-[border-color,box-shadow] duration-(--motion-base)"
-    :class="voice.listening.value ? 'border-error ring-4 ring-error/15' : 'border-default focus-within:border-primary'"
+    class="rounded-2xl border bg-default p-2 shadow-sm transition-[border-color,box-shadow,background-color] duration-(--motion-base)"
+    :class="voice.listening.value ? 'border-error/50 bg-error/[0.03] ring-4 ring-error/10' : 'border-default focus-within:border-primary'"
   >
     <UTextarea
       v-model="text"
@@ -86,24 +86,10 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
         />
         Starting the microphone. Allow access if your browser asks.
       </div>
-      <div
+      <span
         v-else-if="voice.state.value === 'listening'"
-        class="flex items-center gap-3 pb-2"
-      >
-        <span
-          class="flex h-7 items-center gap-1"
-          aria-hidden="true"
-        >
-          <span
-            v-for="(factor, i) in bars"
-            :key="i"
-            class="w-1 rounded-full bg-error"
-            :class="voice.hasLevel.value ? 'transition-[height] duration-75' : 'h-6 origin-center motion-safe:animate-voice-bar'"
-            :style="voice.hasLevel.value ? { height: barHeight(factor) } : { animationDelay: `${i * 120}ms` }"
-          />
-        </span>
-        <span class="text-sm font-medium text-error">Listening. Tap Stop when you're done.</span>
-      </div>
+        class="sr-only"
+      >Listening. Tap Stop when you're done.</span>
       <div
         v-else-if="voice.state.value === 'stopping'"
         class="pb-2 text-sm text-toned"
@@ -130,13 +116,15 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       {{ voice.error.value }}
     </p>
 
-    <div class="flex flex-wrap items-center gap-2 px-2 pb-1">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-2 px-3 pb-2 pt-1">
       <UButton
         v-if="voice.supported.value"
         :color="voice.listening.value ? 'error' : 'neutral'"
         :variant="voice.listening.value ? 'solid' : 'outline'"
-        size="sm"
-        class="max-sm:min-h-11 max-sm:px-4"
+        size="lg"
+        class="rounded-full px-4 max-sm:min-h-11"
+        :class="voice.listening.value ? 'motion-safe:animate-rec-pulse' : ''"
+        :ui="voice.listening.value ? { leadingIcon: 'size-3.5 fill-current' } : undefined"
         :icon="voice.state.value === 'listening' ? 'i-lucide-square' : 'i-lucide-mic'"
         :loading="voice.state.value === 'starting' || voice.state.value === 'stopping'"
         :disabled="loading || voice.state.value === 'starting' || voice.state.value === 'stopping'"
@@ -157,25 +145,40 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       >
         {{ example }}
       </UButton>
-    </div>
-
-    <div class="flex items-center justify-between gap-3 px-2 pb-1 pt-2">
-      <slot name="secondary" />
-      <span
-        v-if="maxLength && text.length > maxLength * 0.85"
-        class="text-sm"
-        :class="text.length > maxLength ? 'text-error' : 'text-muted'"
-        role="status"
-      >{{ text.length }} / {{ maxLength }}</span>
-      <UButton
-        class="ms-auto max-sm:min-h-11"
-        size="lg"
-        :loading="loading"
-        :disabled="!text.trim() || loading || Boolean(maxLength && text.length > maxLength) || voice.state.value === 'starting'"
-        @click="submit"
+      <div
+        v-if="voice.listening.value"
+        class="flex items-center gap-2.5 ps-1 text-sm font-medium text-error"
+        aria-hidden="true"
       >
-        {{ submitLabel }}
-      </UButton>
+        <span class="flex h-6 items-center gap-[3px]">
+          <span
+            v-for="(factor, i) in bars"
+            :key="i"
+            class="w-[3px] rounded-full bg-error"
+            :class="voice.hasLevel.value ? 'transition-[height] duration-75' : 'h-5 origin-center motion-safe:animate-voice-bar'"
+            :style="voice.hasLevel.value ? { height: barHeight(factor) } : { animationDelay: `${i * 120}ms` }"
+          />
+        </span>
+        Listening…
+      </div>
+      <slot name="secondary" />
+      <div class="ms-auto flex items-center gap-3">
+        <span
+          v-if="maxLength && text.length > maxLength * 0.85"
+          class="text-sm"
+          :class="text.length > maxLength ? 'text-error' : 'text-muted'"
+          role="status"
+        >{{ text.length }} / {{ maxLength }}</span>
+        <UButton
+          class="rounded-full px-5 max-sm:min-h-11"
+          size="lg"
+          :loading="loading"
+          :disabled="!text.trim() || loading || Boolean(maxLength && text.length > maxLength) || voice.state.value === 'starting'"
+          @click="submit"
+        >
+          {{ submitLabel }}
+        </UButton>
+      </div>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 import { getDemoSummary } from '../../data/demo-ai'
 import { summarizeTicket } from '../../utils/ai/summarize'
-import { shouldUseRealAi } from '../../utils/aiMode'
+import { fallsBackToDemo, shouldUseRealAi } from '../../utils/aiMode'
 import { NotFoundError, apiError } from '../../utils/errors'
 import { isAiError, useLlm } from '../../utils/llm'
 import { resolveProvider } from '../../utils/mode'
@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
   try {
     return await summarizeTicket(ticket, useLlm())
   } catch (err) {
+    if (fallsBackToDemo(mode.mode)) return getDemoSummary(key, ticket.comments.length, ticket.status)
     if (isAiError(err)) return apiError(event, err.status, err.message)
     return apiError(event, 502, 'Could not generate summary')
   }

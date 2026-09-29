@@ -19,6 +19,7 @@
   --animate-voice-bar: voice-bar 1s ease-in-out infinite;
   --animate-row-flash: row-flash 4s cubic-bezier(.2, .8, .2, 1) 1;
   --animate-flow-pulse: flow-pulse 2.4s cubic-bezier(.2, .8, .2, 1) infinite;
+  --animate-rec-pulse: rec-pulse 1.8s cubic-bezier(.2, .8, .2, 1) infinite;
 
   @keyframes voice-bar {
     0%,
@@ -36,6 +37,15 @@
     }
     100% {
       background-color: transparent;
+    }
+  }
+
+  @keyframes rec-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--ui-error) 38%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 11px transparent;
     }
   }
 
@@ -126,4 +136,21 @@ h2 {
 
 .row-move {
   transition: transform var(--motion-slow) var(--ease-out);
+}
+
+/* Tailwind 4 resets buttons to the arrow cursor. Anything clickable shows the pointer hand. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab'],
+  summary,
+  select,
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
 }

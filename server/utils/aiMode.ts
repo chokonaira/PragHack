@@ -7,3 +7,11 @@ export function shouldUseRealAi(mode: 'live' | 'demo', aiLive: boolean, hasKey: 
   if (mode === 'live') return true
   return aiLive && hasKey
 }
+
+/**
+ * In demo mode a model failure falls back to the pre-written answer, so a demo never dies on the network
+ * or a key problem. Live mode reports the error instead: it must not pass demo text off as real.
+ */
+export function fallsBackToDemo(mode: 'live' | 'demo'): boolean {
+  return mode === 'demo'
+}
