@@ -84,8 +84,8 @@ flowchart TD
 ### T-02 Baseline, look and tests
 **Owner:** Marzieh · **Time:** 30 min · **Needs:** nothing · **Unblocks:** T-03
 **Goal:** an empty branded app with tests running in CI.
-- [ ] Starter content removed (`TemplateMenu`, starter home content, title and meta). App named "TicketFlow AI".
-- [ ] `DESIGN.md` colours in `app/app.config.ts`, CSS tokens in `app/assets/css/main.css`, green scale removed.
+- [x] Starter content removed (`TemplateMenu`, starter home content, title and meta). App named "TicketFlow AI". (done by Henry; `TemplateMenu.vue` file is unused and can be deleted)
+- [x] `DESIGN.md` colours in `app/app.config.ts`, CSS tokens in `app/assets/css/main.css`, green scale removed. (done by Henry: cobalt scale, violet AI, Schibsted Grotesk, motion tokens)
 - [ ] `runtimeConfig` holds `apiBase`, `demoMode` and the LLM settings (server-only), matching `.env.example`.
 - [ ] Vitest installed. `pnpm test` works with one passing sample test. `.github/workflows/ci.yml` runs `pnpm test`.
 - [ ] `pnpm lint`, `pnpm typecheck` and `pnpm test` pass and CI is green.
@@ -139,7 +139,7 @@ flowchart TD
 **Goal:** the frame every page sits in, plus the one AI component.
 - [ ] Header: product name, nav (My requests, New request), colour-mode toggle, and a "Demo data" badge when `/api/mode` says demo.
 - [ ] Page container, `error.vue` (404 and 500 with a way back), skip-to-content link.
-- [ ] `AiCard.vue` as in `DESIGN.md`: props `title`, `loading`, `error`, `footnote`, a default slot, an AI badge and sparkles icon, a retry event, `aria-live="polite"` and `aria-busy`.
+- [x] `AiCard.vue` as in `DESIGN.md` (done by Henry): props `title`, `loading`, `error`, `footnote`, a default slot, an AI badge and sparkles icon, a retry event, `aria-live="polite"` and `aria-busy`.
 - [ ] Looks right at 390 px and 1440 px, light and dark.
 
 **Check:** header and an `AiCard` in loading, error and ready states on a scratch page (do not commit the scratch page).
@@ -266,3 +266,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, team: LLM is provider-neutral (base URL, key, model). The provider is whichever working key a teammate has (T-01).
 - 2026-09-29, team: 3 hours left. Tickets cut and ordered in waves. Owners drawn at random and balanced.
 - 2026-09-29, Florian: T-04 needed tests before T-02 landed, so vitest, `pnpm test` (`vitest run`, tests in `tests/**/*.test.ts`) and `runtimeConfig.apiBase` are in with T-04. T-02 keeps the rest of `runtimeConfig` and CI.
+- 2026-09-29, Henry: built the visual layer because the UI is the big scoring lever: `cobalt` tokens, Schibsted Grotesk, `TicketFlowTracker` (the flow-line signature), logo, header shell, home page UI, `TicketRow`, and a placeholder `/new`. Also the first slice of `server/api/tickets.get.ts` (demo data). **Marzieh:** T-02 left = `runtimeConfig` for the LLM, CI test step; T-05 must extend `server/api/tickets.get.ts` and `server/utils/demoProvider.ts`, not recreate them; T-08 left = `useTickets` composable, text search, keyboard check. **Florian:** T-13 replaces `app/pages/new.vue`. Use the `ticketflow-ui` skill for all UI. Live: https://ticketflow-hack.vercel.app

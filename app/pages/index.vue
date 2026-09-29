@@ -1,76 +1,168 @@
+<script setup lang="ts">
+import type { StatusId, Ticket } from '../../shared/types'
+
+const { data: tickets, status, refresh } = await useFetch<Ticket[]>('/api/tickets', {
+  default: () => []
+})
+
+const filter = ref<'all' | StatusId>('all')
+const draft = ref('')
+
+const examples = [
+  'My laptop keeps shutting down',
+  'I can\'t log in',
+  'The printer is offline'
+]
+
+const filters = computed(() => [
+  { id: 'all' as const, label: 'All', count: tickets.value.length },
+  { id: 'new' as const, label: 'Received', count: tickets.value.filter(t => t.status === 'new').length },
+  { id: 'in_progress' as const, label: 'In progress', count: tickets.value.filter(t => t.status === 'in_progress').length },
+  { id: 'resolved' as const, label: 'Resolved', count: tickets.value.filter(t => t.status === 'resolved').length }
+])
+
+const visible = computed(() =>
+  tickets.value.filter(t => filter.value === 'all' || t.status === filter.value)
+)
+
+function start() {
+  const text = draft.value.trim()
+  navigateTo({ path: '/new', query: text ? { text } : {} })
+}
+</script>
+
 <template>
-  <div>
-    <UPageHero
-      title="Nuxt Starter Template"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
-    />
+  <UContainer class="max-w-3xl py-12 sm:py-20">
+    <section aria-labelledby="hero-title">
+      <h1
+        id="hero-title"
+        class="text-4xl font-bold tracking-tight text-highlighted sm:text-6xl"
+      >
+        What went wrong?
+      </h1>
+      <p class="mt-4 max-w-prose text-lg text-muted">
+        Tell us in your own words. We turn it into a request and keep you posted on every step.
+      </p>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
+      <div class="mt-8 rounded-xl border border-default bg-default p-2 shadow-sm transition-colors duration-(--motion-fast) focus-within:border-primary">
+        <UTextarea
+          v-model="draft"
+          variant="none"
+          autoresize
+          :rows="3"
+          :maxrows="8"
+          size="xl"
+          class="w-full"
+          aria-label="Describe your problem"
+          placeholder="For example: my laptop keeps shutting down since yesterday's update, three times this morning."
+          @keydown.meta.enter.prevent="start"
+          @keydown.ctrl.enter.prevent="start"
+        />
+        <div class="flex flex-wrap items-center justify-between gap-3 px-2 pb-1 pt-2">
+          <div class="flex flex-wrap gap-2">
+            <UButton
+              v-for="example in examples"
+              :key="example"
+              size="xs"
+              color="neutral"
+              variant="soft"
+              @click="draft = example"
+            >
+              {{ example }}
+            </UButton>
+          </div>
+          <UButton
+            size="lg"
+            icon="i-lucide-sparkles"
+            @click="start"
+          >
+            Create request
+          </UButton>
+        </div>
+      </div>
+    </section>
 
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
+    <section
+      class="mt-16"
+      aria-labelledby="requests-title"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2
+          id="requests-title"
+          class="text-2xl font-semibold tracking-tight text-highlighted"
+        >
+          My requests
+        </h2>
+        <div
+          class="flex flex-wrap gap-1"
+          role="group"
+          aria-label="Filter by status"
+        >
+          <UButton
+            v-for="f in filters"
+            :key="f.id"
+            size="sm"
+            :color="filter === f.id ? 'primary' : 'neutral'"
+            :variant="filter === f.id ? 'soft' : 'ghost'"
+            :aria-pressed="filter === f.id"
+            @click="filter = f.id"
+          >
+            {{ f.label }}
+            <span class="tabular-nums text-muted">{{ f.count }}</span>
+          </UButton>
+        </div>
+      </div>
+
+      <div
+        v-if="status === 'pending'"
+        class="mt-4 space-y-6"
+        role="status"
+      >
+        <span class="sr-only">Loading your requests</span>
+        <div
+          v-for="n in 4"
+          :key="n"
+          class="space-y-3 py-2"
+        >
+          <USkeleton class="h-3 w-24" />
+          <USkeleton class="h-5 w-4/5" />
+          <USkeleton class="h-3 w-40" />
+        </div>
+      </div>
+
+      <UAlert
+        v-else-if="status === 'error'"
+        class="mt-4"
+        color="error"
         variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
+        title="Couldn't load your requests"
+        description="Check your connection and try again."
+        :actions="[{ label: 'Try again', color: 'neutral', variant: 'outline', onClick: () => refresh() }]"
       />
-    </UPageSection>
-  </div>
+
+      <div
+        v-else-if="!visible.length"
+        class="mt-6 rounded-lg border border-dashed border-default p-8 text-center"
+      >
+        <p class="font-medium text-highlighted">
+          No requests here yet
+        </p>
+        <p class="mt-1 text-sm text-muted">
+          Describe a problem above and it will show up in this list.
+        </p>
+      </div>
+
+      <ul
+        v-else
+        class="mt-2 divide-y divide-default"
+      >
+        <li
+          v-for="ticket in visible"
+          :key="ticket.key"
+        >
+          <TicketRow :ticket="ticket" />
+        </li>
+      </ul>
+    </section>
+  </UContainer>
 </template>

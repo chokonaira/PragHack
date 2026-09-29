@@ -13,8 +13,8 @@ export default defineNuxtConfig({
     apiBase: 'http://mockapi.pragvue.cz:8001'
   },
 
-  routeRules: {
-    '/': { prerender: true }
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' }
   },
 
   compatibilityDate: '2026-06-30',

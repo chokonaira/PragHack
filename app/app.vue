@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -11,70 +11,67 @@ useHead({
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'TicketFlow AI'
+const description = 'Describe a problem in your own words. AI turns it into a request and keeps you posted.'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
-  ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterCard: 'summary_large_image'
+  ogDescription: description
 })
 </script>
 
 <template>
   <UApp>
-    <UHeader>
-      <template #left>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-default focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-primary"
+    >
+      Skip to content
+    </a>
+
+    <header class="sticky top-0 z-40 border-b border-default bg-default/85 backdrop-blur">
+      <UContainer class="flex h-16 items-center justify-between gap-4">
         <NuxtLink
           to="/"
-          class="focus-visible:outline-3 outline-primary/25 rounded-md p-1 -ms-1"
+          class="-ms-1 rounded-md p-1 focus-visible:outline-2 focus-visible:outline-primary"
+          aria-label="TicketFlow home"
         >
-          <AppLogo class="w-auto h-6 shrink-0" />
+          <AppLogo />
         </NuxtLink>
 
-        <TemplateMenu />
-      </template>
+        <nav
+          class="flex items-center gap-1"
+          aria-label="Main"
+        >
+          <UButton
+            to="/"
+            color="neutral"
+            variant="ghost"
+            class="hidden sm:inline-flex"
+          >
+            My requests
+          </UButton>
+          <UButton
+            to="/new"
+            icon="i-lucide-plus"
+          >
+            New request
+          </UButton>
+          <UColorModeButton />
+        </nav>
+      </UContainer>
+    </header>
 
-      <template #right>
-        <UColorModeButton />
-
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UHeader>
-
-    <UMain>
+    <UMain id="main">
       <NuxtPage />
     </UMain>
 
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
-        </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UFooter>
+    <footer class="mt-24 border-t border-default py-8 text-sm text-muted">
+      <UContainer>
+        TicketFlow AI, built for the PragVue Hackathon 2026.
+      </UContainer>
+    </footer>
   </UApp>
 </template>

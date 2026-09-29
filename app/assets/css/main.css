@@ -2,17 +2,66 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  --color-cobalt-50: #EEF3FF;
+  --color-cobalt-100: #DCE6FF;
+  --color-cobalt-200: #BCCEFF;
+  --color-cobalt-300: #8FADFF;
+  --color-cobalt-400: #5B84FF;
+  --color-cobalt-500: #3562FF;
+  --color-cobalt-600: #1F4BF0;
+  --color-cobalt-700: #1A3BC4;
+  --color-cobalt-800: #1B349C;
+  --color-cobalt-900: #1C317B;
+  --color-cobalt-950: #131F4D;
+
+  --animate-flow-pulse: flow-pulse 2.4s cubic-bezier(.2, .8, .2, 1) infinite;
+
+  @keyframes flow-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.45;
+    }
+    70%,
+    100% {
+      transform: scale(2.1);
+      opacity: 0;
+    }
+  }
+}
+
+:root {
+  --ui-radius: 0.5rem;
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --motion-slow: 400ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+  }
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.page-leave-to {
+  opacity: 0;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
 }
