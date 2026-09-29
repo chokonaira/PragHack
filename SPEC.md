@@ -59,10 +59,11 @@ Build a Vue.js app where a service desk operator watches a live ticket board tri
 
 ## Data and API layer
 
-The Mock Ticketing API is unknown until we read its docs. So the UI never talks to it directly:
+The Mock Ticketing API is the ServiceBridge mock, documented for this repo in [docs/api/README.md](docs/api/README.md) (base URL, endpoints, response shapes, quirks). The UI never talks to it directly:
 
 - We define our own `Ticket`, `Comment` and `StatusId` types.
-- One `TicketProvider` interface, with a `MockApiProvider` (written from the docs at kickoff) and a `FixtureProvider` (demo mode).
+- One `TicketProvider` interface, with a `MockApiProvider` (written from `docs/api/README.md`) and a `FixtureProvider` (demo mode).
+- The mock does not persist writes and has no CORS, so `MockApiProvider` keeps a local overlay of our changes and all calls go through a Nuxt server route or Nitro proxy. Details and the method-to-endpoint mapping are in the API document.
 
 ## Tech stack
 
@@ -163,4 +164,4 @@ This is a 5-hour event, so we test what would embarrass us on stage:
 3. Which AI provider and key do we use at the event? Does the event network allow it?
 4. Confirm the operator as the main user.
 5. Team size and roles.
-6. Which statuses and comment features does the API really have? (read the docs at kickoff)
+6. ~~Which statuses and comment features does the API really have?~~ Answered on 2026-09-29 in [docs/api/README.md](docs/api/README.md): three statuses (new, in_progress, resolved), no comment list, one `updates` endpoint for status and comment. Re-check the snapshots at kickoff.
