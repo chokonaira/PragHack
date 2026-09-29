@@ -4,6 +4,7 @@ Shared workspace for our team at the **PragVue Hackathon 2026**, a 5-hour event 
 
 ## Status
 
+
 Preparation phase. There is no application code yet. Under the hackathon rules all coding happens during the event, so this repo only holds our notes and decisions. The final code must go into the Git repository the organizers assign to each team.
 
 ## Event links
