@@ -78,42 +78,12 @@ watch(lastCreated, (key) => {
           Tell us in your own words. We turn it into a request and keep you posted.
         </p>
 
-        <div class="mt-6 rounded-xl border border-default bg-default p-2 shadow-sm transition-colors duration-(--motion-fast) focus-within:border-primary">
-          <UTextarea
-            v-model="draft"
-            variant="none"
-            autoresize
-            :rows="3"
-            :maxrows="8"
-            size="lg"
-            class="w-full"
-            aria-label="Describe your problem"
-            placeholder="For example: my laptop keeps shutting down since yesterday's update, three times this morning."
-            @keydown.meta.enter.prevent="start"
-            @keydown.ctrl.enter.prevent="start"
-          />
-          <div class="flex gap-2 overflow-x-auto px-2 pb-2 pt-1 lg:flex-wrap lg:overflow-visible">
-            <UButton
-              v-for="example in examples"
-              :key="example"
-              size="xs"
-              color="neutral"
-              variant="soft"
-              class="shrink-0"
-              @click="draft = example"
-            >
-              {{ example }}
-            </UButton>
-          </div>
-          <UButton
-            block
-            size="lg"
-            icon="i-lucide-sparkles"
-            @click="start"
-          >
-            Create request
-          </UButton>
-        </div>
+        <PromptBox
+          v-model="draft"
+          class="mt-6"
+          :examples="examples"
+          @submit="start"
+        />
       </section>
 
       <section aria-labelledby="requests-title">

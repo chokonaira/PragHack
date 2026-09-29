@@ -36,10 +36,6 @@ const examples = ['My laptop keeps shutting down', 'I can\'t log in', 'The print
 const impactLabel = { low: 'Low impact', medium: 'Medium impact', high: 'High impact' } as const
 const impactIcon = { low: 'i-lucide-arrow-down', medium: 'i-lucide-minus', high: 'i-lucide-triangle-alert' } as const
 
-const voice = useSpeechInput((spoken) => {
-  text.value = text.value ? `${text.value} ${spoken}` : spoken
-})
-
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const pause = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -58,15 +54,12 @@ watch(open, (isOpen) => {
     reset()
     text.value = seed.value
     if (text.value) run()
-  } else {
-    voice.stop()
   }
 })
 
 async function run() {
   const value = text.value.trim()
   if (!value) return
-  voice.stop()
   step.value = 'thinking'
   thinkingStep.value = 0
   aiFailed.value = false
@@ -138,73 +131,25 @@ async function create() {
         <div
           v-if="step === 'describe'"
           key="describe"
-          class="space-y-4"
         >
-          <div class="relative">
-            <UTextarea
-              v-model="text"
-              autofocus
-              autoresize
-              :rows="4"
-              :maxrows="9"
-              size="xl"
-              class="w-full"
-              aria-label="Describe your problem"
-              placeholder="For example: my laptop keeps shutting down since yesterday's update, three times this morning."
-              @keydown.meta.enter.prevent="run"
-              @keydown.ctrl.enter.prevent="run"
-            />
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <UButton
-              v-if="voice.supported.value"
-              :color="voice.listening.value ? 'error' : 'neutral'"
-              :variant="voice.listening.value ? 'soft' : 'outline'"
-              size="sm"
-              icon="i-lucide-mic"
-              :aria-pressed="voice.listening.value"
-              @click="voice.toggle()"
-            >
-              {{ voice.listening.value ? 'Listening, tap to stop' : 'Speak' }}
-            </UButton>
-            <UButton
-              v-for="example in examples"
-              :key="example"
-              size="xs"
-              color="neutral"
-              variant="soft"
-              @click="text = example"
-            >
-              {{ example }}
-            </UButton>
-          </div>
-          <p
-            v-if="voice.error.value"
-            class="text-sm text-error"
-            role="alert"
+          <PromptBox
+            v-model="text"
+            autofocus
+            :rows="4"
+            :examples="examples"
+            @submit="run"
           >
-            {{ voice.error.value }}
-          </p>
-
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <UButton
-              color="neutral"
-              variant="link"
-              class="-ms-2.5"
-              @click="fillManually"
-            >
-              Fill it in manually
-            </UButton>
-            <UButton
-              size="lg"
-              icon="i-lucide-sparkles"
-              :disabled="!text.trim()"
-              @click="run"
-            >
-              Create with AI
-            </UButton>
-          </div>
+            <template #secondary>
+              <UButton
+                color="neutral"
+                variant="link"
+                class="-ms-1"
+                @click="fillManually"
+              >
+                Skip AI, use the form
+              </UButton>
+            </template>
+          </PromptBox>
         </div>
 
         <div

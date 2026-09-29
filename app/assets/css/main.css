@@ -16,8 +16,19 @@
   --color-cobalt-900: #1C317B;
   --color-cobalt-950: #131F4D;
 
+  --animate-voice-bar: voice-bar 1s ease-in-out infinite;
   --animate-row-flash: row-flash 2.6s cubic-bezier(.2, .8, .2, 1) 1;
   --animate-flow-pulse: flow-pulse 2.4s cubic-bezier(.2, .8, .2, 1) infinite;
+
+  @keyframes voice-bar {
+    0%,
+    100% {
+      transform: scaleY(0.3);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
 
   @keyframes row-flash {
     0% {
