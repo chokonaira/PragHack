@@ -12,6 +12,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  colorMode: {
+    preference: 'light'
+  },
+
   // Server-only. NUXT_* env vars override these (see .env.example).
   runtimeConfig: {
     apiBase: 'http://mockapi.pragvue.cz:8001',
