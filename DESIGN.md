@@ -62,7 +62,7 @@ Rules:
 
 ## Themes
 
-Light and dark, both first-class. Default follows the system. The header has a colour-mode toggle (`UColorModeButton`). Every screen is reviewed in both before it is done.
+Light and dark, both first-class. Default is light. The header has a colour-mode toggle (`UColorModeButton`). Every screen is reviewed in both before it is done.
 
 ## Typography
 
