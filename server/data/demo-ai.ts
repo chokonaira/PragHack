@@ -80,3 +80,34 @@ export function getDemoStructuredTicket(): StructuredTicket {
     source: 'demo'
   }
 }
+
+const REQUEST_WORDS = /\b(need|order|request|could you|access|new account|install|set up|second monitor)\b/i
+const PROBLEM_WORDS = /\b(broken|not working|offline|crash|crashing|error|down|fail|failing|shut|shutting|blank|slow)\b/i
+const HIGH_WORDS = /\b(cannot|can't|can not|unable|offline|outage|crash|crashing|shutting|not accepting|data loss|security)\b/i
+
+// Rule-based stand-in for the real model. Always labelled source 'demo'.
+export function structureDemo(text: string): StructuredTicket {
+  const clean = text.trim().replace(/\s+/g, ' ')
+  const firstSentence = clean.split(/(?<=[.!?])\s/)[0] ?? clean
+  const trimmed = firstSentence.replace(/[.!?]+$/, '')
+  const short = trimmed.length > 80 ? `${trimmed.slice(0, 77).trimEnd()}...` : trimmed
+  const summary = short.charAt(0).toUpperCase() + short.slice(1)
+
+  const isRequest = REQUEST_WORDS.test(clean) && !PROBLEM_WORDS.test(clean)
+  const impact = isRequest ? 'low' : HIGH_WORDS.test(clean) ? 'high' : 'medium'
+  const location = /nusle|prague/i.test(clean) ? 'CZ_PHA_NUSLE' : /brno/i.test(clean) ? 'CZ_BRN_CENTRUM' : null
+
+  const missingInfo: string[] = []
+  if (!location) missingInfo.push('Which location are you at?')
+  if (!isRequest && clean.length < 60) missingInfo.push('When did it start?')
+
+  return {
+    summary,
+    description: clean,
+    ticketType: isRequest ? 'request' : 'incident',
+    location,
+    impact,
+    missingInfo,
+    source: 'demo'
+  }
+}

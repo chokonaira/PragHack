@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ticket } from '../../shared/types'
 
-defineProps<{ ticket: Ticket }>()
+defineProps<{ ticket: Ticket, highlight?: boolean }>()
 
 const now = useState('now', () => Date.now())
 </script>
@@ -9,6 +9,7 @@ const now = useState('now', () => Date.now())
 <template>
   <NuxtLink
     :to="`/tickets/${ticket.key}`"
+    :class="highlight ? 'motion-safe:animate-row-flash' : undefined"
     class="-mx-3 block rounded-lg px-3 py-3.5 transition-colors duration-(--motion-fast) hover:bg-elevated/70 focus-visible:outline-2 focus-visible:outline-primary"
   >
     <div class="flex items-baseline justify-between gap-4">

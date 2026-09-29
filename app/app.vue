@@ -11,6 +11,8 @@ useHead({
   }
 })
 
+const { openWith } = useNewRequest()
+
 const title = 'TicketFlow AI'
 const description = 'Describe a problem in your own words. AI turns it into a request and keeps you posted.'
 
@@ -54,8 +56,8 @@ useSeoMeta({
             My requests
           </UButton>
           <UButton
-            to="/new"
             icon="i-lucide-plus"
+            @click="openWith()"
           >
             New request
           </UButton>
@@ -67,6 +69,8 @@ useSeoMeta({
     <UMain id="main">
       <NuxtPage />
     </UMain>
+
+    <NewRequestModal />
 
     <footer class="mt-24 border-t border-default py-8 text-sm text-muted">
       <UContainer>

@@ -16,7 +16,17 @@
   --color-cobalt-900: #1C317B;
   --color-cobalt-950: #131F4D;
 
+  --animate-row-flash: row-flash 2.6s cubic-bezier(.2, .8, .2, 1) 1;
   --animate-flow-pulse: flow-pulse 2.4s cubic-bezier(.2, .8, .2, 1) infinite;
+
+  @keyframes row-flash {
+    0% {
+      background-color: color-mix(in oklab, var(--ui-primary) 18%, transparent);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
 
   @keyframes flow-pulse {
     0% {
@@ -64,4 +74,29 @@
 h1,
 h2 {
   text-wrap: balance;
+}
+
+.step-enter-active,
+.step-leave-active {
+  transition: opacity var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+}
+
+.step-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.step-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.row-enter-active,
+.row-move {
+  transition: opacity var(--motion-slow) var(--ease-out), transform var(--motion-slow) var(--ease-out);
+}
+
+.row-enter-from {
+  opacity: 0;
+  transform: translateY(-14px);
 }

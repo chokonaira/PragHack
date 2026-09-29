@@ -2,8 +2,12 @@
 import type { StatusId, Ticket } from '../../shared/types'
 
 const { data: tickets, status, refresh } = await useFetch<Ticket[]>('/api/tickets', {
+  key: 'tickets',
   default: () => []
 })
+
+const { openWith, lastCreated } = useNewRequest()
+const route = useRoute()
 
 const filter = ref<'all' | StatusId>('all')
 const draft = ref('')
@@ -26,9 +30,27 @@ const visible = computed(() =>
 )
 
 function start() {
-  const text = draft.value.trim()
-  navigateTo({ path: '/new', query: text ? { text } : {} })
+  openWith(draft.value)
+  draft.value = ''
 }
+
+let poll: ReturnType<typeof setInterval> | undefined
+
+onMounted(() => {
+  if (route.query.new) {
+    openWith(typeof route.query.text === 'string' ? route.query.text : '')
+    navigateTo({ path: '/', query: {} }, { replace: true })
+  }
+  poll = setInterval(() => {
+    if (document.visibilityState === 'visible' && status.value !== 'pending') refresh()
+  }, 3000)
+})
+
+onBeforeUnmount(() => clearInterval(poll))
+
+watch(lastCreated, (key) => {
+  if (key) setTimeout(() => (lastCreated.value = null), 3500)
+})
 </script>
 
 <template>
@@ -153,17 +175,22 @@ function start() {
           </p>
         </div>
 
-        <ul
+        <TransitionGroup
           v-else
+          name="row"
+          tag="ul"
           class="mt-1 divide-y divide-default"
         >
           <li
             v-for="ticket in visible"
             :key="ticket.key"
           >
-            <TicketRow :ticket="ticket" />
+            <TicketRow
+              :ticket="ticket"
+              :highlight="ticket.key === lastCreated"
+            />
           </li>
-        </ul>
+        </TransitionGroup>
       </section>
     </div>
   </UContainer>
