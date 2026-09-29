@@ -1,5 +1,6 @@
 import { getDemoSummary } from '../../data/demo-ai'
 import { summarizeTicket } from '../../utils/ai/summarize'
+import { shouldUseRealAi } from '../../utils/aiMode'
 import { NotFoundError, apiError } from '../../utils/errors'
 import { isAiError, useLlm } from '../../utils/llm'
 import { resolveProvider } from '../../utils/mode'
@@ -20,7 +21,10 @@ export default defineEventHandler(async (event) => {
     return apiError(event, 502, 'Could not load ticket')
   }
 
-  if (mode.mode === 'demo') return getDemoSummary(key, ticket.comments.length, ticket.status)
+  const config = useRuntimeConfig()
+  if (!shouldUseRealAi(mode.mode, Boolean(config.aiLive), Boolean(config.llm.apiKey))) {
+    return getDemoSummary(key, ticket.comments.length, ticket.status)
+  }
 
   try {
     return await summarizeTicket(ticket, useLlm())

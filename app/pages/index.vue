@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { StatusId, Ticket } from '../../shared/types'
+import type { StatusId } from '../../shared/types'
 
-const { data: tickets, status, refresh } = await useFetch<Ticket[]>('/api/tickets', {
-  key: 'tickets',
-  default: () => []
-})
+const { data: tickets, status, refresh } = await useTickets()
 
 const { openWith, lastCreated } = useNewRequest()
 const route = useRoute()
@@ -18,6 +15,7 @@ const refreshing = computed(() => status.value === 'pending' && hasLoaded.value)
 const reconnecting = computed(() => status.value === 'error' && hasLoaded.value)
 
 const filter = ref<'all' | StatusId>('all')
+const search = ref('')
 const draft = ref('')
 
 const filters = computed(() => [
@@ -27,9 +25,21 @@ const filters = computed(() => [
   { id: 'resolved' as const, label: 'Resolved', count: tickets.value.filter(t => t.status === 'resolved').length }
 ])
 
-const visible = computed(() =>
-  tickets.value.filter(t => filter.value === 'all' || t.status === filter.value)
-)
+const isFiltered = computed(() => filter.value !== 'all' || search.value.trim().length > 0)
+
+const visible = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  return tickets.value.filter((t) => {
+    if (filter.value !== 'all' && t.status !== filter.value) return false
+    if (q && !t.summary.toLowerCase().includes(q) && !t.key.toLowerCase().includes(q)) return false
+    return true
+  })
+})
+
+function clearFilters() {
+  filter.value = 'all'
+  search.value = ''
+}
 
 function start() {
   openWith(draft.value)
@@ -75,56 +85,84 @@ watch(lastCreated, (key) => {
         <PromptBox
           v-model="draft"
           class="mt-6"
-          :examples="exampleRequests"
           @submit="start"
         />
       </section>
 
       <section aria-labelledby="requests-title">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <h2
-              id="requests-title"
-              class="text-2xl font-semibold tracking-tight text-highlighted"
-            >
-              My requests
-            </h2>
-            <span class="flex items-center gap-1.5 text-xs text-toned">
-              <span
-                class="relative flex size-2"
-                aria-hidden="true"
-              >
-                <span
-                  v-if="refreshing"
-                  class="absolute inline-flex size-full rounded-full opacity-60 motion-safe:animate-flow-pulse"
-                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
-                />
-                <span
-                  class="relative inline-flex size-2 rounded-full transition-colors duration-(--motion-base)"
-                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
-                />
-              </span>
-              {{ reconnecting ? 'Reconnecting' : 'Live' }}
-            </span>
-          </div>
-          <div
-            class="flex flex-wrap gap-1"
-            role="group"
-            aria-label="Filter by status"
+        <div class="flex items-center gap-3">
+          <h2
+            id="requests-title"
+            class="text-2xl font-semibold tracking-tight text-highlighted"
           >
-            <UButton
-              v-for="f in filters"
-              :key="f.id"
-              size="sm"
-              :color="filter === f.id ? 'primary' : 'neutral'"
-              :variant="filter === f.id ? 'soft' : 'ghost'"
-              :aria-pressed="filter === f.id"
-              @click="filter = f.id"
+            My requests
+          </h2>
+          <span class="flex items-center gap-1.5 text-xs text-toned">
+            <span
+              class="relative flex size-2"
+              aria-hidden="true"
             >
-              {{ f.label }}
-              <span class="tabular-nums text-muted">{{ f.count }}</span>
-            </UButton>
-          </div>
+              <span
+                v-if="refreshing"
+                class="absolute inline-flex size-full rounded-full opacity-60 motion-safe:animate-flow-pulse"
+                :class="reconnecting ? 'bg-warning' : 'bg-success'"
+              />
+              <span
+                class="relative inline-flex size-2 rounded-full transition-colors duration-(--motion-base)"
+                :class="reconnecting ? 'bg-warning' : 'bg-success'"
+              />
+            </span>
+            {{ reconnecting ? 'Reconnecting' : 'Live' }}
+          </span>
+        </div>
+
+        <div
+          class="-mx-1 mt-4 flex gap-1 overflow-x-auto border-b border-default px-1"
+          role="group"
+          aria-label="Filter by status"
+        >
+          <button
+            v-for="f in filters"
+            :key="f.id"
+            type="button"
+            class="relative min-h-11 shrink-0 px-3 text-sm font-medium transition-colors duration-(--motion-fast) focus-visible:outline-2 focus-visible:outline-primary sm:min-h-10"
+            :class="filter === f.id ? 'text-highlighted' : 'text-muted hover:text-default'"
+            :aria-pressed="filter === f.id"
+            @click="filter = f.id"
+          >
+            {{ f.label }}
+            <span class="ms-1 tabular-nums text-muted">{{ f.count }}</span>
+            <span
+              v-if="filter === f.id"
+              class="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-primary"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+
+        <div class="mt-3 flex justify-end">
+          <UInput
+            v-model="search"
+            icon="i-lucide-search"
+            placeholder="Search your requests"
+            aria-label="Search your requests"
+            class="w-full sm:w-56"
+            :ui="{ trailing: 'pe-1' }"
+          >
+            <template
+              v-if="search"
+              #trailing
+            >
+              <UButton
+                icon="i-lucide-x"
+                size="xs"
+                color="neutral"
+                variant="link"
+                aria-label="Clear search"
+                @click="search = ''"
+              />
+            </template>
+          </UInput>
         </div>
 
         <div
@@ -156,14 +194,38 @@ watch(lastCreated, (key) => {
 
         <div
           v-else-if="!visible.length"
-          class="mt-6 rounded-lg border border-dashed border-default p-8 text-center"
+          class="mt-6 flex flex-col items-center gap-3 rounded-lg border border-dashed border-default p-8 text-center"
         >
-          <p class="font-medium text-highlighted">
-            No requests here yet
-          </p>
-          <p class="mt-1 text-sm text-muted">
-            Describe a problem and it will show up in this list.
-          </p>
+          <UIcon
+            :name="isFiltered ? 'i-lucide-search-x' : 'i-lucide-inbox'"
+            class="size-8 text-muted"
+            aria-hidden="true"
+          />
+          <div>
+            <p class="font-medium text-highlighted">
+              {{ isFiltered ? 'No requests match' : 'No requests yet' }}
+            </p>
+            <p class="mt-1 text-sm text-muted">
+              {{ isFiltered ? 'Try a different search or filter.' : 'Describe a problem above and it will show up here.' }}
+            </p>
+          </div>
+          <UButton
+            v-if="isFiltered"
+            size="sm"
+            color="neutral"
+            variant="soft"
+            @click="clearFilters"
+          >
+            Clear filters
+          </UButton>
+          <UButton
+            v-else
+            size="sm"
+            icon="i-lucide-plus"
+            @click="openWith()"
+          >
+            New request
+          </UButton>
         </div>
 
         <TransitionGroup

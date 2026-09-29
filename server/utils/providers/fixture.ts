@@ -7,10 +7,11 @@ import type {
   TicketProvider
 } from '../../../shared/types'
 import { buildDemoTickets, DEMO_LOCATIONS } from '../../data/demo'
+import type { DemoState, DemoStore } from '../demoStore'
 import { NotFoundError } from '../errors'
 
 export interface FixtureProvider extends TicketProvider {
-  reset(): void
+  reset(): Promise<void>
   // Demo only: plays the support side. new -> in progress -> resolved, with a support reply.
   advance(key: string): Promise<TicketDetail>
 }
@@ -20,34 +21,59 @@ function toTicket(detail: TicketDetail): Ticket {
   return { ...ticket }
 }
 
-// In-memory provider for demo mode. Changes live until reset() or a server restart.
-export function createFixtureProvider(): FixtureProvider {
-  let tickets = buildDemoTickets()
-  let nextKey = 50
-  let nextComment = 1
+function freshState(): DemoState {
+  return { tickets: buildDemoTickets(), nextKey: 50, nextComment: 1 }
+}
+
+/**
+ * Demo provider. State lives in this instance's memory, or in the store when one is given,
+ * so that every serverless instance sees the same tickets.
+ */
+export function createFixtureProvider(store?: DemoStore): FixtureProvider {
+  let state = freshState()
+  let seeded = false
+
+  async function hydrate() {
+    if (!store) return
+    const stored = await store.load()
+    if (stored) {
+      state = stored
+      seeded = true
+    } else if (!seeded) {
+      seeded = true
+      await store.save(state)
+    }
+  }
+
+  async function commit() {
+    if (store) await store.save(state)
+  }
 
   const find = (key: string): TicketDetail => {
-    const found = tickets.find(t => t.key === key)
+    const found = state.tickets.find(t => t.key === key)
     if (!found) throw new NotFoundError(key)
     return found
   }
 
   return {
     async list() {
-      return tickets
+      await hydrate()
+      return state.tickets
         .map(toTicket)
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     },
 
     async get(key) {
+      await hydrate()
       const found = find(key)
       return { ...found, comments: [...found.comments] }
     },
 
     async create(input: NewTicket) {
+      await hydrate()
       const now = new Date().toISOString()
       const created: TicketDetail = {
-        key: `MCDTE-${nextKey++}`,
+        key: `MCDTE-${state.nextKey++}`,
         summary: input.summary,
         description: input.description ?? '',
         status: 'new',
@@ -61,14 +87,16 @@ export function createFixtureProvider(): FixtureProvider {
         assignee: 'Unassigned',
         comments: []
       }
-      tickets = [created, ...tickets]
+      state.tickets = [created, ...state.tickets]
+      await commit()
       return toTicket(created)
     },
 
     async addComment(key, body): Promise<TicketComment> {
+      await hydrate()
       const found = find(key)
       const created: TicketComment = {
-        id: `local-${nextComment++}`,
+        id: `local-${state.nextComment++}`,
         author: found.reporter,
         body,
         createdAt: new Date().toISOString(),
@@ -76,6 +104,7 @@ export function createFixtureProvider(): FixtureProvider {
       }
       found.comments = [...found.comments, created]
       found.updatedAt = created.createdAt
+      await commit()
       return created
     },
 
@@ -88,6 +117,7 @@ export function createFixtureProvider(): FixtureProvider {
     },
 
     async advance(key) {
+      await hydrate()
       const found = find(key)
       const now = new Date().toISOString()
       if (found.status === 'new') {
@@ -95,7 +125,7 @@ export function createFixtureProvider(): FixtureProvider {
         found.statusName = 'In progress'
         found.assignee = 'IT Support'
         found.comments = [...found.comments, {
-          id: `support-${nextComment++}`,
+          id: `support-${state.nextComment++}`,
           author: 'IT Support',
           body: 'We\'ve picked this up and started looking into it. We\'ll update you here as soon as we know more.',
           createdAt: now,
@@ -105,7 +135,7 @@ export function createFixtureProvider(): FixtureProvider {
         found.status = 'resolved'
         found.statusName = 'Resolved'
         found.comments = [...found.comments, {
-          id: `support-${nextComment++}`,
+          id: `support-${state.nextComment++}`,
           author: 'IT Support',
           body: 'This is fixed now. Let us know if it happens again and we\'ll reopen it.',
           createdAt: now,
@@ -113,13 +143,14 @@ export function createFixtureProvider(): FixtureProvider {
         }]
       }
       found.updatedAt = now
+      await commit()
       return { ...found, comments: [...found.comments] }
     },
 
-    reset() {
-      tickets = buildDemoTickets()
-      nextKey = 50
-      nextComment = 1
+    async reset() {
+      state = freshState()
+      seeded = true
+      await commit()
     }
   }
 }

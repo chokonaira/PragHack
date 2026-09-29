@@ -170,7 +170,6 @@ async function create() {
             v-model="text"
             autofocus
             :rows="4"
-            :examples="exampleRequests"
             @submit="run"
           >
             <template #secondary>
@@ -205,7 +204,7 @@ async function create() {
               <UIcon
                 v-if="i < thinkingStep"
                 name="i-lucide-circle-check"
-                class="size-5 text-secondary"
+                class="size-5 text-primary"
                 aria-hidden="true"
               />
               <span
@@ -213,8 +212,8 @@ async function create() {
                 class="relative flex size-5 items-center justify-center"
                 aria-hidden="true"
               >
-                <span class="absolute size-3 rounded-full bg-secondary motion-safe:animate-flow-pulse" />
-                <span class="relative size-2.5 rounded-full bg-secondary" />
+                <span class="absolute size-3 rounded-full bg-primary motion-safe:animate-flow-pulse" />
+                <span class="relative size-2.5 rounded-full bg-primary" />
               </span>
               <span
                 v-else
@@ -241,7 +240,7 @@ async function create() {
 
           <component
             :is="suggestion ? AiCard : 'div'"
-            v-bind="suggestion ? { title: 'Review your request', demo: suggestion.source === 'demo' } : {}"
+            v-bind="suggestion ? { title: 'Review your request', demo: suggestion.source === 'demo', footnote: 'Drafted by AI from what you wrote. Check it before you create the request.' } : {}"
           >
             <div class="space-y-4">
               <UFormField
@@ -252,6 +251,7 @@ async function create() {
               >
                 <UInput
                   v-model="form.summary"
+                  size="lg"
                   class="w-full"
                   maxlength="255"
                 />
@@ -275,6 +275,7 @@ async function create() {
                 >
                   <USelect
                     v-model="form.ticketType"
+                    size="lg"
                     :items="typeItems"
                     class="w-full"
                   />
@@ -287,6 +288,7 @@ async function create() {
                 >
                   <USelect
                     v-model="form.location"
+                    size="lg"
                     :items="locations"
                     placeholder="Choose a location"
                     class="w-full"

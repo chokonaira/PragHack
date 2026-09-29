@@ -16,6 +16,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBase: 'http://mockapi.pragvue.cz:8001',
     demoMode: false,
+    // Demo tickets with the real model. Needs NUXT_LLM_API_KEY. Off by default (see server/utils/aiMode.ts).
+    aiLive: false,
     llm: {
       provider: 'anthropic',
       baseUrl: 'https://api.anthropic.com',

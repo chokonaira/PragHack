@@ -1,5 +1,6 @@
 import type { StructuredTicket } from '../../../shared/types'
 import { structureDemo } from '../../data/demo-ai'
+import { shouldUseRealAi } from '../../utils/aiMode'
 import { apiError } from '../../utils/errors'
 import { isAiError, useLlm } from '../../utils/llm'
 import { resolveProvider } from '../../utils/mode'
@@ -21,7 +22,8 @@ export default defineEventHandler(async (event): Promise<StructuredTicket | Retu
   if (raw.length > TEXT_MAX) return apiError(event, 400, `That is too long, keep it under ${TEXT_MAX} characters`)
 
   const { provider, mode } = await resolveProvider(event)
-  if (mode.mode === 'demo') return structureDemo(text)
+  const config = useRuntimeConfig()
+  if (!shouldUseRealAi(mode.mode, Boolean(config.aiLive), Boolean(config.llm.apiKey))) return structureDemo(text)
 
   let locations: LocationOption[] = []
   try {

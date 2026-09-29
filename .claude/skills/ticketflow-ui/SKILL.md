@@ -15,7 +15,7 @@ TicketFlow AI feels like tracking a parcel, not filing a form. A ticket is a **r
 
 1. **Plan in 5 lines:** which tokens (colour, type), what layout, which single moment of motion, what states (loading, empty, error, AI failed).
 2. **Check the plan against the defaults.** If it looks like any generic SaaS page (identical rounded cards, gradient hero, eyebrow labels, middle-dot meta strings, arrows on every link), change it.
-3. **Build with tokens only.** Semantic Nuxt UI classes, the `cobalt` primary, `secondary` (violet) for AI only, Schibsted Grotesk, motion tokens from `main.css`.
+3. **Build with tokens only.** Semantic Nuxt UI classes, the `cobalt` primary, Schibsted Grotesk, motion tokens from `main.css`.
 4. **Look at it.** Take screenshots at 390 px and 1440 px, light and dark, before saying it is done. Fix what looks off.
 5. **Remove one accessory.** Cut a decoration that does not carry information.
 
@@ -24,9 +24,9 @@ TicketFlow AI feels like tracking a parcel, not filing a form. A ticket is a **r
 - Lists are **divided rows**, not grids of identical cards. Cards are for AI content and forms.
 - One primary button per view. Left-aligned text, generous space, lines under 65 characters.
 - Type carries the personality: tight display headings, calm body. No all-caps labels, no eyebrow above every heading, no single accented word in a headline.
-- Borders and dividers must encode structure. No decorative shadows or gradients. The only glow allowed is the AI working state on `AiCard`.
+- Borders and dividers must encode structure. No decorative shadows or gradients.
 - Status is always icon plus text plus colour, and shown on the flow line, never colour alone.
-- AI content lives in `AiCard`: labelled, editable, with a fallback. Never blocks the core flow.
+- AI content lives in `AiCard`, a plain quiet card. No sparkle icons, no "AI" pills, no coloured AI boxes, no example chips. Honesty is one small plain-text line. Everything is editable, with a fallback, and never blocks the core flow.
 
 ## Rules that keep it smooth and intuitive
 
