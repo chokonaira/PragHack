@@ -4,7 +4,7 @@ One story, told once: a customer says what went wrong out loud, and the app does
 
 ## Before you go on stage (10 minutes before)
 
-Run the demo from the presenter's laptop, not from Vercel. One server, real AI, no surprises.
+Run the demo on the live site (https://ticketflow-hack.vercel.app): it has real AI, and the phone handoff only works there. The laptop (steps below) is the backup.
 
 1. `.env` has `NUXT_DEMO_MODE=true`, `NUXT_AI_LIVE=true` and a valid `NUXT_LLM_API_KEY`. Leave `REDIS_URL` empty locally.
 2. `pnpm dev --host`, then open `http://localhost:3000` in **Chrome** (voice input needs it) and allow the microphone once.
@@ -60,8 +60,8 @@ Speak slowly. If you run long, cut the filter click and the Refresh click.
 
 ## Where to run what
 
-- **Main flow on the laptop** (`localhost:3000`, `NUXT_AI_LIVE=true`): real AI drafts the request and reads the thread. The QR card is hidden on localhost by design.
-- **Phone handoff on the live site** (https://ticketflow-hack.vercel.app): the laptop has it open in a second tab, the phone scans the QR code and creates a request, and it slides into the laptop's list within about 3 seconds. Say out loud that the live site uses pre-written AI answers so the key is never public. Do this as the finale if there is time, or skip it and mention it.
+- **Live site** (https://ticketflow-hack.vercel.app): the whole demo, with real AI. For the handoff, the laptop shows the site, the phone scans the QR code and creates a request, and it slides into the laptop's list within about 3 seconds.
+- **Laptop backup** (`localhost:3000`, `NUXT_AI_LIVE=true`): same flow if the network fails. The QR card is hidden on localhost by design.
 - Reset the live data right before you start: `curl -X POST https://ticketflow-hack.vercel.app/api/demo/reset`
 
 ## Two-sentence version (if you get 30 seconds)
@@ -81,7 +81,7 @@ Speak slowly. If you run long, cut the filter click and the Refresh click.
 
 | Question | Answer |
 |---|---|
-| Is the AI real? | Yes. Claude, called from our server. The public site shows pre-written answers so we do not expose the key. Run locally with the key you saw the real model. |
+| Is the AI real? | Yes. Claude, called only from our server, on the live site and on the laptop. If the service is down, the app falls back to pre-written answers, and we saw that happen today. |
 | What if the AI is wrong? | It only proposes. The customer edits every field and clicks Create. Bad output is validated and replaced by the manual form. |
 | Can a ticket message hijack the AI? | Ticket text goes to the model inside data tags, output is validated against a fixed shape, and the AI has no route that writes anything. |
 | The mock API saves nothing. How does create work? | We keep an overlay and shared Redis state, always labelled as demo data. Against a real ServiceBridge the same provider would write through. |

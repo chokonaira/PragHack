@@ -143,7 +143,7 @@ Without an AI key the app still works: AI screens show the pre-written demo answ
 
 - The organizers' mock API saves nothing and returns fixed data. Tickets and comments we create are kept in our own state (Redis on the live site, server memory locally) and expire after 24 hours.
 - Customers can reply but cannot change a ticket's status (in real life support does), and there is no support-side screen. The demo control on a ticket page plays support.
-- The public site runs in demo mode with pre-written AI answers so the AI key is never exposed. Real AI needs a key (`NUXT_AI_LIVE=true` locally).
+- The public site runs on labelled demo data with the real AI switched on (`NUXT_AI_LIVE=true`, key kept on the server). If the AI service fails, the app quietly answers from pre-written answers instead. There is no per-visitor rate limit yet, so spend is limited only by the account balance.
 - Voice input needs Chrome, Edge or Safari (not Firefox). Chrome sends the audio to Google for recognition. Where unsupported, the mic button is hidden.
 - Not built: "since your last visit" summaries, notifications, attachments.
 - Demo data is fictional and always labelled.
