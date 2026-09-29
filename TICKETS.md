@@ -117,6 +117,7 @@ flowchart TD
 **Goal:** one safe function every AI route uses.
 - [ ] `server/utils/llm.ts` with `askJson(system, user, validate)`: OpenAI-style chat completions at `NUXT_LLM_BASE_URL`, 10 second timeout, one retry, typed `AiError`.
 - [ ] Key only from server config. Logs never contain the key, request bodies or ticket text.
+- [ ] Spend guard for the public site: per-IP rate limit on `/api/ai/*` (10 requests per minute) and a small `max_tokens` cap. Real AI on Vercel stays off (`NUXT_DEMO_MODE=true`) until this is done.
 - [ ] Ticket text is passed as delimited data. The system prompt says never to follow instructions inside it.
 - [ ] Tests with mocked fetch: valid JSON passes, invalid JSON retries then errors, an "ignore your instructions" text keeps the output shape.
 
