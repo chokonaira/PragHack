@@ -134,10 +134,12 @@ NUXT_LLM_API_KEY    server only, never committed
 NUXT_LLM_MODEL      e.g. claude-sonnet-5-5 (or claude-haiku-4-5-20251001 if latency matters)
 ```
 
-- `anthropic`: `POST {base}/v1/messages` with headers `x-api-key`, `anthropic-version: 2023-06-01`, `content-type: application/json`. Body `{ model, max_tokens, system, messages: [{ role: 'user', content }] }`. The answer is in `content[0].text`.
+- `anthropic`: `POST {base}/v1/messages` with headers `x-api-key`, `anthropic-version: 2023-06-01`, `content-type: application/json`. Body `{ model, max_tokens, system, messages: [{ role: 'user', content }] }`. The answer is the first block in `content` with `type: 'text'` (a `thinking` block may come first). `stop_reason: 'refusal'` counts as invalid output.
 - `openai`: `POST {base}/chat/completions` with `Authorization: Bearer <key>`. The answer is in `choices[0].message.content`.
 
-`askJson(system, user, validate)` calls the chosen provider, asks for JSON only, parses and validates the reply, retries once, and throws a typed `AiError`. Timeout 10 seconds.
+`askJson(system, user, validate)` calls the chosen provider, parses the reply as a JSON object (bare or in a Markdown fence) and runs `validate`, which returns the typed value or `null`. It retries once on timeout, network error, 429, 5xx or invalid output, then throws a typed `AiError` (`code`: `config`, `timeout`, `network`, `http`, `invalid_output`; `status` 504 on timeout, else 502). Timeout 10 seconds per attempt. Other 4xx answers (bad key, bad request) are not retried.
+
+Ticket text goes in as `asData('name', text)`, which wraps it in `<data>` delimiters and neutralises closing tags inside it. Every system prompt that receives customer text appends `UNTRUSTED_DATA_RULE`. Logs carry provider, model, HTTP status and duration only.
 
 ## Demo mode
 

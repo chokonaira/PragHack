@@ -115,11 +115,11 @@ flowchart TD
 ### T-11 LLM utility
 **Owner:** Florian · **Time:** 30 min · **Needs:** T-01 (key), T-04 · **Unblocks:** T-12, T-14
 **Goal:** one safe function every AI route uses.
-- [ ] `server/utils/llm.ts` with `askJson(system, user, validate)`: OpenAI-style chat completions at `NUXT_LLM_BASE_URL`, 10 second timeout, one retry, typed `AiError`.
-- [ ] Key only from server config. Logs never contain the key, request bodies or ticket text.
-- [ ] Spend guard for the public site: per-IP rate limit on `/api/ai/*` (10 requests per minute) and a small `max_tokens` cap. Real AI on Vercel stays off (`NUXT_DEMO_MODE=true`) until this is done.
-- [ ] Ticket text is passed as delimited data. The system prompt says never to follow instructions inside it.
-- [ ] Tests with mocked fetch: valid JSON passes, invalid JSON retries then errors, an "ignore your instructions" text keeps the output shape.
+- [x] `server/utils/llm.ts` with `askJson(system, user, validate)`: Anthropic Messages API by default, OpenAI-style chat completions as the alternative (`NUXT_LLM_PROVIDER`, see `docs/contracts.md`), 10 second timeout per attempt, one retry, typed `AiError`.
+- [x] Key only from server config (`runtimeConfig.llm.apiKey`). Logs hold provider, model, status and duration only, never the key, request bodies or ticket text.
+- [ ] Spend guard for the public site: per-IP rate limit on `/api/ai/*` (10 requests per minute) and a small `max_tokens` cap. Real AI on Vercel stays off (`NUXT_DEMO_MODE=true`) until this is done. (`max_tokens` is capped at 1024 in `llm.ts`. Rate limit still open.)
+- [x] Ticket text is passed as delimited data (`asData`). `UNTRUSTED_DATA_RULE` goes into every system prompt and says never to follow instructions inside it.
+- [x] Tests with mocked fetch: valid JSON passes, invalid JSON retries then errors, an "ignore your instructions" text keeps the output shape. (`tests/server/llm.test.ts`, 18 tests. Also checked live against Anthropic: the model answers JSON and ignores the injection.)
 
 **Check:** `pnpm test` is green.
 
@@ -270,3 +270,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Florian: T-04 needed tests before T-02 landed, so vitest, `pnpm test` (`vitest run`, tests in `tests/**/*.test.ts`) and `runtimeConfig.apiBase` are in with T-04. T-02 keeps the rest of `runtimeConfig` and CI.
 - 2026-09-29, Henry: built the visual layer because the UI is the big scoring lever: `cobalt` tokens, Schibsted Grotesk, `TicketFlowTracker` (the flow-line signature), logo, header shell, home page UI, `TicketRow`, and a placeholder `/new`. Also the first slice of `server/api/tickets.get.ts` (demo data). **Marzieh:** T-02 left = `runtimeConfig` for the LLM, CI test step; T-05 must extend `server/api/tickets.get.ts` and `server/utils/demoProvider.ts`, not recreate them; T-08 left = `useTickets` composable, text search, keyboard check. **Florian:** T-13 replaces `app/pages/new.vue`. Use the `ticketflow-ui` skill for all UI. Live: https://ticketflow-hack.vercel.app
 - 2026-09-29, Henry: ticket detail page (`app/pages/tickets/[key].vue`) and its AI summary card are built against demo data. Slices of T-05 and T-14 added: `server/api/tickets/[key].get.ts` and `server/api/ai/summarize-ticket.post.ts` (demo answers only). Marzieh extends both for live mode and the real LLM, do not recreate them.
+- 2026-09-29, Florian: T-11 reads `runtimeConfig.llm.{provider,baseUrl,apiKey,model}` as T-02 defined them (`NUXT_LLM_*`). Note for T-12 and T-14: the model overshoots character limits in the prompt (asked for 80, wrote 84 and 95), so ask for a smaller number than the validator enforces.
