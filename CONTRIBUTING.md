@@ -57,6 +57,7 @@ Only docs and the Nuxt starter scaffold are allowed. No feature code. The hackat
 - `README.md`: overview and setup.
 - `pragvue-ai-ticket-management-implementation-plan.md`: product plan (customer-first).
 - `SPEC.md`: MVP scope and success criteria.
+- `docs/contracts.md`: shared types, routes and AI response shapes. Change it in the same push as any shape change.
 - `TICKETS.md`: tickets, checklists, Definition of Done, sign-off.
 - `docs/api/README.md`: the Mock API spec for this repo (source of truth). OpenAPI and mock snapshots sit next to it.
 - `docs/api-notes.md`: extra findings and corrections.

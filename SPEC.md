@@ -1,6 +1,6 @@
 # Spec: TicketFlow AI (MVP)
 
-**Status:** direction agreed on 2026-09-29: **customer-first**, built on [the implementation plan](pragvue-ai-ticket-management-implementation-plan.md). Tickets are in [TICKETS.md](TICKETS.md). The earlier operator-autopilot idea is dropped. Under the hackathon rules, feature coding starts at kickoff.
+**Status:** 3 hours left, tickets are ordered in waves in [TICKETS.md](TICKETS.md). Contracts: [docs/contracts.md](docs/contracts.md). Direction agreed on 2026-09-29: **customer-first**, built on [the implementation plan](pragvue-ai-ticket-management-implementation-plan.md). Tickets are in [TICKETS.md](TICKETS.md). The earlier operator-autopilot idea is dropped. Under the hackathon rules, feature coding starts at kickoff.
 
 ## Objective
 
@@ -32,15 +32,15 @@ Full detail in [docs/api/README.md](docs/api/README.md).
 
 | # | Pri | Story | Done when | Tickets |
 |---|---|---|---|---|
-| 1 | P0 | I see my requests | List with key, summary, status, location, updated time. Filter by status, search text. Loading, empty and error states. | T-04 to T-08 |
+| 1 | P0 | I see my requests | List with key, summary, status, location, updated time. Filter by status, search text. Loading, empty and error states. | T-05, T-08 |
 | 2 | P0 | I open a ticket and understand where it stands | Detail with description and timeline. States handled. | T-09 |
-| 3 | P0 | I describe a problem and AI structures it into a ticket | Free text in, editable title, description, type and location out, using only real options. I review, then click "Create request". If AI fails I fill the same form manually. | T-11 to T-13 |
+| 3 | P0 | I describe a problem and AI structures it into a ticket | Free text in, editable title, description, type and location out, using only real options. I review, then click "Create request". If AI fails I fill the same form manually. | T-11, T-12, T-13 |
 | 4 | P0 | AI explains a ticket with a long history | "What's happening?" card: summary, waiting on, action required, based on N comments. Page works if AI fails. | T-14, T-15 |
 | 5 | P0 | The presenter can run the story on any network | Demo mode with seeded data and a visible "Demo data" badge. Chosen automatically when the health probe fails. | T-06 |
 | 6 | P0 | It is comfortable and accessible | Keyboard, 390 px and 1440 px, light and dark, reduced motion, axe clean. | T-21 |
-| 7 | P1 | I reply to a ticket, with AI help | Comment composer. "Help me reply" fills an editable draft. AI never sends. | T-10, T-18 |
-| 8 | P1 | I see what changed since my last visit | AI card listing changes, only when something changed. | T-17 |
-| 9 | P1 | I see notifications | Bell with unread badge. Needs confirmation first, notifications are out of scope in the API doc. | T-19 |
+| 7 | P1 | I reply to a ticket, with AI help | Comment composer. "Help me reply" fills an editable draft. AI never sends. | T-10, T-18 (extras) |
+| 8 | P1 | I see what changed since my last visit | AI card listing changes, only when something changed. | T-17 (extra) |
+| 9 | P1 | I see notifications | Bell with unread badge. Dropped: notifications are out of scope in the API doc. | none |
 | 10 | P2 | Stretch | Voice input, natural-language search, attachment analysis, ticket trends, installable offline app. | none |
 
 **Not in the MVP:** login and accounts, changing ticket status, operator or agent views, boards and lanes, attachments, real-time updates, translations, a generic chatbot.

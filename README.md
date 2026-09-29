@@ -69,7 +69,7 @@ About `.env`:
 
 - The defaults point at the organizers' mock API. Nothing else is needed to browse tickets.
 - Set `NUXT_DEMO_MODE=true` to run on seeded demo data with no network.
-- AI features need `NUXT_LLM_API_KEY` and `NUXT_LLM_MODEL`. Ask a teammate for the key. Never put a key in git.
+- AI features need `NUXT_LLM_BASE_URL`, `NUXT_LLM_API_KEY` and `NUXT_LLM_MODEL`. Ask a teammate for the key. Never put a key in git.
 
 | Command | What it does |
 |---|---|
@@ -84,7 +84,7 @@ Until ticket T-02 lands, the page you see is the Nuxt UI starter.
 ## Where to start
 
 1. Read [CONTRIBUTING.md](CONTRIBUTING.md) (rules for every push: small, rebased, lint, typecheck and tests all pass, no failing test ever, no secrets).
-2. Skim [SPEC.md](SPEC.md), [DESIGN.md](DESIGN.md) and [docs/api/README.md](docs/api/README.md).
+2. Skim [SPEC.md](SPEC.md), [docs/contracts.md](docs/contracts.md), [DESIGN.md](DESIGN.md) and [docs/api/README.md](docs/api/README.md).
 3. Pick a ticket in [TICKETS.md](TICKETS.md), write your name on it, push that line, then build.
 
 ## Docs map
@@ -94,6 +94,8 @@ Until ticket T-02 lands, the page you see is the Nuxt UI starter.
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Trunk-based rules for every push |
 | [SPEC.md](SPEC.md) | MVP scope, stories, success criteria, demo script |
 | [TICKETS.md](TICKETS.md) | Tickets with done-checklists, plan, sign-off, sync log |
+| [docs/contracts.md](docs/contracts.md) | Shared types, routes and AI response shapes |
+| [docs/ai-samples.md](docs/ai-samples.md) | AI test samples and pass rules |
 | [DESIGN.md](DESIGN.md) | Colours, themes, typography, motion, component and accessibility rules |
 | [docs/WIREFRAMES.md](docs/WIREFRAMES.md) | Low-fidelity wireframes of the three key screens |
 | [docs/api/README.md](docs/api/README.md) | Mock API spec for this repo, snapshots next to it |

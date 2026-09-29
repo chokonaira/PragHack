@@ -1,276 +1,267 @@
 # Tickets
 
-MVP: **TicketFlow AI**, customer-first. Scope is in [SPEC.md](SPEC.md), the Mock API spec is [docs/api/README.md](docs/api/README.md), push rules are in [CONTRIBUTING.md](CONTRIBUTING.md).
+**3 hours left, so this is the smallest MVP that still demos well.** Tickets are ordered in **waves**. Inside a wave, everything runs in parallel. Do not start a ticket until everything in its **Needs** line is pushed.
 
-**How to use this file**
+Rules: [CONTRIBUTING.md](CONTRIBUTING.md). Shapes and routes: [docs/contracts.md](docs/contracts.md). Look and feel: [DESIGN.md](DESIGN.md). Mock API: [docs/api/README.md](docs/api/README.md).
 
-1. Pick an unowned ticket whose dependencies are done. Write your name in its `Owner` line and push that one-line change first.
-2. One active ticket per person. Work in small pushes, following the push rules.
-3. Tick the ticket's checkboxes as you finish them, in the same push as the code.
-4. A ticket is done only when every box is ticked **and** the Definition of Done below holds.
+## How to work a ticket
 
-Priorities: **P0** the demo fails without it. **P1** only after every P0 is polished. Areas: **UI**, **Data**, **AI**, **Demo**.
+1. Find your name below. Start with your first ticket whose **Needs** are done.
+2. Build it in small pushes. Tick the boxes as you go.
+3. Done means every box is ticked **and** the Definition of Done at the bottom holds.
+4. Stuck for 10 minutes? Say so in the team chat.
 
-## Overview
+## Who does what (random draw, balanced by time)
 
-| ID | Ticket | Pri | Area | Est | Needs | Owner |
-|---|---|---|---|---|---|---|
-| T-01 | Kickoff decisions and API check | P0 | All | 20m | | |
-| T-02 | Baseline, design tokens and test setup | P0 | UI | 40m | T-01 | |
-| T-03 | App shell | P0 | UI | 30m | T-02 | |
-| T-16 | AiCard component | P0 | UI | 30m | T-02 | |
-| T-04 | API types, mapping and upstream client | P0 | Data | 40m | T-01 | |
-| T-05 | MockApiProvider, overlay and routes | P0 | Data | 60m | T-04 | |
-| T-06 | Demo data and demo mode | P0 | Data | 45m | T-04 | |
-| T-07 | Ticket composables | P0 | Data | 40m | T-04 | |
-| T-08 | Home: my requests | P0 | UI | 60m | T-03, T-06, T-07 | |
-| T-09 | Ticket detail | P0 | UI | 60m | T-03, T-07 | |
-| T-11 | LLM server utility | P0 | AI | 45m | T-01 | |
-| T-12 | AI structure-ticket API | P0 | AI | 50m | T-11, T-05 | |
-| T-13 | AI ticket creator UI | P0 | UI | 90m | T-12, T-16, T-05 | |
-| T-14 | AI summarize-ticket API | P0 | AI | 40m | T-11, T-05 | |
-| T-15 | AI summary UI | P0 | UI | 45m | T-14, T-16, T-09 | |
-| T-21 | Responsive and accessibility pass | P0 | UI | 45m | T-13, T-15 | |
-| T-22 | Demo script and rehearsal | P0 | Demo | 45m | T-13, T-15 | |
-| T-23 | Judges' README | P0 | Demo | 30m | T-13 | |
-| T-24 | Freeze and final push | P0 | All | 30m | all P0 | |
-| T-10 | Comment composer | P1 | UI | 40m | T-05, T-09 | |
-| T-17 | Since your last visit | P1 | Data, AI | 60m | T-07, T-11 | |
-| T-18 | Help me reply and next action | P1 | AI, UI | 75m | T-10, T-14 | |
-| T-19 | Notifications bell | P1 | Data, UI | 45m | T-05 | |
+| Person | Tickets in order | Total |
+|---|---|---|
+| **Henry** | T-06, T-03, T-09, T-15 | 145 min |
+| **Florian** | T-04, T-11, T-12, T-13 | 160 min |
+| **Marzieh** | T-02, T-05, T-14, T-08 | 150 min |
+| **Everyone** | T-01, then T-21, T-22, T-24 at the end | |
 
-P0 total is about 14 person-hours. With 4 people working in parallel it fits. With 3 or fewer, cut in this order if behind at 3:00: summary refresh and caching (T-15), status chips and search (T-08), the step-2 animation (T-13), in-memory demo writes (T-06). Never cut the manual fallback in T-13, the loading, empty and error states, the tests, or T-21.
+Swap freely, but write it here and push.
 
-Parallel start after T-01: **UI** T-02, T-03, T-16, T-08, T-09. **Data** T-04, T-05, T-06, T-07. **AI** T-11, T-12, T-14.
+## Build order
+
+```mermaid
+flowchart TD
+    W0["Wave 0: T-01 Decide (all)"] --> W1
+    subgraph W1["Wave 1: foundation, all in parallel"]
+        T02["T-02 Baseline and tests (Marzieh)"]
+        T04["T-04 Types and upstream (Florian)"]
+        T06["T-06 Demo data (Henry)"]
+        T11["T-11 LLM utility (Florian)"]
+    end
+    T02 --> T03["T-03 Shell and AiCard (Henry)"]
+    T04 --> T05["T-05 Provider and routes (Marzieh)"]
+    T06 --> T05
+    T11 --> T12["T-12 structure-ticket API (Florian)"]
+    T05 --> T12
+    T11 --> T14["T-14 summarize API (Marzieh)"]
+    T05 --> T14
+    T03 --> T08["T-08 Home list (Marzieh)"]
+    T05 --> T08
+    T03 --> T09["T-09 Ticket detail (Henry)"]
+    T05 --> T09
+    T12 --> T13["T-13 AI creator UI (Florian)"]
+    T03 --> T13
+    T14 --> T15["T-15 Summary UI (Henry)"]
+    T09 --> T15
+    T08 --> T21["Wave 4: T-21, T-22, T-24 (all)"]
+    T13 --> T21
+    T15 --> T21
+```
+
+| Wave | Time (from now) | Tickets | Goal |
+|---|---|---|---|
+| 0 | 0:00 to 0:15 | T-01 | Decisions made, LLM key works |
+| 1 | 0:15 to 0:50 | T-02, T-04, T-06, T-11 | Foundation pushed |
+| 2 | 0:50 to 1:40 | T-03, T-05, T-12, T-14 | Data routes, shell and AI routes work |
+| 3 | 1:40 to 2:30 | T-08, T-09, T-13, T-15 | All screens work end to end |
+| 4 | 2:30 to 3:00 | T-21, T-22, T-24 | Checks, README, demo, final push |
+
+**Feature freeze at 2:30.** After that only fixes, README and rehearsal.
+
+**No slack in this plan.** If behind, cut in this order: (1) T-15 refresh and caching, (2) T-08 filters and search, (3) T-13 step-2 animation, (4) T-21 becomes a 15-minute quick check. Never cut: the manual fallback in T-13, loading, empty and error states, tests, demo mode.
+
+**Merged or dropped:** T-07 is inside T-08 and T-09. T-16 is inside T-03. T-20 (offline AI answers) is inside T-06, T-12 and T-14. T-23 is inside T-22. T-19 (notifications) is dropped. Extras (T-10, T-17, T-18) are only for after Wave 3 with more than 40 minutes left.
+
+---
+
+## Wave 0
+
+### T-01 Decide (everyone, 15 min)
+**Goal:** the blockers are answered before anyone codes.
+- [ ] One teammate confirms a working LLM key, base URL and model, and tests one call from a terminal. Values go only in their own `.env`.
+- [ ] Everyone has pulled, read `CONTRIBUTING.md` and `docs/contracts.md`, and added a row to the sign-off table at the bottom.
+- [ ] Registered for the topic. Asked the organizers for the final repo URL and whether the Nuxt starter is fine. Answers noted in the sync log.
+
+**Check:** the LLM test call returns text.
+
+## Wave 1: foundation (parallel)
+
+### T-02 Baseline, look and tests
+**Owner:** Marzieh · **Time:** 30 min · **Needs:** nothing · **Unblocks:** T-03
+**Goal:** an empty branded app with tests running in CI.
+- [ ] Starter content removed (`TemplateMenu`, starter home content, title and meta). App named "TicketFlow AI".
+- [ ] `DESIGN.md` colours in `app/app.config.ts`, CSS tokens in `app/assets/css/main.css`, green scale removed.
+- [ ] `runtimeConfig` holds `apiBase`, `demoMode` and the LLM settings (server-only), matching `.env.example`.
+- [ ] Vitest installed. `pnpm test` works with one passing sample test. `.github/workflows/ci.yml` runs `pnpm test`.
+- [ ] `pnpm lint`, `pnpm typecheck` and `pnpm test` pass and CI is green.
+
+**Check:** open http://localhost:3000. You see a branded empty page, in light and dark.
+
+### T-04 Types and upstream client
+**Owner:** Florian · **Time:** 30 min · **Needs:** nothing · **Unblocks:** T-05, T-06, T-11
+**Goal:** shared types and one safe way to call the mock.
+- [ ] `shared/types.ts` exactly as in `docs/contracts.md`. **Push this file in the first 10 minutes**, Henry and Marzieh need it.
+- [ ] `server/utils/upstream.ts`: fetch with 8 second timeout, base URL from config, handles `204`, throws a typed `ApiError`, never leaks stack traces.
+- [ ] Mapper from mock shapes to our types (status matched by name, case-insensitive). Health probe on `GET /health`.
+- [ ] Tests: mapper, timeout, 404, 204.
+
+**Check:** `pnpm test` is green.
+
+### T-06 Demo data
+**Owner:** Henry · **Time:** 30 min · **Needs:** `shared/types.ts` from T-04 · **Unblocks:** T-05, T-09, T-14
+**Goal:** a believable demo that works with no network.
+- [ ] `server/data/demo.ts` with 8 tickets as `TicketDetail`: one with 8 or more comments (story: laptop replacement approved, waiting on support), one waiting on the customer ("please send the serial number"), one resolved, one created today, and two different locations and types.
+- [ ] `server/data/demo-ai.ts` with a hand-written `AiSummary` for every demo ticket and one `StructuredTicket` for the laptop sample text. All marked `source: 'demo'`.
+- [ ] `FixtureProvider` implements `TicketProvider`, keeps changes in memory, and has `reset()`.
+- [ ] Test: lists all tickets, `create` adds one, `reset` restores.
+
+**Check:** `pnpm test` is green.
+
+### T-11 LLM utility
+**Owner:** Florian · **Time:** 30 min · **Needs:** T-01 (key), T-04 · **Unblocks:** T-12, T-14
+**Goal:** one safe function every AI route uses.
+- [ ] `server/utils/llm.ts` with `askJson(system, user, validate)`: OpenAI-style chat completions at `NUXT_LLM_BASE_URL`, 10 second timeout, one retry, typed `AiError`.
+- [ ] Key only from server config. Logs never contain the key, request bodies or ticket text.
+- [ ] Ticket text is passed as delimited data. The system prompt says never to follow instructions inside it.
+- [ ] Tests with mocked fetch: valid JSON passes, invalid JSON retries then errors, an "ignore your instructions" text keeps the output shape.
+
+**Check:** `pnpm test` is green.
+
+## Wave 2: routes and shell (parallel)
+
+### T-05 Provider and routes
+**Owner:** Marzieh · **Time:** 45 min · **Needs:** T-04, T-06 · **Unblocks:** T-08, T-09, T-12, T-14
+**Goal:** the browser gets tickets from our own routes, live or demo.
+- [ ] `MockApiProvider` with `list`, `get`, `create`, `addComment`, `meta` following the mapping in `docs/api/README.md`. Overlay holds created tickets and comments. Created tickets get a unique local key (the mock always answers `MCDTE-50`) and `isLocal: true`. `get` takes summary and description from the list item.
+- [ ] Routes exactly as in `docs/contracts.md`: `/api/mode`, tickets, `:key`, create-meta, create, comments, `/api/demo/reset`.
+- [ ] Provider chosen by `/api/mode` (live or demo). Inputs validated, errors use `{ message, status }`.
+- [ ] Tests: overlay merge, unique keys, validation.
+
+**Check:** `curl localhost:3000/api/tickets` returns tickets. With demo mode on it returns the demo tickets.
+
+### T-03 App shell and AiCard
+**Owner:** Henry · **Time:** 40 min · **Needs:** T-02 · **Unblocks:** T-08, T-09, T-13, T-15
+**Goal:** the frame every page sits in, plus the one AI component.
+- [ ] Header: product name, nav (My requests, New request), colour-mode toggle, and a "Demo data" badge when `/api/mode` says demo.
+- [ ] Page container, `error.vue` (404 and 500 with a way back), skip-to-content link.
+- [ ] `AiCard.vue` as in `DESIGN.md`: props `title`, `loading`, `error`, `footnote`, a default slot, an AI badge and sparkles icon, a retry event, `aria-live="polite"` and `aria-busy`.
+- [ ] Looks right at 390 px and 1440 px, light and dark.
+
+**Check:** header and an `AiCard` in loading, error and ready states on a scratch page (do not commit the scratch page).
+
+### T-12 structure-ticket API
+**Owner:** Florian · **Time:** 40 min · **Needs:** T-11, T-05 · **Unblocks:** T-13
+**Goal:** free text in, a valid structured ticket out.
+- [ ] `POST /api/ai/structure-ticket` exactly as in `docs/contracts.md`. Output validated: summary 80 characters or fewer, `ticketType` and `impact` from the enums, `location` one of the create-meta options or `null`.
+- [ ] The prompt lists the real locations and never invents values.
+- [ ] Demo mode returns the pre-generated result with `source: 'demo'`. If the model fails outside demo mode the route returns `502`.
+- [ ] The 8 samples in `docs/ai-samples.md` are run and the results written down. Pass rule is in that file.
+
+**Check:** curl with the laptop sample returns valid JSON.
+
+### T-14 summarize-ticket API
+**Owner:** Marzieh · **Time:** 30 min · **Needs:** T-11, T-05, T-06 · **Unblocks:** T-15
+**Goal:** a short, honest explanation of any ticket.
+- [ ] `POST /api/ai/summarize-ticket` exactly as in `docs/contracts.md`. The server loads the ticket and comments itself from the key.
+- [ ] Output validated. A ticket with zero comments says the history is short instead of guessing.
+- [ ] Demo mode returns the pre-generated summary with `source: 'demo'`.
+- [ ] Tested (mocked LLM) on the long-thread demo ticket and a zero-comment ticket. Results in `docs/ai-samples.md`.
+
+**Check:** curl with the long-thread demo key returns `waitingOn` and `basedOnComments` filled.
+
+## Wave 3: screens (parallel)
+
+### T-08 Home: my requests
+**Owner:** Marzieh · **Time:** 45 min · **Needs:** T-03, T-05 · **Unblocks:** T-21
+**Goal:** the customer sees their requests and can start a new one.
+- [ ] `useTickets()` composable with loading, error (retry), empty and refresh.
+- [ ] `TicketCard`: key (mono), summary, status badge (icon and text), location, relative updated time. Wireframe: `docs/WIREFRAMES.md`.
+- [ ] Status filter chips with counts, and client-side text search.
+- [ ] "What's the problem?" box at the top that opens `/new`.
+- [ ] Skeleton, empty state (with a "New request" button) and error state. Cards work with the keyboard.
+
+**Check:** open `/`, filter by status, search, open a card.
+
+### T-09 Ticket detail
+**Owner:** Henry · **Time:** 45 min · **Needs:** T-03, T-05, T-06 · **Unblocks:** T-15
+**Goal:** the customer understands where a ticket stands.
+- [ ] `useTicket(key)` composable.
+- [ ] Header (key, status, type, location, created, updated), description, `TicketTimeline` with the created event and comments, details column from `lg` up.
+- [ ] Skeleton, error and not-found states. Zero comments handled.
+- [ ] A slot above the description for the summary card.
+
+**Check:** open the long-thread demo ticket. The timeline shows all comments.
+
+### T-13 AI creator UI
+**Owner:** Florian · **Time:** 60 min · **Needs:** T-12, T-03, T-05 · **Unblocks:** T-21
+**Goal:** describe, review, create. This is the hero of the demo.
+- [ ] `/new`: step 1 textarea, 3 example chips (from `docs/ai-samples.md`), "Create with AI" button (also Ctrl/Cmd+Enter), "Fill it in manually" link.
+- [ ] Step 2: progress text ("Understanding", "Structuring", "Choosing location"), no motion under reduced motion.
+- [ ] Step 3 inside an `AiCard`: editable title, description, type, location. Changed fields show "Edited". Missing-info hints and impact shown.
+- [ ] "Create request" calls `POST /api/tickets`, shows a success toast and opens the new ticket. Errors keep what was typed.
+- [ ] If the AI fails, the same form appears empty with a clear message.
+- [ ] Nothing is created until "Create request" is clicked.
+
+**Check:** the laptop sample goes from text to a created ticket that shows in the list.
+
+### T-15 Summary UI
+**Owner:** Henry · **Time:** 30 min · **Needs:** T-14, T-09, T-03 · **Unblocks:** T-21
+**Goal:** the "What's happening?" card on the detail page.
+- [ ] `AiCard` with the summary, waiting on, action required, "Based on N comments", and the "Demo data" marker when `source` is `demo`.
+- [ ] Skeleton while loading. Refresh button. Cached per key and `updatedAt`. Inline "Try again" on error.
+- [ ] The rest of the page works if the AI fails.
+
+**Check:** open the long-thread demo ticket. The card fills in. Turn the LLM key off and the page still works.
+
+## Wave 4: finish (everyone)
+
+### T-21 Final checks (10 minutes each)
+- [ ] **Henry:** keyboard-only run (home, open ticket, create with AI, back), axe scan on home, detail and `/new`.
+- [ ] **Marzieh:** 390 px and 1440 px, light and dark, on all three screens.
+- [ ] **Florian:** error cases (API down, LLM down, empty list), demo mode with the network off.
+- [ ] Every problem found is fixed or written down as a known limitation.
+
+### T-22 README, demo script and rehearsal
+- [ ] Judges' README: description, features, stack, setup and start, configuration, AI tools used (development and in the app) and the value they give, known limitations, significant pre-existing parts (Nuxt starter, libraries). Henry writes it.
+- [ ] `docs/demo-script.md` from the demo script in `SPEC.md`, with who says what and who drives.
+- [ ] Two timed rehearsals under 5 minutes, plus a backup screen recording.
+
+### T-24 Freeze and final push
+- [ ] Fresh clone: `pnpm install && pnpm build && pnpm test` pass.
+- [ ] `git grep` for keys and tokens finds nothing. `.env` not committed.
+- [ ] Code pushed to the repository the organizers assigned. CI green there.
+- [ ] Demo runs from the pushed version.
+
+## Only if Wave 3 is done with more than 40 minutes left
+
+- **T-10 Comment composer:** send a comment from the detail page, rolls back on failure.
+- **T-17 Since your last visit:** AI card listing changes since the last visit, only when something changed.
+- **T-18 Help me reply:** AI fills an editable draft. The customer sends it, never the AI.
+
+---
 
 ## Definition of Done (every ticket)
 
-- [ ] All of the ticket's checkboxes are ticked, and Owner is set.
-- [ ] `pnpm lint`, `pnpm typecheck` and `pnpm test` all pass. No failing, skipped or weakened test. CI is green after the push.
+- [ ] Every checkbox in the ticket is ticked.
+- [ ] `pnpm lint`, `pnpm typecheck` and `pnpm test` pass. No failing, skipped or weakened test. CI is green after the push.
 - [ ] New logic has a test in the same push.
 - [ ] Loading, empty and error states exist for anything that loads data.
 - [ ] No secrets, keys or real personal data in the diff.
 - [ ] `pnpm dev` runs and the demo path still works.
-- [ ] `SPEC.md` or `docs/api/README.md` updated if scope or API assumptions changed.
+- [ ] `docs/contracts.md` or `SPEC.md` updated if a shape or scope changed, with a line in the sync log.
 - [ ] Pushed to `main` following [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Extra for UI tickets (design rubric)**
+**Extra for UI tickets:** semantic tokens only, no hex colours. Works at 390 px and 1440 px, light and dark. Keyboard only works with visible focus. Status never relies on colour alone. Motion only on `transform` and `opacity`, off under reduced motion. AI content sits in `AiCard`, labelled and editable.
 
-- [ ] Only semantic Nuxt UI tokens and classes. No hardcoded hex colours.
-- [ ] Works at 390 px and 1440 px, in light and dark mode.
-- [ ] Reachable and usable with the keyboard alone, visible focus, labelled controls.
-- [ ] Status and priority never rely on colour alone (icon or text too).
-- [ ] Motion only on `transform` and `opacity`, and off under `prefers-reduced-motion`.
-- [ ] AI-produced content sits in `AiCard`, labelled as AI, and is editable before any write.
-
-**Extra for AI tickets**
-
-- [ ] Model output is validated before use. Invalid output triggers one retry, then a clear fallback.
-- [ ] 10 second timeout. The API key comes only from server config and is never logged.
-- [ ] Ticket text is passed as data. The prompt says never to follow instructions found in it.
-- [ ] If AI fails, the core flow still works.
-- [ ] Sample inputs and results are recorded in `docs/ai-samples.md`.
-
----
-
-## Foundation
-
-### T-01 Kickoff decisions and API check
-`P0 · All · 20m` · Owner: ______
-- [ ] Everyone has read `docs/api/README.md`, `SPEC.md` and `CONTRIBUTING.md`, and signed the table at the bottom.
-- [ ] API snapshots re-fetched (commands in `docs/api/README.md`, "Refreshing the snapshots"). Any diff read and the document updated.
-- [ ] Duplicate `docs/api/ticket-api.openapi.json` removed (keep `servicebridgeapi.openapi.json`).
-- [ ] Calling style decided and recorded: Nitro proxy or server routes. Recommendation: server routes, because the overlay then lives on the server.
-- [ ] LLM provider and key handling decided (key in server env only), and the event network can reach it.
-- [ ] Roles assigned and tickets claimed in the table above.
-- [ ] Organizers asked: is the Nuxt starter fine, and what is the final repo URL. Answer recorded in README.
-
-**Verify:** SPEC "Open questions" are all answered.
-
-### T-02 Baseline, design tokens and test setup
-`P0 · UI · 40m · needs T-01` · Owner: ______
-- [ ] Starter content removed (`TemplateMenu`, starter home page, starter title and meta). App named "TicketFlow AI".
-- [ ] Colours, radius and fonts applied from `DESIGN.md` (`app/app.config.ts`, `app/assets/css/main.css`).
-- [ ] `runtimeConfig` reads the API base and the LLM key (server only) using the names in `.env.example`.
-- [ ] Vitest installed with a `pnpm test` script and one passing sample test.
-- [ ] `.github/workflows/ci.yml` runs `pnpm test` after typecheck.
-- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` pass, CI green.
-
-**Verify:** clean clone, `pnpm install && pnpm dev` shows an empty branded page.
-
-### T-03 App shell
-`P0 · UI · 30m · needs T-02` · Owner: ______
-- [ ] Header with product name, nav (My requests, New request) and the colour-mode toggle.
-- [ ] Page container and spacing per `DESIGN.md`.
-- [ ] `error.vue` for 404 and 500 with a way back.
-- [ ] A slot for the "Demo data" badge (used by T-06).
-- [ ] Skip-to-content link. Layout good at 390 px and 1440 px, light and dark.
-
-### T-16 AiCard component
-`P0 · UI · 30m · needs T-02` · Owner: ______
-- [ ] `AiCard.vue` with props for title, loading, error, footnote, and a default slot.
-- [ ] AI style and sparkles icon from `DESIGN.md`. Label "AI" and footnote "AI-generated. Check before you rely on it."
-- [ ] Loading shows skeleton lines. Error shows a short message and a retry button, and never blocks the page.
-- [ ] `aria-live="polite"` and `aria-busy` while loading.
-
-## Data layer
-
-The mock is stateless: fixed responses, writes not persisted, bodies and query strings ignored, no CORS. Read `docs/api/README.md` before starting any Data ticket.
-
-### T-04 API types, mapping and upstream client
-`P0 · Data · 40m · needs T-01` · Owner: ______
-- [ ] API types copied from `docs/api/README.md` ("Response shapes"). Our domain types (`Ticket`, `TicketDetail`, `TicketComment`, `TicketStatus`, `CreateMeta`, `StructuredTicket`, `AiSummary`) in `shared/types.ts`.
-- [ ] Mapper from API types to domain types, with tests. Status is mapped by name, case-insensitively.
-- [ ] `server/utils/upstream.ts`: fetch with 8 second timeout, base URL from `runtimeConfig`, handles `204`, maps failures to a typed `ApiError`, never leaks stack traces.
-- [ ] Health probe using `GET /health` with a short timeout.
-- [ ] Tests for timeout, 404, 204 and the mapper.
-
-### T-05 MockApiProvider, overlay and routes
-`P0 · Data · 60m · needs T-04` · Owner: ______
-- [ ] `TicketProvider` with `list`, `get`, `create`, `addComment` implemented per the mapping table in `docs/api/README.md`.
-- [ ] Server-side overlay (in-memory, keyed by `issueKey`) holds created tickets and comments. Created tickets get a unique local key, because the mock always returns `MCDTE-50`. Local tickets are labelled as local.
-- [ ] `get` takes summary and description from the list item, not the detail (the detail returns placeholder text).
-- [ ] Routes: `GET /api/tickets`, `GET /api/tickets/:key`, `GET /api/create-meta`, `POST /api/tickets`, `POST /api/tickets/:key/comments`. Typed JSON out, one error shape `{ message, status }`.
-- [ ] Inputs validated on our side (the mock validates nothing): issue key pattern, required summary, size limits.
-- [ ] Overlay reset endpoint or button for demos.
-- [ ] Tests for overlay merge, unique keys and validation. Curl-checked against the live mock.
-
-### T-06 Demo data and demo mode
-`P0 · Data · 45m · needs T-04` · Owner: ______
-- [ ] `FixtureProvider` with 8 to 10 seeded tickets, including one long thread (8+ comments), one waiting on the customer, one resolved, one new today, and varied types and locations.
-- [ ] Switch with env `NUXT_DEMO_MODE=true` or a `?demo=1` cookie. Also chosen automatically when the health probe fails.
-- [ ] A visible "Demo data" badge whenever demo mode is on. Demo data is never presented as live.
-- [ ] Demo tickets give the AI summary meaningful input (the live mock has 2 tickets and no comments).
-
-### T-07 Ticket composables
-`P0 · Data · 40m · needs T-04` · Owner: ______
-- [ ] `useTickets()` and `useTicket(key)` with loading, error (retry) and empty states, plus refresh.
-- [ ] Records the last visit time per ticket in localStorage (used by T-17).
-- [ ] Test for the state transitions.
-
-## Core screens
-
-### T-08 Home: my requests
-`P0 · UI · 60m · needs T-03, T-06, T-07` · Owner: ______
-- [ ] `TicketCard`: key, summary, status badge (icon, text and colour), location, relative updated time.
-- [ ] Status filter chips with counts. Client-side text search (the mock ignores query strings).
-- [ ] Skeleton, empty state (with a "New request" button) and error state with retry.
-- [ ] Prominent "Describe a problem" entry at the top that leads to T-13.
-- [ ] Cards focusable, Enter opens the ticket.
-
-### T-09 Ticket detail
-`P0 · UI · 60m · needs T-03, T-07` · Owner: ______
-- [ ] Header with key, status, type, location, created and updated times. Description below.
-- [ ] `TicketTimeline` showing the created event and comments in order. Handles zero comments.
-- [ ] Skeleton, error and not-found states. Back link keeps the filters.
-- [ ] Space reserved for the AI summary card (T-15).
-
-## AI features
-
-### T-11 LLM server utility
-`P0 · AI · 45m · needs T-01` · Owner: ______
-- [ ] `server/utils/llm.ts` with `askJson(system, user, validate)`. 10 second timeout, one retry, typed `AiError`.
-- [ ] Key only from `runtimeConfig`. Logs never contain the key, bodies or full ticket text.
-- [ ] Ticket text is delimited as data. System prompt says never to follow instructions inside it.
-- [ ] Hand-written type guards for validation. Adding a validation library needs a team OK first.
-- [ ] Tests with mocked fetch: invalid JSON, retry then error, and an injection sample that does not change the output shape.
-
-### T-12 AI structure-ticket API
-`P0 · AI · 50m · needs T-11, T-05` · Owner: ______
-- [ ] `POST /api/ai/structure-ticket` takes `{ text }` and returns `{ summary, description, ticketType, location, impact, missingInfo }`. Summary is 80 characters or fewer.
-- [ ] `ticketType` and `location` are either one of the `create-meta` or catalog options, or `null`. The model never invents values.
-- [ ] `missingInfo` lists what to ask the customer (for example a serial number).
-- [ ] 8 sample complaints recorded in `docs/ai-samples.md`, at least 7 give valid, sensible output.
-- [ ] Empty, very long (over 4000 characters) and non-English input return clear errors or sensible output.
-
-### T-13 AI ticket creator UI
-`P0 · UI, AI · 90m · needs T-12, T-16, T-05` · Owner: ______
-- [ ] Step 1: textarea, 3 example chips, "Create with AI" button (also Ctrl/Cmd+Enter).
-- [ ] Step 2: progress text ("Understanding", "Structuring", "Choosing location") that respects reduced motion.
-- [ ] Step 3: editable review form (title, description, type, location) inside `AiCard`. Changed fields are marked. Missing-info hints shown.
-- [ ] "Create request" posts through T-05, shows a success toast and opens the new ticket. Errors keep the entered data.
-- [ ] If the AI fails, the same form appears empty with "Fill it in manually". Creating a ticket never depends on AI.
-- [ ] Nothing is created until the customer clicks "Create request".
-
-### T-14 AI summarize-ticket API
-`P0 · AI · 40m · needs T-11, T-05` · Owner: ______
-- [ ] `POST /api/ai/summarize-ticket` takes `{ key }`. The server loads the ticket and comments itself, so the client cannot inject text.
-- [ ] Returns `{ whatsHappening, waitingOn, actionRequired, basedOnComments }`. `waitingOn` is `You`, `Support` or `Nobody`. `whatsHappening` is 3 sentences or fewer.
-- [ ] Says so when data is thin (for example zero comments) instead of guessing.
-- [ ] Tested on the demo long-thread ticket and a zero-comment ticket. Results in `docs/ai-samples.md`.
-
-### T-15 AI summary UI
-`P0 · UI · 45m · needs T-14, T-16, T-09` · Owner: ______
-- [ ] "What's happening?" `AiCard` on the detail page with waiting-on and action-required lines and "Based on N comments".
-- [ ] Skeleton while loading. Refresh button. Cached per ticket and `updatedAt`.
-- [ ] If it fails, the rest of the page still works.
-
-## Delivery
-
-### T-21 Responsive and accessibility pass
-`P0 · UI · 45m · needs T-13, T-15` · Owner: ______
-- [ ] Keyboard-only run through: home, open ticket, create with AI, back.
-- [ ] axe scan on home, detail and creator: no serious or critical issues.
-- [ ] 390 px and 1440 px, light and dark, all reviewed.
-- [ ] Reduced-motion check. Touch targets at least 44 px on mobile.
-
-### T-22 Demo script and rehearsal
-`P0 · Demo · 45m · needs T-13, T-15` · Owner: ______
-- [ ] `docs/demo-script.md` with the 5-minute story and timings (problem, create with AI, understand a ticket, since last visit if built, reply help if built, closing line).
-- [ ] Demo data prepared so every step works offline.
-- [ ] Rehearsed three times end to end, timed, with a backup screen recording.
-- [ ] Who says what, and who drives the laptop, decided.
-
-### T-23 Judges' README
-`P0 · Demo · 30m · needs T-13` · Owner: ______
-- [ ] Description, main features, technology stack, setup and start instructions, required configuration.
-- [ ] AI tools used for development and AI features in the app, and what value they give.
-- [ ] Known limitations (mock API is stateless, demo data, no real status changes).
-- [ ] Significant pre-existing parts listed (Nuxt starter, libraries).
-
-### T-24 Freeze and final push
-`P0 · All · 30m · at 4:30` · Owner: ______
-- [ ] Fresh clone: `pnpm install && pnpm build && pnpm test` pass.
-- [ ] `git grep` for keys and tokens finds nothing. `.env` not committed.
-- [ ] Code pushed to the repository the organizers assigned. CI green there too.
-- [ ] Demo runs from the pushed version.
-
-## P1 (only after every P0 is polished)
-
-### T-10 Comment composer
-`P1 · UI · 40m · needs T-05, T-09` · Owner: ______
-- [ ] Textarea and Send on the detail page. Comment appears immediately and rolls back with a retry on failure.
-- [ ] Empty comments blocked. Keyboard shortcut to send.
-
-### T-17 Since your last visit
-`P1 · Data, AI · 60m · needs T-07, T-11` · Owner: ______
-- [ ] Compares last visit with `updatedAt` and new comments.
-- [ ] `AiCard` "Since your last visit" appears only when something changed. Nothing shows on a first visit.
-- [ ] Demo data includes a ticket that triggers it.
-
-### T-18 Help me reply and next action
-`P1 · AI, UI · 75m · needs T-10, T-14` · Owner: ______
-- [ ] `POST /api/ai/draft-reply` returns a draft. "Help me reply" fills the composer and the customer edits and sends.
-- [ ] A "Recommended next step" line added to the summary.
-- [ ] AI never sends anything by itself.
-
-### T-19 Notifications bell
-`P1 · Data, UI · 45m · needs T-05` · Owner: ______
-- [ ] Notification API is out of scope in `docs/api/README.md`. Confirm with the team before starting, then verify the endpoints first.
-- [ ] Bell with unread badge in the header. Marks read on open.
-
----
+**Extra for AI tickets:** output validated before use, one retry then a clear fallback. 10 second timeout. Key only in server config, never logged. Ticket text is data, never instructions. The core flow works if AI fails.
 
 ## Team sign-off
 
-Add your row in your first push. It means you have read `SPEC.md`, `CONTRIBUTING.md`, `docs/api/README.md` and this file, and you follow the push rules.
+Add your row in your first push. It means you have read `CONTRIBUTING.md`, `docs/contracts.md` and this file, and you follow the push rules.
 
-| Name | GitHub handle | Read and agreed (date) |
-|---|---|---|
-| | | |
+| Name | Read and agreed (time) |
+|---|---|
+| | |
 
 ## Sync log
 
-One line per decision that changes scope, stack, the API or the demo path: `time, who, decision`.
+One line per decision that changes scope, stack, a contract or the demo path: `time, who, decision`.
 
 - 2026-09-29, team: direction is customer-first (TicketFlow AI). The operator autopilot board is dropped.
+- 2026-09-29, team: LLM is provider-neutral (base URL, key, model). The provider is whichever working key a teammate has (T-01).
+- 2026-09-29, team: 3 hours left. Tickets cut and ordered in waves. Owners drawn at random and balanced.

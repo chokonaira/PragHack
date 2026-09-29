@@ -3,7 +3,7 @@
 Team project for the PragVue Hackathon 2026, a 5-hour build of a Vue.js app called **TicketFlow AI** (customer-first). Read these before working, in this order:
 
 1. [CONTRIBUTING.md](CONTRIBUTING.md): the rules for every push (trunk-based, tests must pass).
-2. [docs/api/README.md](docs/api/README.md): the Mock API spec for this repo.
+2. [docs/contracts.md](docs/contracts.md) and [docs/api/README.md](docs/api/README.md): our shared shapes and the Mock API spec.
 3. [pragvue-ai-ticket-management-implementation-plan.md](pragvue-ai-ticket-management-implementation-plan.md): the product plan.
 4. [SPEC.md](SPEC.md) and [TICKETS.md](TICKETS.md): MVP scope and the tickets. Work from a ticket. Do not build anything that is not in one without asking.
 
