@@ -38,7 +38,7 @@ const emit = defineEmits<{ retry: [], refresh: [] }>()
       </UBadge>
       <UButton
         v-if="refreshable && !loading"
-        class="ms-auto"
+        class="ms-auto max-sm:size-11"
         color="neutral"
         variant="ghost"
         size="xs"

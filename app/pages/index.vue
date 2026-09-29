@@ -1,10 +1,50 @@
 <script setup lang="ts">
-import type { StatusId } from '../../shared/types'
+import type { StatusId, Ticket } from '../../shared/types'
 
 const { data: tickets, status, refresh } = await useTickets()
 
 const { openWith, lastCreated } = useNewRequest()
 const route = useRoute()
+const toast = useToast()
+
+// Tickets that just arrived or changed (for example from another device), with the tag to show.
+const fresh = ref<Record<string, 'New' | 'Updated'>>({})
+const knownUpdates = new Map<string, string>()
+let primed = false
+
+function markFresh(keys: string[], label: 'New' | 'Updated') {
+  if (!keys.length) return
+  for (const key of keys) fresh.value = { ...fresh.value, [key]: label }
+  setTimeout(() => {
+    fresh.value = Object.fromEntries(Object.entries(fresh.value).filter(([key]) => !keys.includes(key))) as typeof fresh.value
+  }, 5000)
+}
+
+watch(tickets, (list) => {
+  const arrived: Ticket[] = []
+  const changed: string[] = []
+  for (const t of list) {
+    const previous = knownUpdates.get(t.key)
+    if (previous === undefined) arrived.push(t)
+    else if (previous !== t.updatedAt) changed.push(t.key)
+    knownUpdates.set(t.key, t.updatedAt)
+  }
+  if (!primed) {
+    primed = true
+    return
+  }
+  const others = arrived.filter(t => t.key !== lastCreated.value)
+  markFresh(arrived.map(t => t.key), 'New')
+  markFresh(changed, 'Updated')
+  if (others.length) {
+    toast.add({
+      title: others.length === 1 ? 'New request' : `${others.length} new requests`,
+      description: others.length === 1 ? others[0]!.summary : 'They are at the top of the list.',
+      icon: 'i-lucide-inbox',
+      duration: 4000
+    })
+  }
+}, { immediate: true })
 
 const hasLoaded = ref(false)
 watch(status, (value) => {
@@ -56,9 +96,18 @@ onMounted(() => {
   poll = setInterval(() => {
     if (document.visibilityState === 'visible' && status.value !== 'pending') refresh()
   }, 3000)
+  document.addEventListener('visibilitychange', refreshWhenVisible)
 })
 
-onBeforeUnmount(() => clearInterval(poll))
+// Catch up straight away when the tab comes back to the front.
+function refreshWhenVisible() {
+  if (document.visibilityState === 'visible') refresh()
+}
+
+onBeforeUnmount(() => {
+  clearInterval(poll)
+  document.removeEventListener('visibilitychange', refreshWhenVisible)
+})
 
 watch(lastCreated, (key) => {
   if (key) setTimeout(() => (lastCreated.value = null), 3500)
@@ -237,11 +286,15 @@ watch(lastCreated, (key) => {
           <li
             v-for="ticket in visible"
             :key="ticket.key"
+            class="row-item"
           >
-            <TicketRow
-              :ticket="ticket"
-              :highlight="ticket.key === lastCreated"
-            />
+            <div class="row-inner">
+              <TicketRow
+                :ticket="ticket"
+                :highlight="ticket.key === lastCreated || Boolean(fresh[ticket.key])"
+                :highlight-label="fresh[ticket.key] ?? 'New'"
+              />
+            </div>
           </li>
         </TransitionGroup>
       </section>

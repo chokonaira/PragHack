@@ -156,6 +156,7 @@ async function create() {
     title="New request"
     description="Tell us what happened. We'll do the paperwork."
     :ui="{ content: 'sm:max-w-xl' }"
+    :close="{ class: 'max-sm:size-11' }"
   >
     <template #body>
       <Transition
@@ -251,7 +252,7 @@ async function create() {
               >
                 <UInput
                   v-model="form.summary"
-                  size="lg"
+                  size="xl"
                   class="w-full"
                   maxlength="255"
                 />
@@ -275,7 +276,7 @@ async function create() {
                 >
                   <USelect
                     v-model="form.ticketType"
-                    size="lg"
+                    size="xl"
                     :items="typeItems"
                     class="w-full"
                   />
@@ -288,7 +289,7 @@ async function create() {
                 >
                   <USelect
                     v-model="form.location"
-                    size="lg"
+                    size="xl"
                     :items="locations"
                     placeholder="Choose a location"
                     class="w-full"
@@ -342,12 +343,14 @@ async function create() {
               color="neutral"
               variant="ghost"
               icon="i-lucide-arrow-left"
+              class="max-sm:min-h-11"
               @click="step = 'describe'"
             >
               Back
             </UButton>
             <UButton
               size="lg"
+              class="max-sm:min-h-11"
               :loading="creating"
               @click="create"
             >

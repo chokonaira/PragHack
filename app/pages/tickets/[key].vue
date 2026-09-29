@@ -37,9 +37,9 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
     <UButton
       to="/"
       color="neutral"
-      variant="link"
+      variant="ghost"
       icon="i-lucide-arrow-left"
-      class="-ms-2.5"
+      class="-ms-2.5 max-sm:min-h-11"
     >
       My requests
     </UButton>
@@ -209,7 +209,7 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
               In real life support moves your request forward. Play support here.
             </p>
             <UButton
-              class="mt-3"
+              class="mt-3 max-sm:min-h-11"
               size="sm"
               color="neutral"
               variant="outline"

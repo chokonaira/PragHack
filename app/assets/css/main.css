@@ -17,7 +17,7 @@
   --color-cobalt-950: #131F4D;
 
   --animate-voice-bar: voice-bar 1s ease-in-out infinite;
-  --animate-row-flash: row-flash 2.6s cubic-bezier(.2, .8, .2, 1) 1;
+  --animate-row-flash: row-flash 4s cubic-bezier(.2, .8, .2, 1) 1;
   --animate-flow-pulse: flow-pulse 2.4s cubic-bezier(.2, .8, .2, 1) infinite;
 
   @keyframes voice-bar {
@@ -32,7 +32,7 @@
 
   @keyframes row-flash {
     0% {
-      background-color: color-mix(in oklab, var(--ui-primary) 18%, transparent);
+      background-color: color-mix(in oklab, var(--ui-primary) 22%, transparent);
     }
     100% {
       background-color: transparent;
@@ -102,12 +102,28 @@ h2 {
   transform: translateY(-8px);
 }
 
-.row-enter-active,
-.row-move {
-  transition: opacity var(--motion-slow) var(--ease-out), transform var(--motion-slow) var(--ease-out);
+@utility row-item {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+@utility row-inner {
+  min-height: 0;
+}
+
+.row-enter-active {
+  transition: grid-template-rows var(--motion-slow) var(--ease-out), opacity var(--motion-slow) var(--ease-out);
+}
+
+.row-enter-active .row-inner {
+  overflow: hidden;
 }
 
 .row-enter-from {
+  grid-template-rows: 0fr;
   opacity: 0;
-  transform: translateY(-14px);
+}
+
+.row-move {
+  transition: transform var(--motion-slow) var(--ease-out);
 }
