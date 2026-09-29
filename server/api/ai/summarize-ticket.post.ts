@@ -1,16 +1,31 @@
 import { getDemoSummary } from '../../data/demo-ai'
+import { summarizeTicket } from '../../utils/ai/summarize'
+import { NotFoundError, apiError } from '../../utils/errors'
+import { isAiError, useLlm } from '../../utils/llm'
+import { resolveProvider } from '../../utils/mode'
+import { TICKET_KEY_RE } from '../../utils/validation'
 
-// Demo branch of T-14. Marzieh adds the real LLM path and keeps this as the demo fallback.
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ key?: string }>(event)
   const key = typeof body?.key === 'string' ? body.key : ''
-  if (!/^[A-Z][A-Z0-9]+-[A-Za-z0-9-]+$/.test(key)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid ticket key' })
-  }
+  if (!TICKET_KEY_RE.test(key)) return apiError(event, 400, 'Invalid ticket key')
+
+  const { provider, mode } = await resolveProvider(event)
+
+  let ticket
   try {
-    const ticket = await demoProvider.get(key)
-    return getDemoSummary(key, ticket.comments.length)
-  } catch {
-    throw createError({ statusCode: 404, statusMessage: 'Ticket not found' })
+    ticket = await provider.get(key)
+  } catch (err) {
+    if (err instanceof NotFoundError) return apiError(event, 404, 'Ticket not found')
+    return apiError(event, 502, 'Could not load ticket')
+  }
+
+  if (mode.mode === 'demo') return getDemoSummary(key, ticket.comments.length, ticket.status)
+
+  try {
+    return await summarizeTicket(ticket, useLlm())
+  } catch (err) {
+    if (isAiError(err)) return apiError(event, err.status, err.message)
+    return apiError(event, 502, 'Could not generate summary')
   }
 })

@@ -12,6 +12,7 @@ useHead({
 })
 
 const { openWith } = useNewRequest()
+const { data: mode } = useFetch<{ mode: 'demo' | 'live' }>('/api/mode')
 
 const title = 'TicketFlow AI'
 const description = 'Describe a problem in your own words. AI turns it into a request and keeps you posted.'
@@ -35,13 +36,23 @@ useSeoMeta({
 
     <header class="sticky top-0 z-40 border-b border-default bg-default/85 backdrop-blur">
       <UContainer class="flex h-16 items-center justify-between gap-4">
-        <NuxtLink
-          to="/"
-          class="-ms-1 rounded-md p-1 focus-visible:outline-2 focus-visible:outline-primary"
-          aria-label="TicketFlow home"
-        >
-          <AppLogo />
-        </NuxtLink>
+        <div class="flex items-center gap-3">
+          <NuxtLink
+            to="/"
+            class="-ms-1 rounded-md p-1 focus-visible:outline-2 focus-visible:outline-primary"
+            aria-label="TicketFlow home"
+          >
+            <AppLogo />
+          </NuxtLink>
+          <UBadge
+            v-if="mode?.mode === 'demo'"
+            color="neutral"
+            variant="subtle"
+            size="sm"
+          >
+            Demo data
+          </UBadge>
+        </div>
 
         <nav
           class="flex items-center gap-1"

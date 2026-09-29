@@ -318,23 +318,25 @@ async function create() {
                 />
                 {{ impactLabel[suggestion.impact] }}
               </p>
-              <ul
-                v-if="suggestion?.missingInfo.length"
-                class="space-y-1 text-sm text-default"
-              >
-                <li
-                  v-for="q in suggestion.missingInfo"
-                  :key="q"
-                  class="flex items-start gap-2"
-                >
-                  <UIcon
-                    name="i-lucide-circle-help"
-                    class="mt-0.5 size-4 shrink-0 text-warning"
-                    aria-hidden="true"
-                  />
-                  {{ q }} Add it to the description so support can help faster.
-                </li>
-              </ul>
+              <div v-if="suggestion?.missingInfo.length">
+                <p class="text-sm font-medium text-highlighted">
+                  Adding this helps support
+                </p>
+                <ul class="mt-1 space-y-1 text-sm text-default">
+                  <li
+                    v-for="q in suggestion.missingInfo"
+                    :key="q"
+                    class="flex items-start gap-2"
+                  >
+                    <UIcon
+                      name="i-lucide-circle-help"
+                      class="mt-0.5 size-4 shrink-0 text-warning"
+                      aria-hidden="true"
+                    />
+                    {{ q }}
+                  </li>
+                </ul>
+              </div>
             </div>
           </component>
 

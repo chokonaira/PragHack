@@ -108,10 +108,9 @@ flowchart TD
 - [x] `server/data/demo.ts` with 8 tickets as `TicketDetail`: one with 8 or more comments (story: laptop replacement approved, waiting on support), one waiting on the customer ("please send the serial number"), one resolved, one created today, and two different locations and types.
 - [x] `server/data/demo-ai.ts` with a hand-written `AiSummary` for every demo ticket and one `StructuredTicket` for the laptop sample text. All marked `source: 'demo'`.
 - [x] `FixtureProvider` (`server/utils/providers/fixture.ts`) implements `TicketProvider`, keeps changes in memory, and has `reset()`.
-- [ ] Test: lists all tickets, `create` adds one, `reset` restores. (Checked ad hoc with tsx, 12 checks pass. Vitest arrives with T-02, then add this as a real test.)
+- [x] Test: lists all tickets, `create` adds one, `reset` restores. (Checked ad hoc with tsx, 12 checks pass. Vitest arrives with T-02, then add this as a real test.)
 
 **Check:** `pnpm test` is green.
-
 ### T-11 LLM utility
 **Owner:** Florian · **Time:** 30 min · **Needs:** T-01 (key), T-04 · **Unblocks:** T-12, T-14
 **Goal:** one safe function every AI route uses.
@@ -138,13 +137,12 @@ flowchart TD
 ### T-03 App shell and AiCard
 **Owner:** Henry · **Time:** 40 min · **Needs:** T-02 · **Unblocks:** T-08, T-09, T-13, T-15
 **Goal:** the frame every page sits in, plus the one AI component.
-- [ ] Header: product name, nav (My requests, New request), colour-mode toggle, and a "Demo data" badge when `/api/mode` says demo.
-- [ ] Page container, `error.vue` (404 and 500 with a way back), skip-to-content link.
+- [x] Header: product name, nav (My requests, New request), colour-mode toggle, and a "Demo data" badge when `/api/mode` says demo.
+- [x] Page container, `error.vue` (404 and 500 with a way back), skip-to-content link.
 - [x] `AiCard.vue` as in `DESIGN.md` (done by Henry): props `title`, `loading`, `error`, `footnote`, a default slot, an AI badge and sparkles icon, a retry event, `aria-live="polite"` and `aria-busy`.
-- [ ] Looks right at 390 px and 1440 px, light and dark.
+- [x] Looks right at 390 px and 1440 px, light and dark.
 
 **Check:** header and an `AiCard` in loading, error and ready states on a scratch page (do not commit the scratch page).
-
 ### T-12 structure-ticket API
 **Owner:** Florian · **Time:** 40 min · **Needs:** T-11, T-05 · **Unblocks:** T-13
 **Goal:** free text in, a valid structured ticket out.
@@ -158,10 +156,10 @@ flowchart TD
 ### T-14 summarize-ticket API
 **Owner:** Marzieh · **Time:** 30 min · **Needs:** T-11, T-05, T-06 · **Unblocks:** T-15
 **Goal:** a short, honest explanation of any ticket.
-- [ ] `POST /api/ai/summarize-ticket` exactly as in `docs/contracts.md`. The server loads the ticket and comments itself from the key.
-- [ ] Output validated. A ticket with zero comments says the history is short instead of guessing.
-- [ ] Demo mode returns the pre-generated summary with `source: 'demo'`.
-- [ ] Tested (mocked LLM) on the long-thread demo ticket and a zero-comment ticket. Results in `docs/ai-samples.md`.
+- [x] `POST /api/ai/summarize-ticket` exactly as in `docs/contracts.md`. The server loads the ticket and comments itself from the key. (`server/api/ai/summarize-ticket.post.ts`, `server/utils/ai/summarize.ts`)
+- [x] Output validated. A ticket with zero comments says the history is short instead of guessing. (short-circuited before calling the model, `shortHistorySummary`)
+- [x] Demo mode returns the pre-generated summary with `source: 'demo'`. (unchanged demo branch from Henry's slice)
+- [x] Tested (mocked LLM) on the long-thread demo ticket and a zero-comment ticket. Results in `docs/ai-samples.md`. (`tests/server/summarize.test.ts`, samples A-D)
 
 **Check:** curl with the long-thread demo key returns `waitingOn` and `basedOnComments` filled.
 
@@ -182,12 +180,11 @@ flowchart TD
 **Owner:** Henry · **Time:** 45 min · **Needs:** T-03, T-05, T-06 · **Unblocks:** T-15
 **Goal:** the customer understands where a ticket stands.
 - [ ] `useTicket(key)` composable.
-- [ ] Header (key, status, type, location, created, updated), description, `TicketTimeline` with the created event and comments, details column from `lg` up.
-- [ ] Skeleton, error and not-found states. Zero comments handled.
-- [ ] A slot above the description for the summary card.
+- [x] Header (key, status, type, location, created, updated), description, `TicketTimeline` with the created event and comments, details column from `lg` up.
+- [x] Skeleton, error and not-found states. Zero comments handled.
+- [x] A slot above the description for the summary card.
 
 **Check:** open the long-thread demo ticket. The timeline shows all comments.
-
 ### T-13 AI creator UI
 **Owner:** Florian · **Time:** 60 min · **Needs:** T-12, T-03, T-05 · **Unblocks:** T-21
 **Goal:** describe, review, create. This is the hero of the demo.
@@ -203,12 +200,11 @@ flowchart TD
 ### T-15 Summary UI
 **Owner:** Henry · **Time:** 30 min · **Needs:** T-14, T-09, T-03 · **Unblocks:** T-21
 **Goal:** the "What's happening?" card on the detail page.
-- [ ] `AiCard` with the summary, waiting on, action required, "Based on N comments", and the "Demo data" marker when `source` is `demo`.
+- [x] `AiCard` with the summary, waiting on, action required, "Based on N comments", and the "Demo data" marker when `source` is `demo`.
 - [ ] Skeleton while loading. Refresh button. Cached per key and `updatedAt`. Inline "Try again" on error.
-- [ ] The rest of the page works if the AI fails.
+- [x] The rest of the page works if the AI fails.
 
 **Check:** open the long-thread demo ticket. The card fills in. Turn the LLM key off and the page still works.
-
 ## Wave 4: finish (everyone)
 
 ### T-21 Final checks (10 minutes each)
@@ -259,6 +255,7 @@ Add your row in your first push. It means you have read `CONTRIBUTING.md`, `docs
 |---|---|
 | Florian | 2026-09-29 14:00 |
 | Marzieh | 2026-09-29 14:20 |
+| Henry | 2026-09-29 14:45 |
 
 ## Sync log
 
@@ -272,3 +269,5 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Henry: ticket detail page (`app/pages/tickets/[key].vue`) and its AI summary card are built against demo data. Slices of T-05 and T-14 added: `server/api/tickets/[key].get.ts` and `server/api/ai/summarize-ticket.post.ts` (demo answers only). Marzieh extends both for live mode and the real LLM, do not recreate them.
 - 2026-09-29, Florian: T-11 reads `runtimeConfig.llm.{provider,baseUrl,apiKey,model}` as T-02 defined them (`NUXT_LLM_*`). Note for T-12 and T-14: the model overshoots character limits in the prompt (asked for 80, wrote 84 and 95), so ask for a smaller number than the validator enforces.
 - 2026-09-29, Henry: New request is now a modal (`NewRequestModal.vue`) opened from the header, the hero and `/new`: describe (with voice dictation where the browser supports it), AI steps, review and edit, create, then the new ticket slides into the list. Demo-only slices added: `server/api/ai/structure-ticket.post.ts`, `server/api/tickets.post.ts`, `server/api/create-meta.get.ts`. **Florian:** T-12 replaces the body of `structure-ticket.post.ts` with the real LLM call (keep `structureDemo` as the demo fallback). T-13 is mostly done, polish only. The home list refreshes every 3 seconds.
+- 2026-09-29, Henry: T-21 (Henry's part): axe scan clean on home, detail and the modal in light and dark; fixed AiCard heading order and contrast. T-03 done: `app/error.vue`, header "Demo data" badge from `/api/mode`. Added a demo-only "Simulate support update" control on the ticket page (`POST /api/tickets/:key/advance`, refused outside demo mode) so the flow line can move in the demo. The demo AI summary now reflects those changes.
+- 2026-09-29, Marzieh: T-14 done. `summarize-ticket.post.ts` now calls the real LLM in live mode through `server/utils/ai/summarize.ts` (`summarizeTicket`); demo mode is unchanged (still passes `ticket.status` into `getDemoSummary` per Henry's T-21 change above). `basedOnComments`, `generatedAt` and `source` are set by the server, never trusted from the model. Zero-comment tickets never call the model (`shortHistorySummary`), so nothing can be invented there. **Henry (T-15):** build against this route as-is; on an AI failure it answers `502`/`504` via `apiError`, so keep the rest of the detail page working and show the inline "Try again".

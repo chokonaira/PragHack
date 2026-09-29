@@ -5,14 +5,16 @@ withDefaults(defineProps<{
   error?: string | null
   footnote?: string
   demo?: boolean
+  refreshable?: boolean
 }>(), {
   loading: false,
   error: null,
   footnote: undefined,
-  demo: false
+  demo: false,
+  refreshable: false
 })
 
-const emit = defineEmits<{ retry: [] }>()
+const emit = defineEmits<{ retry: [], refresh: [] }>()
 </script>
 
 <template>
@@ -28,13 +30,14 @@ const emit = defineEmits<{ retry: [] }>()
         class="size-5 text-secondary"
         aria-hidden="true"
       />
-      <h3 class="text-lg font-medium text-highlighted">
+      <h2 class="text-lg font-medium text-highlighted">
         {{ title }}
-      </h3>
+      </h2>
       <UBadge
         color="secondary"
         variant="subtle"
         size="sm"
+        class="text-violet-800 dark:text-violet-200"
       >
         AI
       </UBadge>
@@ -46,6 +49,16 @@ const emit = defineEmits<{ retry: [] }>()
       >
         Demo data
       </UBadge>
+      <UButton
+        v-if="refreshable && !loading"
+        class="ms-auto"
+        color="neutral"
+        variant="ghost"
+        size="xs"
+        icon="i-lucide-refresh-cw"
+        aria-label="Refresh"
+        @click="emit('refresh')"
+      />
     </header>
 
     <div class="mt-3">
@@ -81,7 +94,7 @@ const emit = defineEmits<{ retry: [] }>()
       <slot v-else />
     </div>
 
-    <p class="mt-4 text-xs text-muted">
+    <p class="mt-4 text-xs text-toned">
       AI-generated. Check before you rely on it.<template v-if="footnote">
         {{ ' ' }}{{ footnote }}
       </template>

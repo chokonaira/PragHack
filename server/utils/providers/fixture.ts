@@ -11,6 +11,8 @@ import { NotFoundError } from '../errors'
 
 export interface FixtureProvider extends TicketProvider {
   reset(): void
+  // Demo only: plays the support side. new -> in progress -> resolved, with a support reply.
+  advance(key: string): Promise<TicketDetail>
 }
 
 function toTicket(detail: TicketDetail): Ticket {
@@ -83,6 +85,35 @@ export function createFixtureProvider(): FixtureProvider {
         requestTypeId: '101',
         locations: DEMO_LOCATIONS.map(l => ({ ...l }))
       }
+    },
+
+    async advance(key) {
+      const found = find(key)
+      const now = new Date().toISOString()
+      if (found.status === 'new') {
+        found.status = 'in_progress'
+        found.statusName = 'In progress'
+        found.assignee = 'IT Support'
+        found.comments = [...found.comments, {
+          id: `support-${nextComment++}`,
+          author: 'IT Support',
+          body: 'We\'ve picked this up and started looking into it. We\'ll update you here as soon as we know more.',
+          createdAt: now,
+          fromCustomer: false
+        }]
+      } else if (found.status === 'in_progress') {
+        found.status = 'resolved'
+        found.statusName = 'Resolved'
+        found.comments = [...found.comments, {
+          id: `support-${nextComment++}`,
+          author: 'IT Support',
+          body: 'This is fixed now. Let us know if it happens again and we\'ll reopen it.',
+          createdAt: now,
+          fromCustomer: false
+        }]
+      }
+      found.updatedAt = now
+      return { ...found, comments: [...found.comments] }
     },
 
     reset() {

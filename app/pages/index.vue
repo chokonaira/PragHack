@@ -9,6 +9,14 @@ const { data: tickets, status, refresh } = await useFetch<Ticket[]>('/api/ticket
 const { openWith, lastCreated } = useNewRequest()
 const route = useRoute()
 
+const hasLoaded = ref(false)
+watch(status, (value) => {
+  if (value === 'success') hasLoaded.value = true
+}, { immediate: true })
+const firstLoad = computed(() => status.value === 'pending' && !hasLoaded.value)
+const refreshing = computed(() => status.value === 'pending' && hasLoaded.value)
+const reconnecting = computed(() => status.value === 'error' && hasLoaded.value)
+
 const filter = ref<'all' | StatusId>('all')
 const draft = ref('')
 
@@ -110,12 +118,31 @@ watch(lastCreated, (key) => {
 
       <section aria-labelledby="requests-title">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <h2
-            id="requests-title"
-            class="text-2xl font-semibold tracking-tight text-highlighted"
-          >
-            My requests
-          </h2>
+          <div class="flex items-center gap-3">
+            <h2
+              id="requests-title"
+              class="text-2xl font-semibold tracking-tight text-highlighted"
+            >
+              My requests
+            </h2>
+            <span class="flex items-center gap-1.5 text-xs text-toned">
+              <span
+                class="relative flex size-2"
+                aria-hidden="true"
+              >
+                <span
+                  v-if="refreshing"
+                  class="absolute inline-flex size-full rounded-full opacity-60 motion-safe:animate-flow-pulse"
+                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
+                />
+                <span
+                  class="relative inline-flex size-2 rounded-full transition-colors duration-(--motion-base)"
+                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
+                />
+              </span>
+              {{ reconnecting ? 'Reconnecting' : 'Live' }}
+            </span>
+          </div>
           <div
             class="flex flex-wrap gap-1"
             role="group"
@@ -137,7 +164,7 @@ watch(lastCreated, (key) => {
         </div>
 
         <div
-          v-if="status === 'pending'"
+          v-if="firstLoad"
           class="mt-4 space-y-5"
           role="status"
         >
@@ -154,7 +181,7 @@ watch(lastCreated, (key) => {
         </div>
 
         <UAlert
-          v-else-if="status === 'error'"
+          v-else-if="status === 'error' && !hasLoaded"
           class="mt-4"
           color="error"
           variant="subtle"

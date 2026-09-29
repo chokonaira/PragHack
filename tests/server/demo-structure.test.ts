@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { structureDemo } from '../../server/data/demo-ai'
+import { getDemoSummary, structureDemo } from '../../server/data/demo-ai'
 
 describe('structureDemo', () => {
   it('treats a breakage as a high impact incident', () => {
@@ -16,15 +16,35 @@ describe('structureDemo', () => {
     expect(r.impact).toBe('low')
   })
 
-  it('only picks a location it recognises, otherwise asks', () => {
+  it('only picks a location it recognises, and never asks for it in the hints', () => {
     expect(structureDemo('POS at Prague Nusle is offline').location).toBe('CZ_PHA_NUSLE')
     const r = structureDemo('The printer is offline')
     expect(r.location).toBeNull()
-    expect(r.missingInfo).toContain('Which location are you at?')
+    expect(r.missingInfo.some(q => /location/i.test(q))).toBe(false)
+    expect(r.missingInfo).toContain('What is the device model or name?')
   })
 
   it('keeps the summary within 80 characters', () => {
     const r = structureDemo(`${'word '.repeat(40)}is broken.`)
     expect(r.summary.length).toBeLessThanOrEqual(80)
+  })
+})
+
+describe('getDemoSummary', () => {
+  it('keeps the written answer while the ticket is unchanged', () => {
+    const s = getDemoSummary('MCDTE-42', 9, 'in_progress')
+    expect(s.basedOnComments).toBe(9)
+    expect(s.whatsHappening).toContain('battery controller')
+  })
+
+  it('reflects a status change made after the answer was written', () => {
+    const s = getDemoSummary('MCDTE-49', 1, 'in_progress')
+    expect(s.whatsHappening).toContain('picked this up')
+    expect(s.waitingOn).toBe('support')
+    expect(getDemoSummary('MCDTE-49', 2, 'resolved').waitingOn).toBe('nobody')
+  })
+
+  it('labels every answer as demo data', () => {
+    expect(getDemoSummary('X-1', 0).source).toBe('demo')
   })
 })

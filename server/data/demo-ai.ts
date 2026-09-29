@@ -1,4 +1,4 @@
-import type { AiSummary, StructuredTicket } from '../../shared/types'
+import type { AiSummary, StatusId, StructuredTicket } from '../../shared/types'
 
 // Hand-written AI answers for demo mode and as offline fallback.
 // Every answer has source: 'demo' so the UI can label it as demo data.
@@ -56,8 +56,29 @@ const SUMMARIES: Record<string, SummaryFields> = {
   }
 }
 
-export function getDemoSummary(key: string, commentCount: number): AiSummary {
-  const known = SUMMARIES[key]
+export function getDemoSummary(key: string, commentCount: number, status?: StatusId): AiSummary {
+  const canned = SUMMARIES[key]
+  const known = canned && canned.basedOnComments === commentCount ? canned : undefined
+  if (!known && status === 'in_progress' && commentCount > 0) {
+    return {
+      whatsHappening: 'Support has picked this up and is looking into it. You will see their updates in the list below.',
+      waitingOn: 'support',
+      actionRequired: null,
+      basedOnComments: commentCount,
+      generatedAt: new Date().toISOString(),
+      source: 'demo'
+    }
+  }
+  if (!known && status === 'resolved' && commentCount > 0) {
+    return {
+      whatsHappening: 'Support marked this as fixed. If the problem comes back, tell us and it will be reopened.',
+      waitingOn: 'nobody',
+      actionRequired: null,
+      basedOnComments: commentCount,
+      generatedAt: new Date().toISOString(),
+      source: 'demo'
+    }
+  }
   const fields: SummaryFields = known ?? {
     whatsHappening: commentCount === 0
       ? 'This ticket has no updates yet, so there is not much to summarize.'
@@ -97,9 +118,10 @@ export function structureDemo(text: string): StructuredTicket {
   const impact = isRequest ? 'low' : HIGH_WORDS.test(clean) ? 'high' : 'medium'
   const location = /nusle|prague/i.test(clean) ? 'CZ_PHA_NUSLE' : /brno/i.test(clean) ? 'CZ_BRN_CENTRUM' : null
 
+  // Location is its own required field in the form, so it is not asked here.
   const missingInfo: string[] = []
-  if (!location) missingInfo.push('Which location are you at?')
   if (!isRequest && clean.length < 60) missingInfo.push('When did it start?')
+  if (!isRequest && /\b(laptop|computer|pc|printer|terminal|phone)\b/i.test(clean)) missingInfo.push('What is the device model or name?')
 
   return {
     summary,

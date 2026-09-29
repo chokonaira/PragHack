@@ -25,9 +25,11 @@ Expected values are what a sensible answer looks like. Locations must come from 
 
 | # | Ticket | Expectation | Result |
 |---|---|---|---|
-| A | Demo long thread (8 or more comments) | `waitingOn` is `support`, `whatsHappening` is 3 sentences or fewer, `basedOnComments` equals the real count | |
-| B | Demo ticket waiting on the customer | `waitingOn` is `you`, `actionRequired` names the missing item | |
-| C | Demo resolved ticket | `waitingOn` is `nobody`, `actionRequired` is `null` | |
-| D | Ticket with zero comments | Says the history is short, does not invent events | |
+| A | Demo long thread (8 or more comments), MCDTE-42 | `waitingOn` is `support`, `whatsHappening` is 3 sentences or fewer, `basedOnComments` equals the real count | Pass (mocked LLM, `tests/server/summarize.test.ts`) |
+| B | Demo ticket waiting on the customer, MCDTE-44 | `waitingOn` is `you`, `actionRequired` names the missing item | Pass (mocked LLM) |
+| C | Demo resolved ticket, MCDTE-41 | `waitingOn` is `nobody`, `actionRequired` is `null` | Pass (mocked LLM) |
+| D | Ticket with zero comments, MCDTE-49 | Says the history is short, does not invent events | Pass. Short-circuited in code (`shortHistorySummary`): zero-comment tickets never call the model, so nothing can be invented. |
 
 **Pass rule:** all four return valid JSON matching `AiSummary` and meet their expectation. Bad key returns `400`, unknown key returns `404`.
+
+Live path: `POST /api/ai/summarize-ticket` loads the ticket via `resolveProvider`, demo mode returns the pre-generated `demo-ai.ts` answer, live mode calls `summarizeTicket()` (`server/utils/ai/summarize.ts`) which builds the prompt from ticket + comments (`asData`, `UNTRUSTED_DATA_RULE`), validates the model's `whatsHappening` / `waitingOn` / `actionRequired`, and sets `basedOnComments`, `generatedAt`, `source` itself rather than trusting the model for them. An `AiError` from `askJson` (bad key, timeout, invalid output) becomes `502`/`504` via `apiError`, so the rest of the ticket detail page still works if the LLM is down.
