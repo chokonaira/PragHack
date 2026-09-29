@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<{
   label?: string
   loading?: boolean
   capturedHint?: string
+  maxLength?: number
 }>(), {
   placeholder: 'For example: my laptop keeps shutting down since yesterday\'s update, three times this morning.',
   submitLabel: 'Continue',
@@ -16,7 +17,8 @@ const props = withDefaults(defineProps<{
   rows: 3,
   label: 'Describe your problem',
   loading: false,
-  capturedHint: 'Got it. Edit the text if you like, then continue.'
+  capturedHint: 'Got it. Edit the text if you like, then continue.',
+  maxLength: undefined
 })
 
 const text = defineModel<string>({ required: true })
@@ -62,6 +64,7 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
       :aria-label="label"
       :autofocus="autofocus"
       :readonly="voice.active.value || loading"
+      :maxlength="maxLength"
       :placeholder="voice.listening.value ? 'Listening. Start speaking…' : placeholder"
       @input="voice.captured.value = false"
       @keydown.meta.enter.prevent="submit"
@@ -136,7 +139,7 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
         class="max-sm:min-h-11 max-sm:px-4"
         :icon="voice.state.value === 'listening' ? 'i-lucide-square' : 'i-lucide-mic'"
         :loading="voice.state.value === 'starting' || voice.state.value === 'stopping'"
-        :disabled="voice.state.value === 'starting' || voice.state.value === 'stopping'"
+        :disabled="loading || voice.state.value === 'starting' || voice.state.value === 'stopping'"
         :aria-pressed="voice.listening.value"
         @click="toggleVoice"
       >
@@ -158,11 +161,17 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
 
     <div class="flex items-center justify-between gap-3 px-2 pb-1 pt-2">
       <slot name="secondary" />
+      <span
+        v-if="maxLength && text.length > maxLength * 0.85"
+        class="text-sm"
+        :class="text.length > maxLength ? 'text-error' : 'text-muted'"
+        role="status"
+      >{{ text.length }} / {{ maxLength }}</span>
       <UButton
         class="ms-auto max-sm:min-h-11"
         size="lg"
         :loading="loading"
-        :disabled="!text.trim() || loading || voice.state.value === 'starting'"
+        :disabled="!text.trim() || loading || Boolean(maxLength && text.length > maxLength) || voice.state.value === 'starting'"
         @click="submit"
       >
         {{ submitLabel }}

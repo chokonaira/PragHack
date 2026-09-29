@@ -4,6 +4,12 @@
 
 A service-ticket app for **customers**, built for the PragVue Hackathon 2026 (topic: AI-Powered Ticket Management Experience). Instead of filling in a form, a customer says what went wrong, typed or spoken. AI turns it into a proper request, the customer checks it and creates it, and AI later explains any ticket in plain language.
 
+## See it in action
+
+![Recording of the app: a customer types what went wrong, AI drafts the request, they create it, open a ticket to read the AI summary, and reply to support](docs/demo/ticketflow-flow.gif)
+
+A 37-second recording of the running app: say what went wrong, AI drafts the request, create it, open a ticket to read the AI summary, reply to support. Full quality: [docs/demo/ticketflow-flow.mp4](docs/demo/ticketflow-flow.mp4).
+
 ## Try it in 30 seconds
 
 **Live demo:** https://ticketflow-hack.vercel.app (sample data, safe to play with)
@@ -11,7 +17,8 @@ A service-ticket app for **customers**, built for the PragVue Hackathon 2026 (to
 1. Click **Speak** (Chrome, Edge or Safari) and say: *"My laptop keeps shutting down since yesterday's update. I'm at the Prague Nusle office."* Or just type it.
 2. Click **Continue**, review the request the AI drafted, and click **Create request**.
 3. Open **Laptop shuts down randomly after update** and read the AI summary of its nine updates.
-4. **Cross-device handoff:** on a desktop, scan the QR code on the page with your phone, create a request there, and watch it slide into the desktop list within a few seconds.
+4. **Reply to support:** use the box under the timeline (typed or spoken). Your reply appears in the timeline at once.
+5. **Cross-device handoff:** on a desktop, scan the QR code on the page with your phone, create a request there, and watch it slide into the desktop list within a few seconds.
 
 A full 5-minute walkthrough is in [docs/demo-script.md](docs/demo-script.md).
 

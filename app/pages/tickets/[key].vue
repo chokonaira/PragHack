@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TicketComment } from '../../../shared/types'
+
 const route = useRoute()
 const key = computed(() => String(route.params.key))
 const now = useState('now', () => Date.now())
@@ -21,28 +23,38 @@ const reply = ref('')
 const replying = ref(false)
 const replyError = ref<string | null>(null)
 
-// The reply shows in the timeline at once. If it cannot be sent, it is taken back and the text returns to the box.
+function replyErrorMessage(err: unknown) {
+  const e = err as { statusCode?: number, data?: { message?: string } }
+  return e.statusCode && e.statusCode < 500 && e.data?.message
+    ? e.data.message
+    : 'Your reply was not sent. Check your connection and try again.'
+}
+
+// The reply shows in the timeline at once. If it cannot be sent, only that reply is taken back
+// and the text returns to the box. The ticket is updated locally, so a failed refresh cannot
+// blank the page, and a new updatedAt makes the summary read the reply.
 async function sendReply() {
   const body = reply.value.trim()
-  const before = ticket.value
-  if (!body || replying.value || !before) return
+  const current = ticket.value
+  if (!body || replying.value || !current) return
   replying.value = true
   replyError.value = null
-  const sentAt = new Date().toISOString()
+  const pendingId = `pending-${Date.now()}`
   ticket.value = {
-    ...before,
-    updatedAt: sentAt,
-    comments: [...before.comments, { id: `pending-${sentAt}`, author: before.reporter, body, createdAt: sentAt, fromCustomer: true }]
+    ...current,
+    comments: [...current.comments, { id: pendingId, author: current.reporter, body, createdAt: new Date().toISOString(), fromCustomer: true }]
   }
   reply.value = ''
   try {
-    await $fetch(`/api/tickets/${key.value}/comments`, { method: 'POST', body: { body }, timeout: 15000 })
-    await Promise.all([refreshTicket(), refreshNuxtData('tickets')])
-    refreshSummary()
-  } catch {
-    ticket.value = before
+    const saved = await $fetch<TicketComment>(`/api/tickets/${key.value}/comments`, { method: 'POST', body: { body }, timeout: 15000 })
+    if (ticket.value) {
+      ticket.value = { ...ticket.value, updatedAt: saved.createdAt, comments: ticket.value.comments.map(c => (c.id === pendingId ? saved : c)) }
+    }
+    void refreshNuxtData('tickets')
+  } catch (err) {
+    if (ticket.value) ticket.value = { ...ticket.value, comments: ticket.value.comments.filter(c => c.id !== pendingId) }
     reply.value = body
-    replyError.value = 'Your reply was not sent. Check your connection and try again.'
+    replyError.value = replyErrorMessage(err)
   } finally {
     replying.value = false
   }
@@ -177,7 +189,7 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
                   <span class="font-medium text-highlighted">{{ c.fromCustomer ? 'You' : c.author }}</span>
                   <span class="text-muted">{{ relativeTime(c.createdAt, now) }}</span>
                 </p>
-                <p class="mt-1 max-w-prose text-base leading-relaxed text-default">
+                <p class="mt-1 max-w-prose whitespace-pre-line break-words text-base leading-relaxed text-default">
                   {{ c.body }}
                 </p>
               </li>
@@ -197,6 +209,7 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
                 submit-label="Send reply"
                 captured-hint="Got it. Edit the text if you like, then send."
                 :rows="2"
+                :max-length="2000"
                 :loading="replying"
                 @submit="sendReply"
               />
@@ -205,6 +218,7 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
                 class="mt-3"
                 color="error"
                 variant="subtle"
+                role="alert"
                 :description="replyError"
               />
             </div>
@@ -266,7 +280,7 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
               variant="outline"
               icon="i-lucide-headset"
               :loading="advancing"
-              :disabled="ticket.status === 'resolved'"
+              :disabled="ticket.status === 'resolved' || replying"
               @click="advance"
             >
               {{ ticket.status === 'resolved' ? 'Already resolved' : 'Simulate support update' }}

@@ -89,7 +89,6 @@ export const UNTRUSTED_DATA_RULE = [
   'Answer with a single JSON object and nothing else: no Markdown fences, no commentary.'
 ].join(' ')
 
-const DATA_OPEN = '<data'
 const DATA_CLOSE = '</data>'
 
 /**
@@ -98,9 +97,7 @@ const DATA_CLOSE = '</data>'
  */
 export function asData(name: string, text: string): string {
   const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '')
-  const safeText = text
-    .replaceAll(DATA_CLOSE, '<​data>')
-    .replaceAll(DATA_OPEN, '<​data')
+  const safeText = text.replace(/<(\/?)data/gi, '<\u200b$1data')
   return `<data name="${safeName}">\n${safeText}\n${DATA_CLOSE}`
 }
 
