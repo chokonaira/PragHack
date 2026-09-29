@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }
   try {
     const ticket = await demoProvider.get(key)
-    return getDemoSummary(key, ticket.comments.length)
+    return getDemoSummary(key, ticket.comments.length, ticket.status)
   } catch {
     throw createError({ statusCode: 404, statusMessage: 'Ticket not found' })
   }

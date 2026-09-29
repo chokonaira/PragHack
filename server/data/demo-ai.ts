@@ -1,4 +1,4 @@
-import type { AiSummary, StructuredTicket } from '../../shared/types'
+import type { AiSummary, StatusId, StructuredTicket } from '../../shared/types'
 
 // Hand-written AI answers for demo mode and as offline fallback.
 // Every answer has source: 'demo' so the UI can label it as demo data.
@@ -56,8 +56,29 @@ const SUMMARIES: Record<string, SummaryFields> = {
   }
 }
 
-export function getDemoSummary(key: string, commentCount: number): AiSummary {
-  const known = SUMMARIES[key]
+export function getDemoSummary(key: string, commentCount: number, status?: StatusId): AiSummary {
+  const canned = SUMMARIES[key]
+  const known = canned && canned.basedOnComments === commentCount ? canned : undefined
+  if (!known && status === 'in_progress' && commentCount > 0) {
+    return {
+      whatsHappening: 'Support has picked this up and is looking into it. You will see their updates in the list below.',
+      waitingOn: 'support',
+      actionRequired: null,
+      basedOnComments: commentCount,
+      generatedAt: new Date().toISOString(),
+      source: 'demo'
+    }
+  }
+  if (!known && status === 'resolved' && commentCount > 0) {
+    return {
+      whatsHappening: 'Support marked this as fixed. If the problem comes back, tell us and it will be reopened.',
+      waitingOn: 'nobody',
+      actionRequired: null,
+      basedOnComments: commentCount,
+      generatedAt: new Date().toISOString(),
+      source: 'demo'
+    }
+  }
   const fields: SummaryFields = known ?? {
     whatsHappening: commentCount === 0
       ? 'This ticket has no updates yet, so there is not much to summarize.'

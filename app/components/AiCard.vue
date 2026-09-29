@@ -28,13 +28,14 @@ const emit = defineEmits<{ retry: [] }>()
         class="size-5 text-secondary"
         aria-hidden="true"
       />
-      <h3 class="text-lg font-medium text-highlighted">
+      <h2 class="text-lg font-medium text-highlighted">
         {{ title }}
-      </h3>
+      </h2>
       <UBadge
         color="secondary"
         variant="subtle"
         size="sm"
+        class="text-violet-800 dark:text-violet-200"
       >
         AI
       </UBadge>
@@ -81,7 +82,7 @@ const emit = defineEmits<{ retry: [] }>()
       <slot v-else />
     </div>
 
-    <p class="mt-4 text-xs text-muted">
+    <p class="mt-4 text-xs text-toned">
       AI-generated. Check before you rely on it.<template v-if="footnote">
         {{ ' ' }}{{ footnote }}
       </template>

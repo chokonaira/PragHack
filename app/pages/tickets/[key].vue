@@ -5,7 +5,19 @@ const route = useRoute()
 const key = computed(() => String(route.params.key))
 const now = useState('now', () => Date.now())
 
-const { data: ticket, error } = await useFetch<TicketDetail>(() => `/api/tickets/${key.value}`)
+const { data: ticket, error, refresh: refreshTicket } = await useFetch<TicketDetail>(() => `/api/tickets/${key.value}`)
+const { data: mode } = useFetch<{ mode: 'demo' | 'live' }>('/api/mode')
+const advancing = ref(false)
+
+async function advance() {
+  advancing.value = true
+  try {
+    await $fetch(`/api/tickets/${key.value}/advance`, { method: 'POST' })
+    await Promise.all([refreshTicket(), refreshSummary(), refreshNuxtData('tickets')])
+  } finally {
+    advancing.value = false
+  }
+}
 
 const { data: summary, status: summaryStatus, error: summaryError, refresh: refreshSummary } = useFetch<AiSummary>(
   '/api/ai/summarize-ticket',
@@ -77,13 +89,13 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
                 {{ summary.whatsHappening }}
               </p>
               <dl class="mt-4 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
-                <dt class="text-muted">
+                <dt class="text-toned">
                   Waiting on
                 </dt>
                 <dd class="font-medium text-highlighted">
                   {{ waitingLabel[summary.waitingOn] }}
                 </dd>
-                <dt class="text-muted">
+                <dt class="text-toned">
                   Action for you
                 </dt>
                 <dd class="font-medium text-highlighted">
@@ -189,6 +201,29 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
               </dd>
             </div>
           </dl>
+          <div
+            v-if="mode?.mode === 'demo'"
+            class="mt-8 rounded-lg border border-dashed border-default p-4"
+          >
+            <p class="text-sm font-medium text-highlighted">
+              Demo control
+            </p>
+            <p class="mt-1 text-sm text-toned">
+              In real life support moves your request forward. Play support here.
+            </p>
+            <UButton
+              class="mt-3"
+              size="sm"
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-headset"
+              :loading="advancing"
+              :disabled="ticket.status === 'resolved'"
+              @click="advance"
+            >
+              {{ ticket.status === 'resolved' ? 'Already resolved' : 'Simulate support update' }}
+            </UButton>
+          </div>
         </aside>
       </div>
     </template>
