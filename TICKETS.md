@@ -156,10 +156,10 @@ flowchart TD
 ### T-14 summarize-ticket API
 **Owner:** Marzieh · **Time:** 30 min · **Needs:** T-11, T-05, T-06 · **Unblocks:** T-15
 **Goal:** a short, honest explanation of any ticket.
-- [ ] `POST /api/ai/summarize-ticket` exactly as in `docs/contracts.md`. The server loads the ticket and comments itself from the key.
-- [ ] Output validated. A ticket with zero comments says the history is short instead of guessing.
-- [ ] Demo mode returns the pre-generated summary with `source: 'demo'`.
-- [ ] Tested (mocked LLM) on the long-thread demo ticket and a zero-comment ticket. Results in `docs/ai-samples.md`.
+- [x] `POST /api/ai/summarize-ticket` exactly as in `docs/contracts.md`. The server loads the ticket and comments itself from the key. (`server/api/ai/summarize-ticket.post.ts`, `server/utils/ai/summarize.ts`)
+- [x] Output validated. A ticket with zero comments says the history is short instead of guessing. (short-circuited before calling the model, `shortHistorySummary`)
+- [x] Demo mode returns the pre-generated summary with `source: 'demo'`. (unchanged demo branch from Henry's slice)
+- [x] Tested (mocked LLM) on the long-thread demo ticket and a zero-comment ticket. Results in `docs/ai-samples.md`. (`tests/server/summarize.test.ts`, samples A-D)
 
 **Check:** curl with the long-thread demo key returns `waitingOn` and `basedOnComments` filled.
 
@@ -270,3 +270,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Florian: T-11 reads `runtimeConfig.llm.{provider,baseUrl,apiKey,model}` as T-02 defined them (`NUXT_LLM_*`). Note for T-12 and T-14: the model overshoots character limits in the prompt (asked for 80, wrote 84 and 95), so ask for a smaller number than the validator enforces.
 - 2026-09-29, Henry: New request is now a modal (`NewRequestModal.vue`) opened from the header, the hero and `/new`: describe (with voice dictation where the browser supports it), AI steps, review and edit, create, then the new ticket slides into the list. Demo-only slices added: `server/api/ai/structure-ticket.post.ts`, `server/api/tickets.post.ts`, `server/api/create-meta.get.ts`. **Florian:** T-12 replaces the body of `structure-ticket.post.ts` with the real LLM call (keep `structureDemo` as the demo fallback). T-13 is mostly done, polish only. The home list refreshes every 3 seconds.
 - 2026-09-29, Henry: T-21 (Henry's part): axe scan clean on home, detail and the modal in light and dark; fixed AiCard heading order and contrast. T-03 done: `app/error.vue`, header "Demo data" badge from `/api/mode`. Added a demo-only "Simulate support update" control on the ticket page (`POST /api/tickets/:key/advance`, refused outside demo mode) so the flow line can move in the demo. The demo AI summary now reflects those changes.
+- 2026-09-29, Marzieh: T-14 done. `summarize-ticket.post.ts` now calls the real LLM in live mode through `server/utils/ai/summarize.ts` (`summarizeTicket`); demo mode is unchanged (still passes `ticket.status` into `getDemoSummary` per Henry's T-21 change above). `basedOnComments`, `generatedAt` and `source` are set by the server, never trusted from the model. Zero-comment tickets never call the model (`shortHistorySummary`), so nothing can be invented there. **Henry (T-15):** build against this route as-is; on an AI failure it answers `502`/`504` via `apiError`, so keep the rest of the detail page working and show the inline "Try again".
