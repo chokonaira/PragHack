@@ -5,14 +5,16 @@ withDefaults(defineProps<{
   error?: string | null
   footnote?: string
   demo?: boolean
+  refreshable?: boolean
 }>(), {
   loading: false,
   error: null,
   footnote: undefined,
-  demo: false
+  demo: false,
+  refreshable: false
 })
 
-const emit = defineEmits<{ retry: [] }>()
+const emit = defineEmits<{ retry: [], refresh: [] }>()
 </script>
 
 <template>
@@ -47,6 +49,16 @@ const emit = defineEmits<{ retry: [] }>()
       >
         Demo data
       </UBadge>
+      <UButton
+        v-if="refreshable && !loading"
+        class="ms-auto"
+        color="neutral"
+        variant="ghost"
+        size="xs"
+        icon="i-lucide-refresh-cw"
+        aria-label="Refresh"
+        @click="emit('refresh')"
+      />
     </header>
 
     <div class="mt-3">

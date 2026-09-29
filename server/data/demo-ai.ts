@@ -118,9 +118,10 @@ export function structureDemo(text: string): StructuredTicket {
   const impact = isRequest ? 'low' : HIGH_WORDS.test(clean) ? 'high' : 'medium'
   const location = /nusle|prague/i.test(clean) ? 'CZ_PHA_NUSLE' : /brno/i.test(clean) ? 'CZ_BRN_CENTRUM' : null
 
+  // Location is its own required field in the form, so it is not asked here.
   const missingInfo: string[] = []
-  if (!location) missingInfo.push('Which location are you at?')
   if (!isRequest && clean.length < 60) missingInfo.push('When did it start?')
+  if (!isRequest && /\b(laptop|computer|pc|printer|terminal|phone)\b/i.test(clean)) missingInfo.push('What is the device model or name?')
 
   return {
     summary,

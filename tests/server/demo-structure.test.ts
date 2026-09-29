@@ -16,11 +16,12 @@ describe('structureDemo', () => {
     expect(r.impact).toBe('low')
   })
 
-  it('only picks a location it recognises, otherwise asks', () => {
+  it('only picks a location it recognises, and never asks for it in the hints', () => {
     expect(structureDemo('POS at Prague Nusle is offline').location).toBe('CZ_PHA_NUSLE')
     const r = structureDemo('The printer is offline')
     expect(r.location).toBeNull()
-    expect(r.missingInfo).toContain('Which location are you at?')
+    expect(r.missingInfo.some(q => /location/i.test(q))).toBe(false)
+    expect(r.missingInfo).toContain('What is the device model or name?')
   })
 
   it('keeps the summary within 80 characters', () => {

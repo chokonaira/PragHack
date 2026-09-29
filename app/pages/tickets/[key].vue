@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { AiSummary, TicketDetail } from '../../../shared/types'
-
 const route = useRoute()
 const key = computed(() => String(route.params.key))
 const now = useState('now', () => Date.now())
 
-const { data: ticket, error, refresh: refreshTicket } = await useFetch<TicketDetail>(() => `/api/tickets/${key.value}`)
+const { data: ticket, error, refresh: refreshTicket } = await useTicket(key)
 const { data: mode } = useFetch<{ mode: 'demo' | 'live' }>('/api/mode')
 const advancing = ref(false)
 
@@ -19,10 +17,7 @@ async function advance() {
   }
 }
 
-const { data: summary, status: summaryStatus, error: summaryError, refresh: refreshSummary } = useFetch<AiSummary>(
-  '/api/ai/summarize-ticket',
-  { method: 'POST', body: computed(() => ({ key: key.value })), server: false, lazy: true }
-)
+const { data: summary, status: summaryStatus, error: summaryError, refresh: refreshSummary } = useTicketSummary(key, () => ticket.value?.updatedAt)
 
 useSeoMeta({ title: () => (ticket.value ? `${ticket.value.key} ${ticket.value.summary}` : 'Request not found') })
 
@@ -80,9 +75,11 @@ const waitingLabel = { you: 'You', support: 'Support', nobody: 'Nobody' } as con
             title="What's happening?"
             :loading="summaryStatus === 'pending' || summaryStatus === 'idle'"
             :error="summaryError ? 'Couldn\'t summarize this request. Try again.' : null"
+            refreshable
             :demo="summary?.source === 'demo'"
             :footnote="summary ? `Based on ${summary.basedOnComments} ${summary.basedOnComments === 1 ? 'comment' : 'comments'}.` : undefined"
             @retry="refreshSummary()"
+            @refresh="refreshSummary()"
           >
             <template v-if="summary">
               <p class="max-w-prose text-base leading-relaxed text-highlighted">
