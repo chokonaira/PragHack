@@ -88,8 +88,8 @@ Nuxt 4, Vue 3, TypeScript, Nuxt UI 4, Tailwind CSS 4, Lucide icons, Schibsted Gr
 You need Node 22 and pnpm (`corepack enable`). No Docker and no database.
 
 ```bash
-git clone <this repository>
-cd <folder>
+git clone https://git.pragvue.cz/okonkwo.henry2012/ticketflow-ai.git
+cd ticketflow-ai
 pnpm install
 cp .env.example .env      # then edit .env, never commit it
 pnpm dev                  # http://localhost:3000
@@ -127,7 +127,7 @@ Without an AI key the app still works: AI screens show the pre-written demo answ
 - Summarises a ticket's history: what is happening, who it is waiting on, and what the customer needs to do.
 - Safety: ticket text goes to the model as data, never as instructions. Every model answer is validated before use, with a timeout and one retry. If AI fails, the ticket flow still works. AI text is labelled, and nothing is created or sent without the customer's confirmation.
 
-**To build it:** Claude Code (Claude Sonnet 5.5) for planning, UI, code, tests and review. *Teammates: add the AI tools you used here.*
+**To build it:** Claude Code (Claude Sonnet 5.5) for planning, UI, code, tests and review.
 
 **Value:** a customer describes a problem once, in their own words, and gets a clean request and a plain-language status instead of a form and a thread to decode.
 
