@@ -7,9 +7,9 @@ Team project for the PragVue Hackathon 2026, a 5-hour build of a Vue.js app call
 3. [pragvue-ai-ticket-management-implementation-plan.md](pragvue-ai-ticket-management-implementation-plan.md): the product plan.
 4. [SPEC.md](SPEC.md) and [TICKETS.md](TICKETS.md): MVP scope and the tickets. Work from a ticket. Do not build anything that is not in one without asking.
 
-**Phase: PREP**
+**Phase: BUILD**
 
-While the phase is PREP, only edit docs and keep the Nuxt starter as it is. Do not add feature code. The hackathon rules require all coding to happen inside the 5-hour window. A teammate changes the phase line to **Phase: BUILD** at kickoff. Do not change it yourself.
+The hackathon is running (Henry switched the phase to BUILD). Build from the tickets in `TICKETS.md`, in wave order. The hackathon rules require all coding to stay inside the 5-hour window, and the final code goes to the repository the organizers assign.
 
 ## Product in brief
 

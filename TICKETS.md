@@ -95,7 +95,7 @@ flowchart TD
 ### T-04 Types and upstream client
 **Owner:** Florian · **Time:** 30 min · **Needs:** nothing · **Unblocks:** T-05, T-06, T-11
 **Goal:** shared types and one safe way to call the mock.
-- [ ] `shared/types.ts` exactly as in `docs/contracts.md`. **Push this file in the first 10 minutes**, Henry and Marzieh need it.
+- [x] `shared/types.ts` exactly as in `docs/contracts.md` (pushed by Henry so nobody waited, Florian: pull it, do not recreate it). Also holds the AI shapes and `TicketProvider`.
 - [ ] `server/utils/upstream.ts`: fetch with 8 second timeout, base URL from config, handles `204`, throws a typed `ApiError`, never leaks stack traces.
 - [ ] Mapper from mock shapes to our types (status matched by name, case-insensitive). Health probe on `GET /health`.
 - [ ] Tests: mapper, timeout, 404, 204.
@@ -105,10 +105,10 @@ flowchart TD
 ### T-06 Demo data
 **Owner:** Henry · **Time:** 30 min · **Needs:** `shared/types.ts` from T-04 · **Unblocks:** T-05, T-09, T-14
 **Goal:** a believable demo that works with no network.
-- [ ] `server/data/demo.ts` with 8 tickets as `TicketDetail`: one with 8 or more comments (story: laptop replacement approved, waiting on support), one waiting on the customer ("please send the serial number"), one resolved, one created today, and two different locations and types.
-- [ ] `server/data/demo-ai.ts` with a hand-written `AiSummary` for every demo ticket and one `StructuredTicket` for the laptop sample text. All marked `source: 'demo'`.
-- [ ] `FixtureProvider` implements `TicketProvider`, keeps changes in memory, and has `reset()`.
-- [ ] Test: lists all tickets, `create` adds one, `reset` restores.
+- [x] `server/data/demo.ts` with 8 tickets as `TicketDetail`: one with 8 or more comments (story: laptop replacement approved, waiting on support), one waiting on the customer ("please send the serial number"), one resolved, one created today, and two different locations and types.
+- [x] `server/data/demo-ai.ts` with a hand-written `AiSummary` for every demo ticket and one `StructuredTicket` for the laptop sample text. All marked `source: 'demo'`.
+- [x] `FixtureProvider` (`server/utils/providers/fixture.ts`) implements `TicketProvider`, keeps changes in memory, and has `reset()`.
+- [ ] Test: lists all tickets, `create` adds one, `reset` restores. (Checked ad hoc with tsx, 12 checks pass. Vitest arrives with T-02, then add this as a real test.)
 
 **Check:** `pnpm test` is green.
 
