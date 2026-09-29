@@ -1,16 +1,27 @@
-import type { NewTicket } from '../../shared/types'
+import { apiError } from '../utils/errors'
+import { resolveProvider } from '../utils/mode'
+import { isApiError } from '../utils/upstream'
+import { validateNewTicket } from '../utils/validation'
 
-// Slice of T-05: create a ticket in the demo provider. T-05 adds live mode and the overlay.
 export default defineEventHandler(async (event) => {
-  const body = await readBody<Partial<NewTicket>>(event)
-  const summary = typeof body?.summary === 'string' ? body.summary.trim() : ''
-  const location = typeof body?.location === 'string' ? body.location : ''
-  if (!summary || summary.length > 255) {
-    throw createError({ statusCode: 400, statusMessage: 'Add a short title (up to 255 characters)' })
+  const { provider } = await resolveProvider(event)
+
+  let allowedLocations: string[]
+  try {
+    allowedLocations = (await provider.meta()).locations.map(l => l.value)
+  } catch (err) {
+    return apiError(event, isApiError(err) ? err.status : 502, 'Could not load create options')
   }
-  if (!location) throw createError({ statusCode: 400, statusMessage: 'Choose a location' })
-  const description = typeof body?.description === 'string' ? body.description.slice(0, 4000) : ''
-  const ticketType = body?.ticketType === 'request' ? 'request' : 'incident'
-  setResponseStatus(event, 201)
-  return demoProvider.create({ summary, description, location, ticketType })
+
+  const body = await readBody(event).catch(() => undefined)
+  const validation = validateNewTicket(body, allowedLocations)
+  if (!validation.ok) return apiError(event, 400, validation.message)
+
+  try {
+    const created = await provider.create(validation.value)
+    event.node.res.statusCode = 201
+    return created
+  } catch (err) {
+    return apiError(event, isApiError(err) ? err.status : 502, 'Could not create ticket')
+  }
 })

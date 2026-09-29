@@ -7,13 +7,7 @@ import type {
   TicketProvider
 } from '../../../shared/types'
 import { buildDemoTickets, DEMO_LOCATIONS } from '../../data/demo'
-
-export class NotFoundError extends Error {
-  status = 404
-  constructor(key: string) {
-    super(`Ticket ${key} not found`)
-  }
-}
+import { NotFoundError } from '../errors'
 
 export interface FixtureProvider extends TicketProvider {
   reset(): void

@@ -128,10 +128,10 @@ flowchart TD
 ### T-05 Provider and routes
 **Owner:** Marzieh · **Time:** 45 min · **Needs:** T-04, T-06 · **Unblocks:** T-08, T-09, T-12, T-14
 **Goal:** the browser gets tickets from our own routes, live or demo.
-- [ ] `MockApiProvider` with `list`, `get`, `create`, `addComment`, `meta` following the mapping in `docs/api/README.md`. Overlay holds created tickets and comments. Created tickets get a unique local key (the mock always answers `MCDTE-50`) and `isLocal: true`. `get` takes summary and description from the list item.
-- [ ] Routes exactly as in `docs/contracts.md`: `/api/mode`, tickets, `:key`, create-meta, create, comments, `/api/demo/reset`.
-- [ ] Provider chosen by `/api/mode` (live or demo). Inputs validated, errors use `{ message, status }`.
-- [ ] Tests: overlay merge, unique keys, validation.
+- [x] `MockApiProvider` with `list`, `get`, `create`, `addComment`, `meta` following the mapping in `docs/api/README.md`. Overlay holds created tickets and comments. Created tickets get a unique local key (the mock always answers `MCDTE-50`) and `isLocal: true`. `get` takes summary and description from the list item. (done by Marzieh: `server/utils/providers/mock.ts`)
+- [x] Routes exactly as in `docs/contracts.md`: `/api/mode`, tickets, `:key`, create-meta, create, comments, `/api/demo/reset`. (done by Marzieh)
+- [x] Provider chosen by `/api/mode` (live or demo). Inputs validated, errors use `{ message, status }`. (done by Marzieh: `server/utils/mode.ts`, `server/utils/validation.ts`, `server/utils/errors.ts`)
+- [x] Tests: overlay merge, unique keys, validation. (done by Marzieh: `tests/server/mock-provider.test.ts`, `tests/server/validation.test.ts`, 36 new tests)
 
 **Check:** `curl localhost:3000/api/tickets` returns tickets. With demo mode on it returns the demo tickets.
 

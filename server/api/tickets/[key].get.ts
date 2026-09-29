@@ -1,12 +1,17 @@
-// Slice of T-05: one demo ticket with comments. T-05 adds live mode.
+import { apiError, NotFoundError } from '../../utils/errors'
+import { resolveProvider } from '../../utils/mode'
+import { isApiError } from '../../utils/upstream'
+import { TICKET_KEY_RE } from '../../utils/validation'
+
 export default defineEventHandler(async (event) => {
   const key = getRouterParam(event, 'key') ?? ''
-  if (!/^[A-Z][A-Z0-9]+-[A-Za-z0-9-]+$/.test(key)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid ticket key' })
-  }
+  if (!TICKET_KEY_RE.test(key)) return apiError(event, 400, 'Invalid ticket key')
+
+  const { provider } = await resolveProvider(event)
   try {
-    return await demoProvider.get(key)
-  } catch {
-    throw createError({ statusCode: 404, statusMessage: 'Ticket not found' })
+    return await provider.get(key)
+  } catch (err) {
+    if (err instanceof NotFoundError) return apiError(event, 404, 'Ticket not found')
+    return apiError(event, isApiError(err) ? err.status : 502, isApiError(err) ? err.message : 'Could not load ticket')
   }
 })
