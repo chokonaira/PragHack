@@ -114,6 +114,10 @@ Until ticket T-02 lands, the page you see is the Nuxt UI starter.
 | Technical Quality | 10 | Clean structure, error handling, tests, no secrets in git |
 | Final Presentation | 5 | Scripted demo with a backup mode in case the network fails |
 
+## Live app
+
+**https://ticketflow-hack.vercel.app** deploys automatically from every push to `main` (Vercel, connected to this repo). It runs in demo mode with seeded data and no AI key, so it is safe to share.
+
 ## Event links
 
 - Portal (topics, announcements, registration): https://hackhub.pragvue.cz/

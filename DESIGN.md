@@ -9,6 +9,19 @@ One source of truth for how TicketFlow AI looks and moves. Build on Nuxt UI 4 an
 3. **Calm and fast.** Few colours, generous space, short motion.
 4. **Accessible by default.** Keyboard, contrast, reduced motion, and no meaning carried by colour alone.
 
+## Signature: the flow line
+
+TicketFlow feels like tracking a parcel. Every ticket is a **route with three stops**: Received, In progress, Resolved. The `TicketFlowTracker` component draws it and is reused everywhere:
+
+- **Ticket rows:** a compact line under the summary.
+- **Ticket header:** a large line with timestamps.
+- **Creator:** the new ticket joins the line at stop one when it is created.
+- **Logo:** the same line with three nodes.
+
+Done stops are filled cobalt, the current stop has a soft pulse ring (off under reduced motion), upcoming stops are outlined. This is the one memorable element. Keep everything else quiet.
+
+Layout rule: ticket lists are **divided rows**, not grids of identical cards. Cards are for AI content and forms.
+
 ## Colour
 
 Use the Nuxt UI colour aliases. Set them once in `app/app.config.ts`:
@@ -17,7 +30,7 @@ Use the Nuxt UI colour aliases. Set them once in `app/app.config.ts`:
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: 'blue',
+      primary: 'cobalt',
       secondary: 'violet',
       success: 'green',
       info: 'sky',
@@ -29,11 +42,11 @@ export default defineAppConfig({
 })
 ```
 
-Remove the custom green scale from `app/assets/css/main.css` (it belongs to the starter).
+Replace the starter's green scale in `app/assets/css/main.css` with the `cobalt` scale (50 `#EEF3FF`, 100 `#DCE6FF`, 200 `#BCCEFF`, 300 `#8FADFF`, 400 `#5B84FF`, 500 `#3562FF`, 600 `#1F4BF0`, 700 `#1A3BC4`, 800 `#1B349C`, 900 `#1C317B`, 950 `#131F4D`).
 
 | Role | Alias | Used for |
 |---|---|---|
-| Brand and actions | `primary` (blue) | Primary button, links, focus, selected states |
+| Brand and actions | `primary` (cobalt, custom scale) | Primary button, links, focus, selected states |
 | **AI only** | `secondary` (violet) | Anything AI produced: `AiCard`, AI badge, sparkles icon. Never used for anything else |
 | Success | `success` (green) | Resolved, saved, created |
 | Info | `info` (sky) | New status |
@@ -53,7 +66,7 @@ Light and dark, both first-class. Default follows the system. The header has a c
 
 ## Typography
 
-Font: **Public Sans** (already set in `main.css`) for everything. Ticket keys such as `MCDTE-48` use `font-mono`. Numbers and dates use `tabular-nums`. No other fonts.
+Font: **Schibsted Grotesk** (variable, weights 400 to 700) for everything, set as `--font-sans` in `main.css` (Nuxt loads it automatically). Display headings use weight 600 to 700 with tight tracking. Ticket keys such as `MCDTE-48` use `font-mono`. Numbers and dates use `tabular-nums`. No other fonts.
 
 | Use | Classes | Notes |
 |---|---|---|

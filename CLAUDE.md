@@ -5,7 +5,8 @@ Team project for the PragVue Hackathon 2026, a 5-hour build of a Vue.js app call
 1. [CONTRIBUTING.md](CONTRIBUTING.md): the rules for every push (trunk-based, tests must pass).
 2. [docs/contracts.md](docs/contracts.md) and [docs/api/README.md](docs/api/README.md): our shared shapes and the Mock API spec.
 3. [pragvue-ai-ticket-management-implementation-plan.md](pragvue-ai-ticket-management-implementation-plan.md): the product plan.
-4. [SPEC.md](SPEC.md) and [TICKETS.md](TICKETS.md): MVP scope and the tickets. Work from a ticket. Do not build anything that is not in one without asking.
+4. [DESIGN.md](DESIGN.md): the design system. **For any UI work, use the `ticketflow-ui` project skill** (`.claude/skills/ticketflow-ui/SKILL.md`, loads automatically in this repo) and, if installed, the `frontend-design` skill too.
+5. [SPEC.md](SPEC.md) and [TICKETS.md](TICKETS.md): MVP scope and the tickets. Work from a ticket. Do not build anything that is not in one without asking.
 
 **Phase: BUILD**
 
@@ -41,6 +42,10 @@ The ticket backend is the ServiceBridge mock API. Its spec for this repo is [doc
 - The mock AI endpoints return canned text. They cannot power our AI features.
 
 If the live API differs from the document, update the document first, then the code. Do not invent endpoints or fields that the document does not list.
+
+## UI work
+
+Every UI change (pages, components, styling, motion, copy) must follow the `ticketflow-ui` skill and `DESIGN.md`: plan first, use tokens only, build the flow-line signature, verify with screenshots at 390 px and 1440 px in light and dark, and never ship a UI that looks like the default starter or a generic SaaS template. If you cannot see the result, say so instead of claiming it looks right.
 
 ## Conventions
 
