@@ -1,0 +1,661 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mock API - servicebridgenotification",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/notifications/unread-count": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "count": 1
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/notifications/read-all": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/notifications/preferences": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "preferences": [
+                    {
+                      "key": "ticket.status_changed",
+                      "category": "tickets",
+                      "isMandatory": false,
+                      "channels": {
+                        "push": true,
+                        "email": false,
+                        "teams": false
+                      }
+                    },
+                    {
+                      "key": "ticket.assigned",
+                      "category": "tickets",
+                      "isMandatory": true,
+                      "channels": {
+                        "push": true,
+                        "email": true
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      },
+      "put": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "id": "notification-001",
+                      "category": "tickets",
+                      "type": "ticket.status_changed",
+                      "title": "Ticket MCDTE-48 status changed",
+                      "body": "Ticket MCDTE-48 is now In progress.",
+                      "data": {
+                        "issueKey": "MCDTE-48",
+                        "newStatus": "In progress"
+                      },
+                      "isRead": false,
+                      "readAt": null,
+                      "expiresAt": "2026-10-18T09:00:00Z",
+                      "createdAt": "2026-09-18T08:45:00Z"
+                    }
+                  ],
+                  "total": 1,
+                  "page": 1,
+                  "pageSize": 20
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/notifications/{param1}/read": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/notifications/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/devices/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/devices": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/devices/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/users/jira-link": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "jiraAccountId": "mock-jira-account-001",
+                  "jiraDisplayName": "Mock User",
+                  "jiraEmail": "mock.user@jira.local",
+                  "linkedAt": "2026-09-01T08:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      },
+      "put": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": []
+      },
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/notification-definitions": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": "definition-001",
+                    "key": "ticket.status_changed",
+                    "category": "tickets",
+                    "allowedChannels": [
+                      "push",
+                      "email",
+                      "teams"
+                    ],
+                    "defaultChannels": [
+                      "push"
+                    ],
+                    "isMandatory": false,
+                    "isActive": true,
+                    "createdAt": "2026-09-01T08:00:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "definition-002",
+                  "key": "mock.event",
+                  "category": "system",
+                  "allowedChannels": [
+                    "push"
+                  ],
+                  "defaultChannels": [
+                    "push"
+                  ],
+                  "isMandatory": false,
+                  "isActive": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/notification-definitions/{param1}": {
+      "put": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/notification-queue": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "pendingCount": 0
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/notifications/send": {
+      "post": {
+        "responses": {
+          "202": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "recipientCount": 1
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/notifications/bulk-delete": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "deleted": 1
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/notifications/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/devices": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": "device-001",
+                    "userId": "mock-user-001",
+                    "platform": "android",
+                    "token": "mock-push-to...",
+                    "appVersion": "1.0.0-mock",
+                    "pushEnabled": true,
+                    "registeredAt": "2026-09-01T08:00:00Z",
+                    "lastSeenAt": "2026-09-18T08:45:00Z",
+                    "jiraDisplayName": "Mock User",
+                    "jiraEmail": "mock.user@jira.local"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/devices/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/notification-logs": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "id": "notification-001",
+                      "userId": "mock-user-001",
+                      "category": "tickets",
+                      "title": "Ticket MCDTE-48 status changed",
+                      "isRead": false,
+                      "createdAt": "2026-09-18T08:45:00Z"
+                    }
+                  ],
+                  "total": 1,
+                  "page": 1,
+                  "pageSize": 50
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/jira-webhook-logs": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "id": "webhook-log-001",
+                      "issueKey": "MCDTE-48",
+                      "webhookEvent": "jira:issue_updated",
+                      "outcome": "Processed",
+                      "receivedAt": "2026-09-18T08:45:00Z"
+                    }
+                  ],
+                  "total": 1,
+                  "page": 1,
+                  "pageSize": 50
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/jira-webhook-logs/bulk-delete": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "deleted": 1
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/jira-webhook-logs/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/user-mappings": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "userId": "mock-user-001",
+                    "jiraDisplayName": "Mock User",
+                    "jiraEmail": "mock.user@jira.local"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/admin/users/search": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "userId": "mock-user-001",
+                    "jiraDisplayName": "Mock User",
+                    "jiraEmail": "mock.user@jira.local",
+                    "source": "jira"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/internal/events": {
+      "post": {
+        "responses": {
+          "202": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "resolved": 1
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/webhooks/jira": {
+      "post": {
+        "responses": {
+          "202": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "event": "jira:issue_updated",
+                  "issueKey": "MCDTE-48",
+                  "resolved": 1,
+                  "ignored": false
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    }
+  }
+}
