@@ -44,10 +44,10 @@ support workflow.
 
 ### Stack
 
--   Vue 3
+-   Nuxt
+-   Nuxt UI
 -   TypeScript
 -   Vite
--   Vue Router
 -   Mock Ticketing REST API
 -   AI API
 
