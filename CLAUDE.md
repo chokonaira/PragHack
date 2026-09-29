@@ -52,7 +52,7 @@ Every UI change (pages, components, styling, motion, copy) must follow the `tick
 - `<script setup lang="ts">`, typed props, no `any`.
 - PascalCase components, `use`-prefixed composables.
 - The UI reaches tickets only through the `TicketProvider` layer and our server routes, never the mock API directly.
-- One accent colour, used only for AI output (see `DESIGN.md` once it exists).
+- No AI-style decoration: no sparkle icons, no "AI" pills, no example chips (see `DESIGN.md`).
 - All motion respects `prefers-reduced-motion`.
 - UI text in sentence case.
 - Every list, detail view and AI call has loading, empty and error states.

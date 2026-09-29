@@ -20,12 +20,6 @@ const reconnecting = computed(() => status.value === 'error' && hasLoaded.value)
 const filter = ref<'all' | StatusId>('all')
 const draft = ref('')
 
-const examples = [
-  'My laptop keeps shutting down',
-  'I can\'t log in',
-  'The printer is offline'
-]
-
 const filters = computed(() => [
   { id: 'all' as const, label: 'All', count: tickets.value.length },
   { id: 'new' as const, label: 'Received', count: tickets.value.filter(t => t.status === 'new').length },
@@ -81,56 +75,59 @@ watch(lastCreated, (key) => {
         <PromptBox
           v-model="draft"
           class="mt-6"
-          :examples="examples"
           @submit="start"
         />
       </section>
 
       <section aria-labelledby="requests-title">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <h2
-              id="requests-title"
-              class="text-2xl font-semibold tracking-tight text-highlighted"
-            >
-              My requests
-            </h2>
-            <span class="flex items-center gap-1.5 text-xs text-toned">
-              <span
-                class="relative flex size-2"
-                aria-hidden="true"
-              >
-                <span
-                  v-if="refreshing"
-                  class="absolute inline-flex size-full rounded-full opacity-60 motion-safe:animate-flow-pulse"
-                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
-                />
-                <span
-                  class="relative inline-flex size-2 rounded-full transition-colors duration-(--motion-base)"
-                  :class="reconnecting ? 'bg-warning' : 'bg-success'"
-                />
-              </span>
-              {{ reconnecting ? 'Reconnecting' : 'Live' }}
-            </span>
-          </div>
-          <div
-            class="flex flex-wrap gap-1"
-            role="group"
-            aria-label="Filter by status"
+        <div class="flex items-center gap-3">
+          <h2
+            id="requests-title"
+            class="text-2xl font-semibold tracking-tight text-highlighted"
           >
-            <UButton
-              v-for="f in filters"
-              :key="f.id"
-              size="sm"
-              :color="filter === f.id ? 'primary' : 'neutral'"
-              :variant="filter === f.id ? 'soft' : 'ghost'"
-              :aria-pressed="filter === f.id"
-              @click="filter = f.id"
+            My requests
+          </h2>
+          <span class="flex items-center gap-1.5 text-xs text-toned">
+            <span
+              class="relative flex size-2"
+              aria-hidden="true"
             >
-              {{ f.label }}
-              <span class="tabular-nums text-muted">{{ f.count }}</span>
-            </UButton>
-          </div>
+              <span
+                v-if="refreshing"
+                class="absolute inline-flex size-full rounded-full opacity-60 motion-safe:animate-flow-pulse"
+                :class="reconnecting ? 'bg-warning' : 'bg-success'"
+              />
+              <span
+                class="relative inline-flex size-2 rounded-full transition-colors duration-(--motion-base)"
+                :class="reconnecting ? 'bg-warning' : 'bg-success'"
+              />
+            </span>
+            {{ reconnecting ? 'Reconnecting' : 'Live' }}
+          </span>
+        </div>
+
+        <div
+          class="-mx-1 mt-4 flex gap-1 overflow-x-auto border-b border-default px-1"
+          role="group"
+          aria-label="Filter by status"
+        >
+          <button
+            v-for="f in filters"
+            :key="f.id"
+            type="button"
+            class="relative min-h-11 shrink-0 px-3 text-sm font-medium transition-colors duration-(--motion-fast) focus-visible:outline-2 focus-visible:outline-primary sm:min-h-10"
+            :class="filter === f.id ? 'text-highlighted' : 'text-muted hover:text-default'"
+            :aria-pressed="filter === f.id"
+            @click="filter = f.id"
+          >
+            {{ f.label }}
+            <span class="ms-1 tabular-nums text-muted">{{ f.count }}</span>
+            <span
+              v-if="filter === f.id"
+              class="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-primary"
+              aria-hidden="true"
+            />
+          </button>
         </div>
 
         <div

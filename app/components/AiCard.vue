@@ -19,28 +19,15 @@ const emit = defineEmits<{ retry: [], refresh: [] }>()
 
 <template>
   <section
-    class="rounded-lg border border-secondary/30 bg-secondary/5 p-4 sm:p-5"
+    class="rounded-xl border border-default bg-elevated/40 p-4 sm:p-5"
     :aria-label="title"
     aria-live="polite"
     :aria-busy="loading"
   >
     <header class="flex flex-wrap items-center gap-2">
-      <UIcon
-        name="i-lucide-sparkles"
-        class="size-5 text-secondary"
-        aria-hidden="true"
-      />
-      <h2 class="text-lg font-medium text-highlighted">
+      <h2 class="text-lg font-semibold tracking-tight text-highlighted">
         {{ title }}
       </h2>
-      <UBadge
-        color="secondary"
-        variant="subtle"
-        size="sm"
-        class="text-violet-800 dark:text-violet-200"
-      >
-        AI
-      </UBadge>
       <UBadge
         v-if="demo"
         color="neutral"
@@ -95,9 +82,7 @@ const emit = defineEmits<{ retry: [], refresh: [] }>()
     </div>
 
     <p class="mt-4 text-xs text-toned">
-      AI-generated. Check before you rely on it.<template v-if="footnote">
-        {{ ' ' }}{{ footnote }}
-      </template>
+      {{ footnote ?? 'Written by AI. Check the details before you act on them.' }}
     </p>
   </section>
 </template>

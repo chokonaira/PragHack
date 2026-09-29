@@ -7,7 +7,7 @@ withDefaults(defineProps<{
   rows?: number
 }>(), {
   placeholder: 'For example: my laptop keeps shutting down since yesterday\'s update, three times this morning.',
-  submitLabel: 'Create with AI',
+  submitLabel: 'Continue',
   autofocus: false,
   examples: () => [],
   rows: 3
@@ -126,6 +126,7 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
         :color="voice.listening.value ? 'error' : 'neutral'"
         :variant="voice.listening.value ? 'solid' : 'outline'"
         size="sm"
+        class="max-sm:min-h-11 max-sm:px-4"
         :icon="voice.state.value === 'listening' ? 'i-lucide-square' : 'i-lucide-mic'"
         :loading="voice.state.value === 'starting' || voice.state.value === 'stopping'"
         :disabled="voice.state.value === 'starting' || voice.state.value === 'stopping'"
@@ -140,6 +141,7 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
         size="xs"
         color="neutral"
         variant="soft"
+        class="max-sm:min-h-10 max-sm:px-3.5 max-sm:text-sm"
         :disabled="voice.active.value"
         @click="text = example"
       >
@@ -150,9 +152,8 @@ const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', liste
     <div class="flex items-center justify-between gap-3 px-2 pb-1 pt-2">
       <slot name="secondary" />
       <UButton
-        class="ms-auto"
+        class="ms-auto max-sm:min-h-11"
         size="lg"
-        icon="i-lucide-sparkles"
         :disabled="!text.trim() || voice.state.value === 'starting'"
         @click="submit"
       >

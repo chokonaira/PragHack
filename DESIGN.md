@@ -47,7 +47,7 @@ Replace the starter's green scale in `app/assets/css/main.css` with the `cobalt`
 | Role | Alias | Used for |
 |---|---|---|
 | Brand and actions | `primary` (cobalt, custom scale) | Primary button, links, focus, selected states |
-| **AI only** | `secondary` (violet) | Anything AI produced: `AiCard`, AI badge, sparkles icon. Never used for anything else |
+| Secondary accent | `secondary` (violet) | Not used for AI. Keep it out of the UI unless a screen truly needs a second accent |
 | Success | `success` (green) | Resolved, saved, created |
 | Info | `info` (sky) | New status |
 | Warning | `warning` (amber) | In progress, medium impact, missing info |
@@ -101,17 +101,15 @@ Never colour alone: always icon plus text.
 
 Show status with `UBadge variant="subtle"`. Impact is an AI estimate, so it appears inside AI content only.
 
-## AI visual language
+## How AI shows up
 
-All AI-produced content lives in `AiCard`:
+AI should feel like a good product feature, not a demo. No sparkle icons, no "AI" pills, no coloured AI boxes.
 
-- Container: `rounded-lg border border-secondary/30 bg-secondary/5 p-4`.
-- Header: `i-lucide-sparkles` icon, the title, and a `UBadge color="secondary" variant="subtle"` reading "AI".
-- Footnote (`text-xs text-muted`): "AI-generated. Check before you rely on it." plus what it is based on, for example "Based on 8 comments".
-- States: **loading** (skeleton lines, `aria-busy`), **error** (one short sentence and a "Try again" button, never a raw error), **ready**.
-- Anything the AI fills into a form is editable. Fields the user changed show a small "Edited" marker.
-- After the user confirms, saved content looks like normal content. Only pending AI content is violet.
-- If AI fails, the core flow still works and the message says what to do ("Fill it in manually").
+- AI content sits in `AiCard`: a plain quiet card with a normal heading (for example "What's happening?").
+- Honesty stays, but small: one line of plain text at the bottom, "Written by AI. Check the details before you act on them."
+- Everything the AI drafts is editable and nothing is created or sent until the user confirms.
+- States: loading (skeleton lines), error (one short sentence and "Try again"), ready.
+- If AI fails, the core flow still works and the message says what to do.
 
 ## Motion
 

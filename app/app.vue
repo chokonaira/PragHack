@@ -39,7 +39,7 @@ useSeoMeta({
         <div class="flex items-center gap-3">
           <NuxtLink
             to="/"
-            class="-ms-1 rounded-md p-1 focus-visible:outline-2 focus-visible:outline-primary"
+            class="-ms-1 flex min-h-11 items-center rounded-md p-1 focus-visible:outline-2 focus-visible:outline-primary"
             aria-label="TicketFlow home"
           >
             <AppLogo />
@@ -49,6 +49,7 @@ useSeoMeta({
             color="neutral"
             variant="subtle"
             size="sm"
+            class="max-sm:hidden"
           >
             Demo data
           </UBadge>
@@ -68,14 +69,22 @@ useSeoMeta({
           </UButton>
           <UButton
             icon="i-lucide-plus"
+            class="max-sm:size-11 max-sm:justify-center max-sm:p-0"
             @click="openWith()"
           >
-            New request
+            <span class="max-sm:sr-only">New request</span>
           </UButton>
-          <UColorModeButton />
+          <UColorModeButton class="max-sm:size-11" />
         </nav>
       </UContainer>
     </header>
+
+    <p
+      v-if="mode?.mode === 'demo'"
+      class="border-b border-default bg-muted px-4 py-1.5 text-center text-xs text-toned sm:hidden"
+    >
+      Demo data: sample tickets, safe to play with
+    </p>
 
     <UMain id="main">
       <NuxtPage />
