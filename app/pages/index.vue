@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { StatusId, Ticket } from '../../shared/types'
+import type { StatusId } from '../../shared/types'
 
-const { data: tickets, status, refresh } = await useFetch<Ticket[]>('/api/tickets', {
-  key: 'tickets',
-  default: () => []
-})
+const { data: tickets, status, refresh } = await useTickets()
 
 const { openWith, lastCreated } = useNewRequest()
 const route = useRoute()
@@ -18,6 +15,7 @@ const refreshing = computed(() => status.value === 'pending' && hasLoaded.value)
 const reconnecting = computed(() => status.value === 'error' && hasLoaded.value)
 
 const filter = ref<'all' | StatusId>('all')
+const search = ref('')
 const draft = ref('')
 
 const filters = computed(() => [
@@ -27,9 +25,21 @@ const filters = computed(() => [
   { id: 'resolved' as const, label: 'Resolved', count: tickets.value.filter(t => t.status === 'resolved').length }
 ])
 
-const visible = computed(() =>
-  tickets.value.filter(t => filter.value === 'all' || t.status === filter.value)
-)
+const isFiltered = computed(() => filter.value !== 'all' || search.value.trim().length > 0)
+
+const visible = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  return tickets.value.filter((t) => {
+    if (filter.value !== 'all' && t.status !== filter.value) return false
+    if (q && !t.summary.toLowerCase().includes(q) && !t.key.toLowerCase().includes(q)) return false
+    return true
+  })
+})
+
+function clearFilters() {
+  filter.value = 'all'
+  search.value = ''
+}
 
 function start() {
   openWith(draft.value)
@@ -130,6 +140,31 @@ watch(lastCreated, (key) => {
           </button>
         </div>
 
+        <div class="mt-3 flex justify-end">
+          <UInput
+            v-model="search"
+            icon="i-lucide-search"
+            placeholder="Search your requests"
+            aria-label="Search your requests"
+            class="w-full sm:w-56"
+            :ui="{ trailing: 'pe-1' }"
+          >
+            <template
+              v-if="search"
+              #trailing
+            >
+              <UButton
+                icon="i-lucide-x"
+                size="xs"
+                color="neutral"
+                variant="link"
+                aria-label="Clear search"
+                @click="search = ''"
+              />
+            </template>
+          </UInput>
+        </div>
+
         <div
           v-if="firstLoad"
           class="mt-4 space-y-5"
@@ -159,14 +194,38 @@ watch(lastCreated, (key) => {
 
         <div
           v-else-if="!visible.length"
-          class="mt-6 rounded-lg border border-dashed border-default p-8 text-center"
+          class="mt-6 flex flex-col items-center gap-3 rounded-lg border border-dashed border-default p-8 text-center"
         >
-          <p class="font-medium text-highlighted">
-            No requests here yet
-          </p>
-          <p class="mt-1 text-sm text-muted">
-            Describe a problem and it will show up in this list.
-          </p>
+          <UIcon
+            :name="isFiltered ? 'i-lucide-search-x' : 'i-lucide-inbox'"
+            class="size-8 text-muted"
+            aria-hidden="true"
+          />
+          <div>
+            <p class="font-medium text-highlighted">
+              {{ isFiltered ? 'No requests match' : 'No requests yet' }}
+            </p>
+            <p class="mt-1 text-sm text-muted">
+              {{ isFiltered ? 'Try a different search or filter.' : 'Describe a problem above and it will show up here.' }}
+            </p>
+          </div>
+          <UButton
+            v-if="isFiltered"
+            size="sm"
+            color="neutral"
+            variant="soft"
+            @click="clearFilters"
+          >
+            Clear filters
+          </UButton>
+          <UButton
+            v-else
+            size="sm"
+            icon="i-lucide-plus"
+            @click="openWith()"
+          >
+            New request
+          </UButton>
         </div>
 
         <TransitionGroup

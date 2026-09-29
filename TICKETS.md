@@ -168,11 +168,11 @@ flowchart TD
 ### T-08 Home: my requests
 **Owner:** Marzieh · **Time:** 45 min · **Needs:** T-03, T-05 · **Unblocks:** T-21
 **Goal:** the customer sees their requests and can start a new one.
-- [ ] `useTickets()` composable with loading, error (retry), empty and refresh.
-- [ ] `TicketCard`: key (mono), summary, status badge (icon and text), location, relative updated time. Wireframe: `docs/WIREFRAMES.md`.
-- [ ] Status filter chips with counts, and client-side text search.
-- [ ] "What's the problem?" box at the top that opens `/new`.
-- [ ] Skeleton, empty state (with a "New request" button) and error state. Cards work with the keyboard.
+- [x] `useTickets()` composable with loading, error (retry), empty and refresh. (`app/composables/useTickets.ts`; loading/error/refresh handled in `index.vue` via `status`)
+- [x] `TicketCard`: key (mono), summary, status badge (icon and text), location, relative updated time. Wireframe: `docs/WIREFRAMES.md`. (`TicketRow.vue`, built with T-03/T-09; flow line doubles as the status badge)
+- [x] Status filter chips with counts, and client-side text search. (chips from earlier work; search added: matches summary or key, case-insensitive)
+- [x] "What's the problem?" box at the top that opens `/new`. (now `PromptBox` from Henry's shared-component pass)
+- [x] Skeleton, empty state (with a "New request" button) and error state. Cards work with the keyboard. (empty state now has icon + headline + help + one button per `DESIGN.md`, distinguishes "no tickets" from "no matches"; verified tab order and focus rings at 390/1440, light/dark)
 
 **Check:** open `/`, filter by status, search, open a card.
 
@@ -276,3 +276,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Henry: `NUXT_AI_LIVE` switch added (off by default). In demo mode the AI routes still answer from the pre-written demo answers. With `NUXT_AI_LIVE=true` and a key set, the demo tickets use the real model. Live mode always uses the model. Logic is `server/utils/aiMode.ts` (tested), used by both AI routes. **Keep it false on Vercel.**
 - 2026-09-29, Henry: design change, less "AI demo", more product. Removed: example chips, sparkle icons, the AI pill and the violet AI card. `AiCard` is now a plain quiet card with one small line ("Written by AI. Check the details before you act on them."). Submit says "Continue". Filters are underline tabs. Mobile: header no longer overflows at 320 px, tap targets are 44 px, demo badge becomes a strip on phones. `DESIGN.md`, `CLAUDE.md` and the `ticketflow-ui` skill are updated, so teammates' agents follow the new rules.
 - 2026-09-29, Henry: found and fixed a Vercel bug. Serverless runs many instances, so a ticket created on one was missing on the others (in a 40-request test: detail 404 on 25, summary 404 on 38). Demo state can now live in Upstash Redis (`server/utils/demoStore.ts`, plain fetch, no new dependency), turned on by `KV_REST_API_URL` and `KV_REST_API_TOKEN` (Vercel's integration sets them). Off without them. Tested with two simulated instances sharing a store.
+- 2026-09-29, Marzieh: T-08 done. Added `useTickets()` composable and client-side search (matches summary or key) alongside the existing status chips. Empty state now follows `DESIGN.md` (icon, headline, help, one button) and tells "no tickets yet" apart from "no matches for this filter/search", with a "Clear filters" way back. Rebased onto Henry's "sleeker, less AI-demo" pass: dropped the sparkle icon from the empty-state button and the underline filter tabs replace the old chip buttons, both per the updated `DESIGN.md`. Verified again at 390/1440, light/dark, tab order chips → search → rows.
