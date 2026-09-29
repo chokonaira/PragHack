@@ -48,7 +48,8 @@ const editedHint = (changed: boolean) => (changed ? 'Edited' : undefined)
 const impactLabel = { low: 'Low impact', medium: 'Medium impact', high: 'High impact' } as const
 const impactIcon = { low: 'i-lucide-arrow-down', medium: 'i-lucide-minus', high: 'i-lucide-triangle-alert' } as const
 
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+// Skip the readability pauses for reduced motion, and when the tab is hidden (browsers throttle timers there).
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.visibilityState !== 'visible'
 const pause = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 let runId = 0

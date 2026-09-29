@@ -167,7 +167,7 @@ watch(lastCreated, (key) => {
         </div>
 
         <div
-          class="-mx-1 mt-4 flex gap-1 overflow-x-auto border-b border-default px-1"
+          class="-mx-1 mt-4 flex gap-1 overflow-x-auto border-b border-default px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="group"
           aria-label="Filter by status"
         >
