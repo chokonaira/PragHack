@@ -58,6 +58,39 @@ Speak slowly. If you run long, cut the filter click and the Refresh click.
 | Technical Quality (10) | Mention: tests, server routes, demo fallback, shared state |
 | Presentation (5) | This script, timed |
 
+## Where to run what
+
+- **Main flow on the laptop** (`localhost:3000`, `NUXT_AI_LIVE=true`): real AI drafts the request and reads the thread. The QR card is hidden on localhost by design.
+- **Phone handoff on the live site** (https://ticketflow-hack.vercel.app): the laptop has it open in a second tab, the phone scans the QR code and creates a request, and it slides into the laptop's list within about 3 seconds. Say out loud that the live site uses pre-written AI answers so the key is never public. Do this as the finale if there is time, or skip it and mention it.
+- Reset the live data right before you start: `curl -X POST https://ticketflow-hack.vercel.app/api/demo/reset`
+
+## Two-sentence version (if you get 30 seconds)
+
+"Customers shouldn't have to learn a ticket system. They say what went wrong, AI writes the request, they check it and send it, and later AI tells them in plain words where it stands and what they need to do. Works on a phone, by voice, and across devices."
+
+## Technical talking points (the 10-point Technical Quality slice)
+
+- Nuxt 4, Vue 3, TypeScript, Nuxt UI. Every AI call runs in a server route. The key never reaches the browser.
+- One `TicketProvider` interface, two implementations: the organizers' mock API with an overlay of our changes, and seeded demo data. If the API is down, the app falls back to labelled demo data.
+- The mock API has no CORS and saves nothing. We proxy it and keep shared state in Redis, which is what makes the phone-to-desktop handoff work on serverless.
+- AI safety: ticket text is passed as data, not instructions. Every model answer is validated, with a timeout and one retry. AI only proposes. Nothing is created until the customer clicks. If AI fails, the manual form still works.
+- 119 unit tests, lint and typecheck in CI on every push, trunk-based, no failing test ever.
+- Accessibility: keyboard operable, no axe violations on the main screens, reduced motion respected, 44 px tap targets on phones.
+
+## Questions judges may ask
+
+| Question | Answer |
+|---|---|
+| Is the AI real? | Yes. Claude, called from our server. The public site shows pre-written answers so we do not expose the key. Run locally with the key you saw the real model. |
+| What if the AI is wrong? | It only proposes. The customer edits every field and clicks Create. Bad output is validated and replaced by the manual form. |
+| Can a ticket message hijack the AI? | Ticket text goes to the model inside data tags, output is validated against a fixed shape, and the AI has no route that writes anything. |
+| The mock API saves nothing. How does create work? | We keep an overlay and shared Redis state, always labelled as demo data. Against a real ServiceBridge the same provider would write through. |
+| Why customer-first? | The brief is about people who create requests and want to know where they stand. Customers are the ones stuck with forms and long threads. |
+| Where is the support side? | Not built. The demo button plays support. A support-side view is the first thing we would add. |
+| What would you build next? | Support-side replies and status changes, a "since your last visit" summary, notifications, attachments, real sign-in, and streaming AI output. |
+| Voice: how does it work? | The browser's built-in speech recognition. Works in Chrome, Edge and Safari. Chrome sends audio to Google for recognition. The mic button is hidden where unsupported. |
+| Who built what? | Henry: AI, voice, demo data, shared state, deploy. Florian: API docs and the create flow. Marzieh: tests, search and comments route. |
+
 ## Rehearsal log
 
 | Run | Time | Notes |
