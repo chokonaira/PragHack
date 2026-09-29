@@ -33,3 +33,4 @@ logs
 *.p12
 credentials*.json
 secrets/
+.vercel
