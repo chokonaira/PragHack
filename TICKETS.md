@@ -96,9 +96,9 @@ flowchart TD
 **Owner:** Florian · **Time:** 30 min · **Needs:** nothing · **Unblocks:** T-05, T-06, T-11
 **Goal:** shared types and one safe way to call the mock.
 - [x] `shared/types.ts` exactly as in `docs/contracts.md` (pushed by Henry so nobody waited, Florian: pull it, do not recreate it). Also holds the AI shapes and `TicketProvider`.
-- [ ] `server/utils/upstream.ts`: fetch with 8 second timeout, base URL from config, handles `204`, throws a typed `ApiError`, never leaks stack traces.
-- [ ] Mapper from mock shapes to our types (status matched by name, case-insensitive). Health probe on `GET /health`.
-- [ ] Tests: mapper, timeout, 404, 204.
+- [x] `server/utils/upstream.ts`: fetch with 8 second timeout, base URL from config, handles `204`, throws a typed `ApiError`, never leaks stack traces.
+- [x] Mapper from mock shapes to our types (status matched by name, case-insensitive). Health probe on `GET /health`. (`server/utils/mappers.ts`, API shapes in `server/types/api.ts`.)
+- [x] Tests: mapper, timeout, 404, 204. (`tests/server/*.test.ts`, 23 tests.)
 
 **Check:** `pnpm test` is green.
 
@@ -256,7 +256,7 @@ Add your row in your first push. It means you have read `CONTRIBUTING.md`, `docs
 
 | Name | Read and agreed (time) |
 |---|---|
-| | |
+| Florian | 2026-09-29 14:00 |
 
 ## Sync log
 
@@ -265,3 +265,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, team: direction is customer-first (TicketFlow AI). The operator autopilot board is dropped.
 - 2026-09-29, team: LLM is provider-neutral (base URL, key, model). The provider is whichever working key a teammate has (T-01).
 - 2026-09-29, team: 3 hours left. Tickets cut and ordered in waves. Owners drawn at random and balanced.
+- 2026-09-29, Florian: T-04 needed tests before T-02 landed, so vitest, `pnpm test` (`vitest run`, tests in `tests/**/*.test.ts`) and `runtimeConfig.apiBase` are in with T-04. T-02 keeps the rest of `runtimeConfig` and CI.

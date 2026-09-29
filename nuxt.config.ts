@@ -8,6 +8,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Server-only. NUXT_API_BASE overrides it (see .env.example). T-02 adds the rest.
+  runtimeConfig: {
+    apiBase: 'http://mockapi.pragvue.cz:8001'
+  },
+
   routeRules: {
     '/': { prerender: true }
   },
