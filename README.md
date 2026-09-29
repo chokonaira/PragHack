@@ -2,33 +2,65 @@
 
 > Stop managing tickets. Just tell us what happened.
 
-TicketFlow AI is a customer-facing service ticket app built for the **PragVue Hackathon 2026** (topic: AI-Powered Ticket Management Experience, ServiceBridge). A customer describes a problem in their own words, typed or spoken. AI turns it into a structured request, the customer reviews it and creates it, and later AI explains what is happening on any ticket.
+A service-ticket app for **customers**, built for the PragVue Hackathon 2026 (topic: AI-Powered Ticket Management Experience). Instead of filling in a form, a customer says what went wrong, typed or spoken. AI turns it into a proper request, the customer checks it and creates it, and AI later explains any ticket in plain language.
 
-**Live demo:** https://ticketflow-hack.vercel.app (sample data, deploys from every push to `main`)
+## Try it in 30 seconds
 
-**Try the handoff (30 seconds):** open the live demo on your laptop, scan the QR code on the page with your phone, then on the phone tap the mic (or type) and report a problem. Create the request and watch it slide into the laptop's list within a few seconds, with a "New" tag.
+**Live demo:** https://ticketflow-hack.vercel.app (sample data, safe to play with)
 
-## The problem
+1. Click **Speak** (Chrome, Edge or Safari) and say: *"My laptop keeps shutting down since yesterday's update. I'm at the Prague Nusle office."* Or just type it.
+2. Click **Continue**, review the request the AI drafted, and click **Create request**.
+3. Open **Laptop shuts down randomly after update** and read the AI summary of its nine updates.
+4. **Cross-device handoff:** on a desktop, scan the QR code on the page with your phone, create a request there, and watch it slide into the desktop list within a few seconds.
+
+A full 5-minute walkthrough is in [docs/demo-script.md](docs/demo-script.md).
+
+## Screenshots
+
+| Home | Create by voice or text |
+|---|---|
+| ![Home: what went wrong, and my requests with a flow line per ticket](docs/screenshots/home.jpg) | ![The AI drafted a request: title, description, type, location, impact and follow-up questions](docs/screenshots/create.jpg) |
+
+| Ticket detail with AI summary | On a phone |
+|---|---|
+| ![Ticket detail: flow line, AI summary, waiting on, action for you](docs/screenshots/ticket.jpg) | <img src="docs/screenshots/mobile.jpg" alt="The home page on a 390 px phone" width="240"> |
+
+## The problem and our answer
 
 Ticket systems make customers understand the system: long forms, unclear categories, long threads, and no clear answer to "where does my request stand?"
 
+Our answer is a **route**. Every ticket is a line with three stops (Received, In progress, Resolved), so status is obvious at a glance. AI does the paperwork at both ends: it structures what the customer says, and it summarises what happened afterwards.
+
+## How it meets the challenge
+
+The brief asks the app to help people do these things:
+
+| The brief says | What we built |
+|---|---|
+| Quickly understand current tickets | Live list with a flow line per ticket, status filters and search |
+| Create new service requests | Say or type it. AI drafts the request, the customer edits and confirms |
+| Communicate with support teams | Not in this version. The ticket page shows the full updates timeline read-only |
+| Identify important changes | New and updated requests get a tag and a toast, live across devices |
+| Find relevant information | Search, and an AI summary of any ticket |
+| Decide what to do next | The summary says who the ticket is waiting on and what the customer should do |
+
 ## Features
 
-- **Describe it, don't fill in a form.** Type or speak what went wrong. The words stream into the box as you talk, with a clear recording state.
-- **AI drafts the request.** Title, description, type and impact from free text, with the location picked only when the text names one. The customer edits anything and confirms. Nothing is created until they click. If AI is unavailable, "Skip AI, use the form" gives the same form.
-- **My requests.** A live list of tickets. Each one shows a flow line (Received, In progress, Resolved), its location and last update. Filter by status. The list refreshes itself and new tickets slide in.
-- **Ticket detail.** The flow line at full size, the description, an updates timeline, and a "What's happening?" summary: what is going on, who the ticket is waiting on, and whether the customer needs to act.
-- **Built to be used.** Works on phones from 320 px, light and dark mode, keyboard operable, no accessibility violations on the main screens (axe), respects reduced motion.
-- **Demo mode.** Seeded sample tickets, always labelled "Demo data", so the demo never depends on the network. A demo control plays the support side so the flow line can move.
+- **Speak or type.** Voice input shows a clear recording state and streams your words into the box as you talk.
+- **AI drafts the request.** Title, description, type and impact from free text. The location is only picked when the text names one. The customer can edit anything, and nothing is created until they click. If AI is unavailable, "Skip AI, use the form" gives the same form.
+- **Live request list.** A flow line per ticket, filters, search, and automatic refresh. New requests slide in with a tag, even when they come from another device.
+- **Ticket detail.** Full-size flow line, description, updates timeline, and a "What's happening?" summary (what is going on, who it is waiting on, what you need to do).
+- **Made to be used.** Works on phones from 320 px, light and dark mode, keyboard operable, no accessibility violations on the main screens (axe), respects reduced motion.
+- **Demo mode.** Sample tickets, always labelled "Demo data", so a demo never depends on the network. A demo control on each ticket plays the support side so the flow line can move.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    A["Customer describes the problem"] --> B["AI structures it: title, type, location, impact"]
+    A["Customer says what went wrong"] --> B["AI drafts: title, type, location, impact"]
     B --> C["Customer reviews and edits"]
     C -->|"Create request"| D["Ticket created"]
-    D --> E["My requests"]
+    D --> E["Live list, on every device"]
     E --> F["Open a ticket"]
     F --> G["AI summary: what is happening, waiting on, action needed"]
 ```
@@ -40,15 +72,16 @@ flowchart TB
     P -->|"live"| M["MockApiProvider + overlay of our changes"]
     P -->|"demo"| F["FixtureProvider: seeded demo data"]
     M --> S["ServiceBridge mock API"]
+    F --> R[("Shared demo state in Redis")]
     API --> L["AI routes /api/ai/*"]
     L --> LLM["Claude, key stays on the server"]
 ```
 
-The organizers' mock API has no CORS and does not save writes, so the browser never calls it. Our Nuxt server routes call it, keep an overlay of what we create, and fall back to labelled demo data. Details: [docs/api/README.md](docs/api/README.md).
+The organizers' mock API has no CORS and does not save writes, so the browser never calls it. Our Nuxt server routes call it, keep an overlay of what we create, and fall back to labelled demo data. Demo state lives in Redis so every server instance sees the same tickets, which is what makes the phone-to-desktop handoff work. Details: [docs/api/README.md](docs/api/README.md).
 
 ## Technology stack
 
-Nuxt 4, Vue 3, TypeScript, Nuxt UI 4, Tailwind CSS 4, Lucide icons, Schibsted Grotesk. Server routes run on Nitro. Vitest for tests, GitHub Actions for lint, typecheck and tests, Vercel for hosting. The browser's built-in speech recognition powers voice input.
+Nuxt 4, Vue 3, TypeScript, Nuxt UI 4, Tailwind CSS 4, Lucide icons, Schibsted Grotesk. Server routes run on Nitro. Vitest for tests (118), GitHub Actions for lint, typecheck and tests, Vercel for hosting, Redis for shared demo state. Voice input uses the browser's built-in speech recognition.
 
 ## Setup and start
 
@@ -64,14 +97,14 @@ pnpm dev                  # http://localhost:3000
 
 | Command | What it does |
 |---|---|
-| `pnpm dev` | Development server on port 3000 (`pnpm dev --host` to open it from a phone on the same Wi-Fi) |
+| `pnpm dev` | Development server on port 3000 (`pnpm dev --host` opens it to a phone on the same Wi-Fi) |
 | `pnpm build` and `pnpm preview` | Production build and local preview |
 | `pnpm lint` and `pnpm typecheck` | Static checks |
 | `pnpm test` | Unit tests |
 
 ## Configuration
 
-Set in `.env` (see `.env.example`). All of these are server-side.
+Set in `.env` (see `.env.example`). All server-side. The app runs with none of them set, using the organizers' mock API.
 
 | Variable | Default | What it does |
 |---|---|---|
@@ -82,34 +115,34 @@ Set in `.env` (see `.env.example`). All of these are server-side.
 | `NUXT_LLM_BASE_URL` | `https://api.anthropic.com` | Model API address |
 | `NUXT_LLM_MODEL` | `claude-sonnet-5-5` | Model name |
 | `NUXT_LLM_API_KEY` | empty | Your key. Never commit it |
-| `REDIS_URL` | empty | Any Redis over TCP (for example Railway), as `redis://user:password@host:port`. Shared demo state across server instances. Keep it secret |
-| `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`) | empty | Upstash Redis for shared demo state. Vercel's integration sets them. Without them, demo state lives in each server instance's memory |
+| `REDIS_URL` | empty | Any Redis over TCP (`redis://user:password@host:port`). Shares demo state across server instances. Needed on Vercel, not locally |
+| `KV_REST_API_URL` and `KV_REST_API_TOKEN` | empty | Alternative to `REDIS_URL` for Upstash Redis |
 
-Without a key the app still works: AI screens show the pre-written demo answers, and creating a ticket always works through the manual form.
+Without an AI key the app still works: AI screens show the pre-written demo answers, and creating a ticket always works through the manual form.
 
 ## AI: tools and value
 
 **In the app:** Claude (Anthropic API, `claude-sonnet-5-5`), called only from our server routes.
-- Structures free text into a request. It picks the type and impact, proposes a title and description, and suggests details worth adding. It may only choose a location from the real list.
-- Summarises a ticket's history into what is happening, who it is waiting on, and what the customer needs to do.
-- Safety: ticket text is passed to the model as data, never as instructions. Every model answer is validated before use, with a timeout and one retry. If AI fails, the ticket flow still works. AI answers are labelled, and nothing is created or sent without the customer's confirmation.
+- Structures free text into a request. It picks the type and impact, writes a title and description, and suggests details worth adding. It may only choose a location from the real list.
+- Summarises a ticket's history: what is happening, who it is waiting on, and what the customer needs to do.
+- Safety: ticket text goes to the model as data, never as instructions. Every model answer is validated before use, with a timeout and one retry. If AI fails, the ticket flow still works. AI text is labelled, and nothing is created or sent without the customer's confirmation.
 
 **To build it:** Claude Code (Claude Sonnet 5.5) for planning, UI, code, tests and review. *Teammates: add the AI tools you used here.*
 
-**Value:** customers describe a problem once, in their own words, and get a clean request and a plain-language status instead of a form and a thread to decode.
+**Value:** a customer describes a problem once, in their own words, and gets a clean request and a plain-language status instead of a form and a thread to decode.
 
 ## Known limitations
 
-- The organizers' mock API does not save anything and returns fixed data. Tickets and comments we create live in our server's memory and reset on restart. On Vercel each request may hit a different server copy, so shared demo state needs the Upstash Redis variables above. Without them, run locally for the live demo.
-- Customers cannot change a ticket's status. In real life support does. The demo control on a ticket page plays support.
+- The organizers' mock API saves nothing and returns fixed data. Tickets and comments we create are kept in our own state (Redis on the live site, server memory locally) and expire after 24 hours.
+- Customers cannot reply to a ticket in this version, and cannot change its status (in real life support does). The demo control on a ticket page plays support.
 - The public site runs in demo mode with pre-written AI answers so the AI key is never exposed. Real AI needs a key (`NUXT_AI_LIVE=true` locally).
-- Voice input needs Chrome, Edge or Safari (not Firefox). Chrome sends the audio to Google for recognition. Without support the mic button is hidden.
-- Not built: replying to a ticket, "since your last visit" changes, notifications, and text search.
+- Voice input needs Chrome, Edge or Safari (not Firefox). Chrome sends the audio to Google for recognition. Where unsupported, the mic button is hidden.
+- Not built: replies, "since your last visit" summaries, notifications, attachments.
 - Demo data is fictional and always labelled.
 
 ## Pre-existing components
 
-Started from the Nuxt UI starter template. Libraries used: Nuxt, Nuxt UI, Tailwind CSS, Lucide icons, Vitest. Everything else was written during the hackathon.
+Started from the Nuxt UI starter template. Libraries used: Nuxt, Nuxt UI, Tailwind CSS, Lucide icons, Vitest, qrcode-generator. Everything else was written during the hackathon.
 
 ---
 
