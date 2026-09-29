@@ -84,3 +84,4 @@ Follow [CONTRIBUTING.md](CONTRIBUTING.md). In short:
 - Run lint, typecheck and tests before saying something is done. Report failures as they are.
 - If a P0 ticket is not working by hour 3:00, stop P1 work. Feature freeze is at 4:15.
 - Ask before adding a dependency outside the stack.
+- Gotcha: after adding a brand-new component or page file, restart `pnpm dev` if Tailwind classes seem missing (spacing, colours). The dev server does not always pick up classes from new files.
