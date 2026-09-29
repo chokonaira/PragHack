@@ -136,6 +136,7 @@ watch(lastCreated, (key) => {
           class="mt-6"
           @submit="start"
         />
+        <HandoffCard />
       </section>
 
       <section aria-labelledby="requests-title">

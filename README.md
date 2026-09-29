@@ -6,6 +6,8 @@ TicketFlow AI is a customer-facing service ticket app built for the **PragVue Ha
 
 **Live demo:** https://ticketflow-hack.vercel.app (sample data, deploys from every push to `main`)
 
+**Try the handoff (30 seconds):** open the live demo on your laptop, scan the QR code on the page with your phone, then on the phone tap the mic (or type) and report a problem. Create the request and watch it slide into the laptop's list within a few seconds, with a "New" tag.
+
 ## The problem
 
 Ticket systems make customers understand the system: long forms, unclear categories, long threads, and no clear answer to "where does my request stand?"
