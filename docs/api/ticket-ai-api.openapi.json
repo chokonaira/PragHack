@@ -1,0 +1,278 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mock API - servicebridgeapiai",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/chat/models": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "provider": "local",
+                  "defaultModel": "llama3.2",
+                  "models": [
+                    {
+                      "id": "llama3.2",
+                      "isDefault": true,
+                      "supportsTools": true
+                    },
+                    {
+                      "id": "mistral",
+                      "isDefault": false,
+                      "supportsTools": true
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/chat/sessions": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sessions": [
+                    {
+                      "id": "chat-session-001",
+                      "title": "MCDTE ticket status",
+                      "createdAt": "2026-09-18T08:00:00Z",
+                      "updatedAt": "2026-09-18T08:15:00Z",
+                      "messageCount": 2
+                    }
+                  ],
+                  "total": 1,
+                  "page": 1,
+                  "pageSize": 25
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "chat-session-002",
+                  "title": "New mock session",
+                  "createdAt": "2026-09-18T09:00:00Z",
+                  "updatedAt": "2026-09-18T09:00:00Z",
+                  "messageCount": 0
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/api/v1/chat/sessions/{param1}/messages": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": {
+                    "id": "msg-003",
+                    "role": "assistant",
+                    "content": "Ticket MCDTE-48 is currently In progress.",
+                    "toolCalls": [],
+                    "createdAt": "2026-09-18T09:00:00Z"
+                  },
+                  "executedToolCalls": [
+                    {
+                      "name": "search_tickets",
+                      "arguments": {
+                        "projectKey": "MCDTE"
+                      }
+                    }
+                  ],
+                  "pendingAction": null,
+                  "usage": {
+                    "promptTokens": 75,
+                    "completionTokens": 18
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/chat/sessions/{param1}/actions/{param2}/confirm": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "msg-004",
+                  "role": "assistant",
+                  "content": "The requested action was completed.",
+                  "toolCalls": [],
+                  "createdAt": "2026-09-18T09:01:00Z"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "param2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/chat/sessions/{param1}/actions/{param2}/cancel": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "param2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/chat/sessions/{param1}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Mock response",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "example": ""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Mock response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "session": {
+                    "id": "{{param1}}",
+                    "title": "MCDTE ticket status",
+                    "createdAt": "2026-09-18T08:00:00Z",
+                    "updatedAt": "2026-09-18T08:15:00Z",
+                    "messageCount": 2
+                  },
+                  "messages": [
+                    {
+                      "id": "msg-001",
+                      "role": "user",
+                      "content": "What is the status of MCDTE-48?",
+                      "toolCalls": [],
+                      "createdAt": "2026-09-18T08:14:00Z"
+                    },
+                    {
+                      "id": "msg-002",
+                      "role": "assistant",
+                      "content": "Ticket MCDTE-48 is currently In progress.",
+                      "toolCalls": [
+                        {
+                          "name": "get_ticket",
+                          "arguments": {
+                            "issueKey": "MCDTE-48"
+                          }
+                        }
+                      ],
+                      "createdAt": "2026-09-18T08:15:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
