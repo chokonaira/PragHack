@@ -7,6 +7,8 @@ Shared workspace for our team at the **PragVue Hackathon 2026**, a 5-hour event 
 
 Preparation phase. There is no application code yet. Under the hackathon rules all coding happens during the event, so this repo only holds our notes and decisions. The final code must go into the Git repository the organizers assign to each team.
 
+The MVP scope, priorities and success criteria are in [SPEC.md](SPEC.md) (draft for team review).
+
 ## Event links
 
 - Portal (topics, announcements, registration): https://hackhub.pragvue.cz/
@@ -14,7 +16,7 @@ Preparation phase. There is no application code yet. Under the hackathon rules a
 
 ## The idea (proposed)
 
-**In one sentence:** an AI copilot for service desk operators that turns a long list of tickets into a short list of things to do, and lets them act by typing or speaking a request.
+**In one sentence:** an AI copilot for service desk operators. New tickets sort themselves on a live board while you watch, and every AI step can be undone.
 
 Topic: **AI-Powered Ticket Management Experience** (ServiceBridge). This is our leading option, but it is not final until we register.
 
@@ -28,16 +30,16 @@ One main user: the **service desk operator**. We design for them first. A custom
 
 ### What it does
 
-1. **Smart inbox.** AI sorts tickets by urgency and groups them by topic. A short "what changed since you last looked" summary sits at the top.
-2. **Ticket view that saves reading.** A one-paragraph summary of a long thread, a suggested next step, and a drafted reply the operator can edit before sending.
-3. **Command bar** (Ctrl/Cmd + K). The operator types or says what they want, for example "close the resolved Acme tickets and tell them why". The AI shows exactly what it will change and waits for a confirm click. One click undoes it.
-4. **Live answers with real controls.** AI replies appear as they are written and can include clickable ticket cards with inline actions, not only plain text.
+1. **Flow board with autopilot.** Tickets sit in lanes by status. When a new ticket arrives, the AI reads it, classifies it, sets a priority and routes it, and you watch each step. The card then glides to the right lane with a short reason and a confidence score. Three modes: off, suggest, or auto with undo. Low-confidence tickets go to "Needs a human".
+2. **Ticket view that saves reading.** A short summary of a long thread, a suggested next step, and a drafted reply the operator can edit before sending.
+3. **Create a ticket from a sentence.** Paste some text and the AI fills in title, description and priority for review.
+4. **Ask about your tickets.** A read-only chat whose answers stream in live and include clickable ticket cards.
+
+Only if everything above is polished: a command that changes tickets (with confirm and undo), voice input, an installable offline app, a ticket map.
 
 ### Demo highlight
 
-The command bar acting on real tickets, with confirm and undo.
-
-If time is left, we add a "ticket map" where tickets cluster by topic and pulse when new ones arrive. It is only worth building if clicking a cluster filters the list.
+The autopilot flow board. A ticket arrives, the AI triages it while the audience watches, and the operator undoes it with one click.
 
 ### Look and feel
 
@@ -52,8 +54,7 @@ If time is left, we add a "ticket map" where tickets cluster by topic and pulse 
 - A ready-made accessible component library and Tailwind CSS, to move fast.
 - [Comark](https://comark.dev/) to render the AI's streaming Markdown replies, including our own ticket cards.
 - A small server route that calls the AI, so API keys never reach the browser.
-- Motion for Vue and the browser's View Transitions API for animation.
-- If time allows: voice input, an installable offline app (PWA), on-device search for similar tickets.
+- The browser's View Transitions API (with Motion for Vue as a fallback) for card movement.
 
 We have not seen the Mock Ticketing API yet, so we put a thin layer between the UI and the API. That way a surprise in the API costs us little.
 
@@ -63,19 +64,19 @@ We have not seen the Mock Ticketing API yet, so we put a thin layer between the 
 |---|---|---|
 | User Experience and Usability | 25 | Fast, keyboard-friendly, mobile and accessible, with loading, empty and error states |
 | User and Business Value | 20 | One clear user and one clear time-saving journey |
-| Creativity, Innovation, and AI | 20 | AI that takes actions with confirm and undo, not just a chatbot |
+| Creativity, Innovation, and AI | 20 | AI that triages on its own, shows its steps, and can be undone, not just a chatbot |
 | Challenge Fulfilment | 20 | Use as much of the provided API as possible |
 | Technical Quality | 10 | Clean structure, error handling, no secrets in git |
-| Final Presentation | 5 | Scripted demo with a backup recording in case the network fails |
+| Final Presentation | 5 | Scripted demo with a backup mode in case the network fails |
 
 ## 5-hour plan
 
 | Time | Focus |
 |---|---|
 | 0:00 to 0:20 | Read the API docs, confirm user and journey, set up the project and design tokens |
-| 0:20 to 1:15 | API layer, app shell, ticket list and detail with smooth transitions |
-| 1:15 to 2:45 | AI features: triage, summary, reply draft, streaming command bar |
-| 2:45 to 3:45 | Demo highlight, mobile and accessibility pass |
+| 0:20 to 1:15 | API layer, app shell, board and list with smooth transitions |
+| 1:15 to 2:45 | AI features: autopilot triage, the three modes with undo, ticket summary and draft reply |
+| 2:45 to 3:45 | Polish the demo highlight, then create-from-a-sentence and the Ask panel if we are on track |
 | 3:45 to 4:15 | Loading, empty and error states, demo mode, project README |
 | 4:15 to 5:00 | Feature freeze, rehearsal, final push |
 
@@ -85,7 +86,7 @@ One person can hold several roles, and we adjust to the team size.
 
 - **UI and design system:** layout, components, animation, accessibility.
 - **API layer and data:** typed client, test data, caching.
-- **AI features:** server route, prompts, the command bar logic.
+- **AI features:** server route, prompts, the triage logic.
 - **Demo and delivery:** demo script, README, presentation, final push.
 
 ## Topics
@@ -135,8 +136,8 @@ pnpm preview
 
 ## Open decisions
 
+- Review and approve [SPEC.md](SPEC.md), including its open questions.
 - Confirm the topic and register.
 - Confirm the main user (service desk operator).
-- Pick the demo highlight: command bar, ticket map, or both.
 - Assign the roles above.
 - Ask the organizers: is a bare project scaffold (for example `create-vue` or Nuxt) plus dependency installs allowed before kickoff? Is Nuxt accepted as "Vue.js" for the main UI requirement?
