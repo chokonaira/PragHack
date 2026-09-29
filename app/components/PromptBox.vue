@@ -26,15 +26,17 @@ function barHeight(factor: number) {
   return `${Math.max(4, Math.round(voice.level.value * 26 * factor))}px`
 }
 
-function toggleVoice() {
-  if (voice.listening.value) voice.stop()
-  else voice.start(text.value)
+async function toggleVoice() {
+  if (voice.state.value === 'idle') voice.start(text.value)
+  else if (voice.state.value === 'listening') await voice.stop()
 }
 
-function submit() {
-  voice.stop()
+async function submit() {
+  if (voice.active.value) await voice.stop()
   if (text.value.trim()) emit('submit')
 }
+
+const micLabel = computed(() => ({ idle: 'Speak', starting: 'Starting…', listening: 'Stop', stopping: 'Finishing…' })[voice.state.value])
 </script>
 
 <template>
@@ -52,32 +54,66 @@ function submit() {
       class="w-full"
       aria-label="Describe your problem"
       :autofocus="autofocus"
+      :readonly="voice.active.value"
       :placeholder="voice.listening.value ? 'Listening. Start speaking…' : placeholder"
+      @input="voice.captured.value = false"
       @keydown.meta.enter.prevent="submit"
       @keydown.ctrl.enter.prevent="submit"
     />
 
     <div
-      v-if="voice.listening.value"
-      class="flex items-center gap-3 px-3 pb-2"
+      class="min-h-0 px-3"
       role="status"
     >
-      <span
-        class="flex h-7 items-center gap-1"
-        aria-hidden="true"
+      <div
+        v-if="voice.state.value === 'starting'"
+        class="flex items-center gap-2 pb-2 text-sm text-toned"
+      >
+        <UIcon
+          name="i-lucide-loader-circle"
+          class="size-4 motion-safe:animate-spin"
+          aria-hidden="true"
+        />
+        Starting the microphone. Allow access if your browser asks.
+      </div>
+      <div
+        v-else-if="voice.state.value === 'listening'"
+        class="flex items-center gap-3 pb-2"
       >
         <span
-          v-for="(factor, i) in bars"
-          :key="i"
-          class="w-1 rounded-full bg-error"
-          :class="voice.hasLevel.value ? 'transition-[height] duration-75' : 'h-6 origin-center motion-safe:animate-voice-bar'"
-          :style="voice.hasLevel.value ? { height: barHeight(factor) } : { animationDelay: `${i * 120}ms` }"
+          class="flex h-7 items-center gap-1"
+          aria-hidden="true"
+        >
+          <span
+            v-for="(factor, i) in bars"
+            :key="i"
+            class="w-1 rounded-full bg-error"
+            :class="voice.hasLevel.value ? 'transition-[height] duration-75' : 'h-6 origin-center motion-safe:animate-voice-bar'"
+            :style="voice.hasLevel.value ? { height: barHeight(factor) } : { animationDelay: `${i * 120}ms` }"
+          />
+        </span>
+        <span class="text-sm font-medium text-error">Listening. Tap Stop when you're done.</span>
+      </div>
+      <div
+        v-else-if="voice.state.value === 'stopping'"
+        class="pb-2 text-sm text-toned"
+      >
+        Finishing up…
+      </div>
+      <div
+        v-else-if="voice.captured.value"
+        class="flex items-center gap-2 pb-2 text-sm text-success"
+      >
+        <UIcon
+          name="i-lucide-circle-check"
+          class="size-4"
+          aria-hidden="true"
         />
-      </span>
-      <span class="text-sm font-medium text-error">Listening. Tap Stop when you're done.</span>
+        Got it. Edit the text if you like, then continue.
+      </div>
     </div>
     <p
-      v-else-if="voice.error.value"
+      v-if="voice.error.value"
       class="px-3 pb-2 text-sm text-error"
       role="alert"
     >
@@ -90,11 +126,13 @@ function submit() {
         :color="voice.listening.value ? 'error' : 'neutral'"
         :variant="voice.listening.value ? 'solid' : 'outline'"
         size="sm"
-        :icon="voice.listening.value ? 'i-lucide-square' : 'i-lucide-mic'"
+        :icon="voice.state.value === 'listening' ? 'i-lucide-square' : 'i-lucide-mic'"
+        :loading="voice.state.value === 'starting' || voice.state.value === 'stopping'"
+        :disabled="voice.state.value === 'starting' || voice.state.value === 'stopping'"
         :aria-pressed="voice.listening.value"
         @click="toggleVoice"
       >
-        {{ voice.listening.value ? 'Stop' : 'Speak' }}
+        {{ micLabel }}
       </UButton>
       <UButton
         v-for="example in examples"
@@ -102,6 +140,7 @@ function submit() {
         size="xs"
         color="neutral"
         variant="soft"
+        :disabled="voice.active.value"
         @click="text = example"
       >
         {{ example }}
@@ -114,7 +153,7 @@ function submit() {
         class="ms-auto"
         size="lg"
         icon="i-lucide-sparkles"
-        :disabled="!text.trim()"
+        :disabled="!text.trim() || voice.state.value === 'starting'"
         @click="submit"
       >
         {{ submitLabel }}

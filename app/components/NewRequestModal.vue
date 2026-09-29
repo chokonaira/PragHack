@@ -39,7 +39,10 @@ const impactIcon = { low: 'i-lucide-arrow-down', medium: 'i-lucide-minus', high:
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const pause = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+let runId = 0
+
 function reset() {
+  runId++
   step.value = 'describe'
   suggestion.value = null
   aiFailed.value = false
@@ -60,6 +63,7 @@ watch(open, (isOpen) => {
 async function run() {
   const value = text.value.trim()
   if (!value) return
+  const id = ++runId
   step.value = 'thinking'
   thinkingStep.value = 0
   aiFailed.value = false
@@ -68,23 +72,34 @@ async function run() {
   }, 650)
   const started = Date.now()
   try {
-    const result = await $fetch<StructuredTicket>('/api/ai/structure-ticket', { method: 'POST', body: { text: value } })
-    suggestion.value = result
-    form.summary = result.summary
-    form.description = result.description
-    form.ticketType = result.ticketType ?? 'incident'
-    form.location = result.location ?? ''
-  } catch {
-    aiFailed.value = true
-    suggestion.value = null
-    form.summary = ''
-    form.description = value
+    try {
+      const result = await $fetch<StructuredTicket>('/api/ai/structure-ticket', {
+        method: 'POST',
+        body: { text: value },
+        timeout: 20000
+      })
+      if (id !== runId) return
+      suggestion.value = result
+      form.summary = result.summary
+      form.description = result.description
+      form.ticketType = result.ticketType ?? 'incident'
+      form.location = result.location ?? ''
+    } catch {
+      if (id !== runId) return
+      aiFailed.value = true
+      suggestion.value = null
+      form.summary = ''
+      form.description = value
+    }
+    if (!reducedMotion()) await pause(Math.max(0, 1700 - (Date.now() - started)))
+    if (id !== runId) return
+    thinkingStep.value = thinkingSteps.length
+    if (!reducedMotion()) await pause(300)
+    if (id !== runId) return
+    step.value = 'review'
+  } finally {
+    clearInterval(ticker)
   }
-  if (!reducedMotion()) await pause(Math.max(0, 1700 - (Date.now() - started)))
-  clearInterval(ticker)
-  thinkingStep.value = thinkingSteps.length
-  if (!reducedMotion()) await pause(300)
-  step.value = 'review'
 }
 
 function fillManually() {
@@ -102,7 +117,8 @@ async function create() {
   try {
     const ticket = await $fetch<Ticket>('/api/tickets', {
       method: 'POST',
-      body: { summary: form.summary, description: form.description, location: form.location, ticketType: form.ticketType }
+      body: { summary: form.summary, description: form.description, location: form.location, ticketType: form.ticketType },
+      timeout: 15000
     })
     lastCreated.value = ticket.key
     await refreshNuxtData('tickets')

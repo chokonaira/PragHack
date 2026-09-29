@@ -201,7 +201,7 @@ flowchart TD
 **Owner:** Henry · **Time:** 30 min · **Needs:** T-14, T-09, T-03 · **Unblocks:** T-21
 **Goal:** the "What's happening?" card on the detail page.
 - [x] `AiCard` with the summary, waiting on, action required, "Based on N comments", and the "Demo data" marker when `source` is `demo`.
-- [ ] Skeleton while loading. Refresh button. Cached per key and `updatedAt`. Inline "Try again" on error.
+- [x] Skeleton while loading. Refresh button. Cached per key and `updatedAt`. Inline "Try again" on error.
 - [x] The rest of the page works if the AI fails.
 
 **Check:** open the long-thread demo ticket. The card fills in. Turn the LLM key off and the page still works.
@@ -272,3 +272,4 @@ One line per decision that changes scope, stack, a contract or the demo path: `t
 - 2026-09-29, Henry: T-21 (Henry's part): axe scan clean on home, detail and the modal in light and dark; fixed AiCard heading order and contrast. T-03 done: `app/error.vue`, header "Demo data" badge from `/api/mode`. Added a demo-only "Simulate support update" control on the ticket page (`POST /api/tickets/:key/advance`, refused outside demo mode) so the flow line can move in the demo. The demo AI summary now reflects those changes.
 - 2026-09-29, Marzieh: T-14 done. `summarize-ticket.post.ts` now calls the real LLM in live mode through `server/utils/ai/summarize.ts` (`summarizeTicket`); demo mode is unchanged (still passes `ticket.status` into `getDemoSummary` per Henry's T-21 change above). `basedOnComments`, `generatedAt` and `source` are set by the server, never trusted from the model. Zero-comment tickets never call the model (`shortHistorySummary`), so nothing can be invented there. **Henry (T-15):** build against this route as-is; on an AI failure it answers `502`/`504` via `apiError`, so keep the rest of the detail page working and show the inline "Try again".
 - 2026-09-29, Henry: one input everywhere. `PromptBox.vue` is now used by both the home hero and the New request modal, so they look and behave the same. Voice: red recording state, Stop button, live level bars (animated fallback if the mic meter is blocked), and text streams into the box while you speak (`useSpeechInput` takes interim results). The manual link is now "Skip AI, use the form".
+- 2026-09-29, Henry: T-15 done (Refresh button, cache keyed on ticket updatedAt). Voice input is now a state machine (idle, starting, listening, stopping): Listening shows only once the mic is really on, Stop waits for the last words, the mic is always released, the box is read-only while recording. The modal ignores stale AI runs and both AI and create calls time out (20s and 15s).
