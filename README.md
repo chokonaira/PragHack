@@ -80,6 +80,7 @@ Set in `.env` (see `.env.example`). All of these are server-side.
 | `NUXT_LLM_BASE_URL` | `https://api.anthropic.com` | Model API address |
 | `NUXT_LLM_MODEL` | `claude-sonnet-5-5` | Model name |
 | `NUXT_LLM_API_KEY` | empty | Your key. Never commit it |
+| `REDIS_URL` | empty | Any Redis over TCP (for example Railway), as `redis://user:password@host:port`. Shared demo state across server instances. Keep it secret |
 | `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`) | empty | Upstash Redis for shared demo state. Vercel's integration sets them. Without them, demo state lives in each server instance's memory |
 
 Without a key the app still works: AI screens show the pre-written demo answers, and creating a ticket always works through the manual form.
